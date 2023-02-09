@@ -1,7 +1,7 @@
 # long-essay-writer
 
 Web App to write long Essays in an exam.
-Used by the [LongEssayService](https://github.com/fneumann/LongEssayService).
+Used by the [LongEssayService](https://github.com/EDUTIEK/LongEssayService).
 
 
 ## Project Setup
