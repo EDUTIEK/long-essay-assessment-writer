@@ -51,6 +51,7 @@ function getResourceIcon(resource) {
           <v-list-item v-bind="props"
                        @mouseenter="openNavigation()"
                        :prepend-icon="layoutStore.isResourcesVisible ? 'mdi-book-open' : 'mdi-book-open-outline'"
+                       color="grey-darken-4"
                        title="Material">
           </v-list-item>
         </template>
