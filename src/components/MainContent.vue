@@ -1,5 +1,6 @@
 <script setup>
   import Instructions from "@/components/Instructions.vue";
+  import InstructionsPdf from '@/components/InstructionsPdf.vue';
   import Resources from "@/components/Resources.vue";
   import Essay from "@/components/Essay.vue";
   import {useLayoutStore} from "../store/layout";
@@ -14,11 +15,13 @@
       <div  class="column" :class="{ colExpanded: layoutStore.isLeftExpanded, colNormal: !layoutStore.isLeftExpanded}" v-show="layoutStore.isLeftVisible">
         <div class="col-header">
           <h2 class="text-h6" v-show="layoutStore.isInstructionsVisible">Aufgabenstellung</h2>
+          <h2 class="text-h6" v-show="layoutStore.isInstructionsPdfVisible">Aufgabenstellung (PDF)</h2>
           <h2 class="text-h6" v-show="layoutStore.isResourcesVisible">{{ resourcesStore.activeTitle }}</h2>
         </div>
         <div class="col-content">
-          <instructions v-show="layoutStore.isInstructionsVisible" />
-          <resources v-show="layoutStore.isResourcesVisible" />
+          <instructions v-if="layoutStore.isInstructionsVisible" />
+          <instructions-pdf v-if="layoutStore.isInstructionsPdfVisible" />
+          <resources v-if="layoutStore.isResourcesVisible" />
         </div>
         <div class="col-footer text-right" :class="{ footerExpanded: layoutStore.isLeftExpanded, footerNormal: !layoutStore.isLeftExpanded}" >
           <v-btn class="ma-2" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">

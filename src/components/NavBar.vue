@@ -1,8 +1,12 @@
 <script setup>
 import {useLayoutStore} from "../store/layout";
 import {useResourcesStore} from "../store/resources";
+import { useTaskStore } from '@/store/task';
+
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
+const taskStore = useTaskStore();
+
 
 function openNavigation() {
   document.getElementById('app-navigation-drawer').dispatchEvent(new Event('mouseenter'));
@@ -34,19 +38,25 @@ function getResourceIcon(resource) {
 </script>
 
 <template>
-  <v-navigation-drawer id="app-navigation-drawer" elevation="2" color="grey-lighten-4" width="500" permanent rail expand-on-hover>
+  <v-navigation-drawer id="app-navigation-drawer" elevation="2" width="500" permanent rail expand-on-hover>
 
-    <v-list color="grey-lighten-4" >
-      <v-list-item @click="layoutStore.showInstructions(); closeNavigation();"
+    <v-list>
+      <v-list-item v-show="taskStore.hasInstructions" @click="layoutStore.showInstructions(); closeNavigation();"
                    :prepend-icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"
                    title="Aufgabenstellung">
       </v-list-item>
+
+      <v-list-item v-show="resourcesStore.hasInstruction" @click="layoutStore.showInstructionsPdf(); closeNavigation();"
+                   :prepend-icon="layoutStore.isInstructionsPdfVisible ? 'mdi-text-box': 'mdi-text-box-outline'"
+                   title="Aufgabenstellung (PDF)">
+      </v-list-item>
+
       <v-list-item @click="layoutStore.showEssay(); closeNavigation();"
                    :prepend-icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"
                    title="Essay schreiben">
       </v-list-item>
 
-      <v-list-group v-show="resourcesStore.hasResources">
+      <v-list-group v-show="resourcesStore.hasFileOrUrlResources">
         <template v-slot:activator="{ props }">
           <v-list-item active-class="appNavActive" v-bind="props"
                        @mouseenter="openNavigation()"
@@ -56,7 +66,7 @@ function getResourceIcon(resource) {
           </v-list-item>
         </template>
 
-        <v-list-item v-for="resource in resourcesStore.resources"
+        <v-list-item v-for="resource in resourcesStore.getFileOrUrlResources"
                      @click="selectResource(resource); closeNavigation();"
                      :prepend-icon="getResourceIcon(resource)"
                      :title="resource.title"
@@ -75,7 +85,13 @@ function getResourceIcon(resource) {
 <style scoped>
 
 .v-list {
-  overflow-x: hidden
+  overflow-x: hidden;
+  background-color: #fafafa;
+}
+
+/* avoid highlight, when selected, see also App.vue */
+.v-list-item, v-list-group {
+  color: #000000 !important;
 }
 
 </style>

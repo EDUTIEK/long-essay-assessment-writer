@@ -15,7 +15,7 @@ export const useLayoutStore = defineStore('layout',{
         return {
             // saved in storage
             expandedColumn: 'left',         // left|right|none
-            leftContent: 'instructions',    // instructions|resources
+            leftContent: 'instructions',    // instructions|instructionsPdf|resources
             rightContent: 'essay',          // essay
             showTimer: true
         }
@@ -29,9 +29,12 @@ export const useLayoutStore = defineStore('layout',{
         isRightVisible: (state) => state.expandedColumn != 'left',
 
         isInstructionsSelected: (state) => state.leftContent == 'instructions',
+        isInstructionsPdfSelected: (state) => state.leftContent == 'instructionsPdf',
+
         isResourcesSelected: (state) => state.leftContent == 'resources',
 
         isInstructionsVisible: (state) => (state.expandedColumn != 'right' && state.leftContent == 'instructions'),
+        isInstructionsPdfVisible: (state) => (state.isInstructionsPdfSelected && state.isLeftVisible),
         isResourcesVisible: (state) => (state.expandedColumn != 'right' && state.leftContent == 'resources'),
 
         isEssayVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'essay')
@@ -84,6 +87,12 @@ export const useLayoutStore = defineStore('layout',{
             this.setLeftVisible();
             this.leftContent = 'instructions';
             this.saveToStorage();
+        },
+
+        showInstructionsPdf() {
+          this.setLeftVisible();
+          this.leftContent = 'instructionsPdf';
+          this.saveToStorage();
         },
 
         showResources() {

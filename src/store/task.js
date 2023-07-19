@@ -29,6 +29,7 @@ export const useTaskStore = defineStore('task',{
     },
 
     getters: {
+        hasInstructions: (state) => !!state.instructions,
         hasWritingEnd: (state) => !!state.writing_end,
         writingEndReached: (state) => state.remaining_time === 0,
         isExcluded: (state) => state.writing_excluded > 0
