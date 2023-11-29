@@ -1,13 +1,19 @@
 import { defineStore } from 'pinia';
 import axios from 'axios'
 import Cookies from 'js-cookie';
-import {useSettingsStore} from "./settings";
-import {useTaskStore} from "./task";
-import {useLayoutStore} from "./layout";
-import {useResourcesStore} from "./resources";
-import {useEssayStore} from "./essay";
-import {useAlertStore} from "./alerts";
+import {useSettingsStore} from "@/store/settings";
+import {useTaskStore} from "@/store/task";
+import {useLayoutStore} from "@/store/layout";
+import {useResourcesStore} from "@/store/resources";
+import {useEssayStore} from "@/store/essay";
+import {useNotesStore} from "@/store/notes";
+import {useAlertStore} from "@/store/alerts";
 import md5 from 'md5';
+import note from "@/data/Note";
+import {useChangesStore} from "@/store/changes";
+
+const sendInterval = 5000;      // time (ms) to wait for sending open changes to the backend
+
 
 /**
  * API Store
@@ -34,16 +40,23 @@ export const useApiStore = defineStore('api', {
             showReloadConfirmation: false,      // show a confirmation that all data for the same task and user shod be reloaded from the server
             showFinalizeFailure: false,         // show a failure message for the final saving
             showAuthorizeFailure: false,        // show a failure message for the final authorization
+
+            lastSendingTry: 0                   // timestamp of the last try to send changes
         }
     },
 
-    getters: {
-        /**
-         * Get the config object for REST requests
-         */
-        requestConfig(state) {
+  /**
+   * Getter functions (with params) start with 'get', simple state queries not
+   */
+  getters: {
+        getRequestConfig: state => {
 
-            return function(token) {
+          /**
+           * Get the config object for REST requests
+           * @param {string}  token
+           * @return {object}
+           */
+          const fn = function(token) {
                 let baseURL = state.backendUrl;
                 let params = new URLSearchParams();
 
@@ -69,25 +82,54 @@ export const useApiStore = defineStore('api', {
                     responseEncoding: 'utf8',   // default
                 }
             }
-
+            return fn;
         },
 
-        /**
-         * Get the Url for loading a file ressource
-         */
-        resourceUrl() {
-            return function (resourceKey) {
-                const config = this.requestConfig(this.fileToken);
+        getResourceUrl: state => {
+
+          /**
+           * Get the Url for loading a file ressource
+           * @param {string}  resourceKey
+           */
+          const fn = function (resourceKey) {
+                const config = this.getRequestConfig(this.fileToken);
                 return config.baseURL + '/file/' + resourceKey + '?' + config.params.toString();
             }
+            return fn;
         },
 
-        /**
-         * Get the server unix timestamp (s) corresponding to a client timestamp (ms)
-         */
-        serverTime(state) {
-            return (clientTime) => clientTime == 0 ? 0 : Math.floor((clientTime - state.timeOffset) / 1000);
+        getServerTime: state => {
+
+          /**
+           * Get the server unix timestamp (s) corresponding to a client timestamp (ms)
+           * @param {number} clientTime
+           * @return {number}
+           */
+          const fn = function (clientTime) {
+            return clientTime == 0 ? 0 : Math.floor((clientTime - state.timeOffset) / 1000);
+          }
+          return fn;
         },
+
+
+      getChangeDataToSend: state => {
+
+        /**
+         * Get the data of a change to be sent to the backend
+         * @param {Change} change
+         * @param {object|null} payload
+         */
+        const fn = function(change, payload = null) {
+          const data = change.getData();
+          if (payload) {
+            data.payload = payload;
+          }
+          data.server_time = state.getServerTime(change.last_change);
+          return data;
+        }
+        return fn;
+      }
+
 
     },
 
@@ -141,12 +183,14 @@ export const useApiStore = defineStore('api', {
             }
 
             const essayStore = useEssayStore();
+            const changesStore = useChangesStore();
 
             if (newContext) {
                 // switching to a new task or user always requires a load from the backend
                 // be shure that existing data is not unintentionally replaced
 
-                if (await essayStore.hasUnsentSavingsInStorage()) {
+                if (await essayStore.hasUnsentSavingsInStorage()
+                  || changesStore.countChanges > 0) {
                     console.log('init: new context, open savings');
                     this.showReplaceConfirmation = true;
                 }
@@ -163,7 +207,8 @@ export const useApiStore = defineStore('api', {
                     console.log('init: same context, same hash');
                     await this.loadDataFromStorage();
                 }
-                else if (await essayStore.hasUnsentSavingsInStorage()) {
+                else if (await essayStore.hasUnsentSavingsInStorage()
+                  || changesStore.countChanges > 0) {
                     console.log('init: same context, hashes differ, open savings');
                     this.showReloadConfirmation = true;
                 }
@@ -176,7 +221,8 @@ export const useApiStore = defineStore('api', {
                 // no savings exist on the server
                 // check if data is already entered but not sent
 
-                if (await essayStore.hasUnsentSavingsInStorage()) {
+                if (await essayStore.hasUnsentSavingsInStorage()
+                  || changesStore.countChanges > 0) {
                     console.log('init: same context, no server hash, open savings');
                     await this.loadDataFromStorage();
                 }
@@ -186,7 +232,7 @@ export const useApiStore = defineStore('api', {
                 }
             }
 
-            setInterval(this.checkUpdate, 5000);
+            setInterval(this.checkUpdate, sendInterval);
         },
 
         /**
@@ -201,13 +247,18 @@ export const useApiStore = defineStore('api', {
             const taskStore = useTaskStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
+            const notesStore = useNotesStore();
             const layoutStore = useLayoutStore();
+            const changesStore = useChangesStore();
 
             await settingsStore.loadFromStorage();
             await taskStore.loadFromStorage();
             await resourcesStore.loadFromStorage();
             await essayStore.loadFromStorage();
+            await notesStore.loadFromStorage();
             await layoutStore.loadFromStorage();
+            await changesStore.loadFromStorage();
+
 
             // directy check for updates of task settings to avoid delay
             await this.checkUpdate();
@@ -225,7 +276,7 @@ export const useApiStore = defineStore('api', {
 
             let response = {};
             try {
-                response = await axios.get( '/data', this.requestConfig(this.dataToken));
+                response = await axios.get( '/data', this.getRequestConfig(this.dataToken));
                 this.setTimeOffset(response);
                 this.refreshToken(response);
             }
@@ -239,11 +290,19 @@ export const useApiStore = defineStore('api', {
             const taskStore = useTaskStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
+            const notesStore = useNotesStore();
+            const changesStore = useChangesStore();
+            const layoutStore = useLayoutStore();
 
             await settingsStore.loadFromData(response.data.settings);
             await taskStore.loadFromData(response.data.task);
             await resourcesStore.loadFromData(response.data.resources);
             await essayStore.loadFromData(response.data.essay);
+            await notesStore.loadFromData(response.data.notes);
+            await notesStore.prepareNotes(settingsStore.notice_boards);
+
+            await changesStore.clearStorage();
+            await layoutStore.clearStorage();
 
             // send the time when the working on the task is started
             if (!response.data.essay.started) {
@@ -272,8 +331,6 @@ export const useApiStore = defineStore('api', {
 
             const taskStore = useTaskStore();
             await taskStore.loadFromData(response.data.task);
-
-            const alertStore = useAlertStore();
             await alertStore.loadFromData(response.data.alerts);
 
         },
@@ -285,10 +342,10 @@ export const useApiStore = defineStore('api', {
 
             let response = {};
             let data = {
-                started: this.serverTime(Date.now())
+                started: this.getServerTime(Date.now())
             }
             try {
-                response = await axios.put( '/start', data, this.requestConfig(this.dataToken));
+                response = await axios.put( '/start', data, this.getRequestConfig(this.dataToken));
                 this.setTimeOffset(response);
                 this.refreshToken(response);
                 return true;
@@ -310,7 +367,7 @@ export const useApiStore = defineStore('api', {
                 steps: steps
             }
             try {
-                response = await axios.put( '/steps', data, this.requestConfig(this.dataToken));
+                response = await axios.put( '/steps', data, this.getRequestConfig(this.dataToken));
                 this.setTimeOffset(response);
                 this.refreshToken(response);
                 return true;
@@ -321,8 +378,61 @@ export const useApiStore = defineStore('api', {
             }
         },
 
+      /**
+       * Periodically send changes to the backend
+       * Timer is set in initialisation
+       *
+       * @param bool wait    wait some seconds for a running sending to finish (if not called by timer)
+       * @return bool
+       */
+      async saveChangesToBackend(wait = false) {
+        const changesStore = useChangesStore();
+        const notesStore = useNotesStore();
 
-        /**
+        // wait up to seconds for a running request to finish before giving up
+        if (wait) {
+          let tries = 0;
+          while (tries < 5 && this.lastSendingTry > 0) {
+            tries++;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+
+        // don't interfer with a running request
+        if (this.lastSendingTry > 0) {
+          return false;
+        }
+
+        if (changesStore.countChanges > 0) {
+          this.lastSendingTry = Date.now();
+
+          try {
+            const data = {
+              notes: await notesStore.getChangedData(this.lastSendingTry),
+              preferences: [],
+            };
+
+            const response = await axios.put( '/changes/' + this.itemKey, data, this.getRequestConfig(this.dataToken));
+            this.setTimeOffset(response);
+            this.refreshToken(response);
+
+            await changesStore.setChangesSent(Change.TYPE_NOTES, response.data.notes, this.lastSendingTry);
+            await changesStore.setChangesSent(Change.TYPE_PREFERENCES, response.data.preferences, this.lastSendingTry);
+          }
+          catch (error) {
+            console.error(error);
+            this.lastSendingTry = 0;
+            return false;
+          }
+
+          this.lastSendingTry = 0;
+        }
+
+        return true;
+      },
+
+
+      /**
          * Save the final authorization to the backend
          */
         async saveFinalContentToBackend(steps, content, hash, authorized) {
@@ -334,7 +444,7 @@ export const useApiStore = defineStore('api', {
                 authorized: authorized
             }
             try {
-                response = await axios.put( '/final', data, this.requestConfig(this.dataToken));
+                response = await axios.put( '/final', data, this.getRequestConfig(this.dataToken));
                 this.refreshToken(response);
                 return true;
             }

@@ -84,7 +84,7 @@ export const useTaskStore = defineStore('task',{
             const apiStore = useApiStore();
 
             if (this.writing_end) {
-                this.remaining_time = Math.max(0, this.writing_end - apiStore.serverTime(Date.now()));
+                this.remaining_time = Math.max(0, this.writing_end - apiStore.getServerTime(Date.now()));
             }
             else {
                 this.remaining_time = null;

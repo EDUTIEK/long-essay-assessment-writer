@@ -20,7 +20,7 @@ const maxDistance = 1000;       // maximum cumulated levenshtein distance of pat
 
 
 const startState = {
-    
+
     // saved in storage
     storedContent: '',          // full content corresponding to the last stored writing step (which may be delta)
     storedHash: '',             // hash of the full stored content
@@ -169,7 +169,7 @@ export const useEssayStore = defineStore('essay',{
 
         /**
          * Load the full state from the storage
-         * Called when the page is reloaded 
+         * Called when the page is reloaded
          */
         async loadFromStorage() {
             lockUpdate = 1;
@@ -242,7 +242,7 @@ export const useEssayStore = defineStore('essay',{
                 // create the save object if content has changed
                 //
                 if (currentContent != this.storedContent) {
-                    const currentHash = this.makeHash(currentContent, apiStore.serverTime(currentTime));
+                    const currentHash = this.makeHash(currentContent, apiStore.getServerTime(currentTime));
 
                     // check for change and calculate the patch
                     let diffs = dmp.diff_main(this.storedContent, currentContent);
@@ -262,7 +262,7 @@ export const useEssayStore = defineStore('essay',{
                     ) {
                         saveObject = {
                             is_delta: 0,
-                            timestamp: apiStore.serverTime(currentTime),
+                            timestamp: apiStore.getServerTime(currentTime),
                             content: currentContent,
                             hash_before: this.storedHash,
                             hash_after: currentHash
@@ -274,7 +274,7 @@ export const useEssayStore = defineStore('essay',{
                     ) {
                         saveObject = {
                             is_delta: 1,
-                            timestamp: apiStore.serverTime(currentTime),
+                            timestamp: apiStore.getServerTime(currentTime),
                             content: difftext,
                             hash_before: this.storedHash,
                             hash_after: currentHash

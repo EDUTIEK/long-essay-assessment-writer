@@ -104,7 +104,7 @@ export const useResourcesStore = defineStore('resources',{
                 let index = 0;
                 while (index < data.length) {
                     let resource = data[index];
-                    resource.url = apiStore.resourceUrl(resource.key);
+                    resource.url = apiStore.getResourceUrl(resource.key);
                     this.resources.push(resource);
                     this.keys.push(resource.key);
                     await storage.setItem(resource.key, resource);
