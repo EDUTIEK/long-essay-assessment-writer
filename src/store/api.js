@@ -10,6 +10,7 @@ import {useNotesStore} from "@/store/notes";
 import {useAlertStore} from "@/store/alerts";
 import md5 from 'md5';
 import Note from "@/data/Note";
+import Change from "@/data/Change";
 import {useChangesStore} from "@/store/changes";
 
 const syncInterval = 5000;      // time (ms) to wait for syncing with the backend
@@ -334,7 +335,7 @@ export const useApiStore = defineStore('api', {
             this.lastSendingTry = Date.now();
 
             try {
-                const response = await axios.get( '/update', this.requestConfig(this.dataToken));
+                const response = await axios.get( '/update', this.getRequestConfig(this.dataToken));
                 this.setTimeOffset(response);
                 this.refreshToken(response);
 
@@ -430,7 +431,7 @@ export const useApiStore = defineStore('api', {
               preferences: [],
             };
 
-            const response = await axios.put( '/changes/' + this.itemKey, data, this.getRequestConfig(this.dataToken));
+            const response = await axios.put( '/changes', data, this.getRequestConfig(this.dataToken));
             this.setTimeOffset(response);
             this.refreshToken(response);
 

@@ -1,12 +1,13 @@
 <script setup>
-import {useLayoutStore} from "../store/layout";
-import {useResourcesStore} from "../store/resources";
+import { useLayoutStore } from "@/store/layout";
+import { useResourcesStore } from "@/store/resources";
 import { useTaskStore } from '@/store/task';
+import {useSettingsStore} from "@/store/settings";
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
 const taskStore = useTaskStore();
-
+const settingsStore = useSettingsStore();
 
 function openNavigation() {
   document.getElementById('app-navigation-drawer').dispatchEvent(new Event('mouseenter'));

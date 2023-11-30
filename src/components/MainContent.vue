@@ -2,7 +2,7 @@
   import Instructions from "@/components/Instructions.vue";
   import InstructionsPdf from '@/components/InstructionsPdf.vue';
   import Resources from "@/components/Resources.vue";
-  import Essay from "@/components/Essay.vue";
+  import EditSelect from "@/components/EditSelect.vue";
   import {useLayoutStore} from "../store/layout";
   import {useResourcesStore} from "../store/resources";
   const layoutStore = useLayoutStore();
@@ -14,9 +14,10 @@
     <div class="container">
       <div  class="column" :class="{ colExpanded: layoutStore.isLeftExpanded, colNormal: !layoutStore.isLeftExpanded}" v-show="layoutStore.isLeftVisible">
         <div class="col-header">
-          <h2 class="text-h6" v-show="layoutStore.isInstructionsVisible">Aufgabenstellung</h2>
-          <h2 class="text-h6" v-show="layoutStore.isInstructionsPdfVisible">Aufgabenstellung (PDF)</h2>
-          <h2 class="text-h6" v-show="layoutStore.isResourcesVisible">{{ resourcesStore.activeTitle }}</h2>
+          <h2 class="text-h6" v-show="layoutStore.isInstructionsVisible">{{
+              layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
+                : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
+                    : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''}}</h2>
         </div>
         <div class="col-content">
           <instructions v-if="layoutStore.isInstructionsVisible" />
@@ -26,7 +27,7 @@
         <div class="col-footer text-right" :class="{ footerExpanded: layoutStore.isLeftExpanded, footerNormal: !layoutStore.isLeftExpanded}" >
           <v-btn class="ma-2" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">
             <v-icon icon="mdi-chevron-left"></v-icon>
-            <span>Mein Text</span>
+            Mein Text
           </v-btn>
           <v-btn class="ma-2" @click="layoutStore.setLeftExpanded(true)" v-show="!layoutStore.isLeftExpanded">
             <span>Erweitern</span>
@@ -39,16 +40,18 @@
           <h2 class="text-h6">Mein Text</h2>
         </div>
         <div class="col-content">
-          <essay />
+          <edit-select/>
         </div>
         <div class="col-footer text-left" :class="{ footerExpanded: layoutStore.isRightExpanded, footerNormal: !layoutStore.isRightExpanded}">
-          <v-btn class="ma-2" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
+          <v-btn class= "ma-2" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
             <v-icon icon="mdi-chevron-left"></v-icon>
             <span>Erweitern</span>
           </v-btn>
           <v-btn class="ma-2" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
-            <span v-show="layoutStore.isInstructionsSelected">Aufgabenstellung</span>
-            <span v-show="layoutStore.isResourcesSelected">{{ resourcesStore.activeTitle }}</span>
+            {{
+              layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
+                : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
+            }}
             <v-icon icon="mdi-chevron-right"></v-icon>
           </v-btn>
         </div>

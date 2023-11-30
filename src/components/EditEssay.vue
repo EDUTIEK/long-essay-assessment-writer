@@ -75,30 +75,32 @@ const id = "essay";
 </script>
 
 <template>
-  <editor
-      :id="id"
-      v-model="essayStore.currentContent"
-      @change="essayStore.updateContent(true)"
-      @keyup="essayStore.updateContent(true)"
-      api-key="no-api-key"
-      :init="{
-        height: '100%',
-        menubar: false,
-        plugins: 'lists charmap paste',
-        toolbar: toolbar(),
-        valid_elements: validElements(),
-        formats: formats(),
-        custom_undo_redo_levels: 10,
-        skin: false,                      //  avoid 404 errors for skin css files
-        content_css: false,               // avoid 404 error for content css file
-        content_style: contentUiCss.toString() + '\n' + contentLocalCss.toString(),
-        paste_block_drop: true
-       }"
-  />
+  <div id="app-essay-edit-wrapper">
+    <editor
+        :id="id"
+        v-model="essayStore.currentContent"
+        @change="essayStore.updateContent(true)"
+        @keyup="essayStore.updateContent(true)"
+        api-key="no-api-key"
+        :init="{
+          height: '100%',
+          menubar: false,
+          plugins: 'lists charmap paste',
+          toolbar: toolbar(),
+          valid_elements: validElements(),
+          formats: formats(),
+          custom_undo_redo_levels: 10,
+          skin: false,                      //  avoid 404 errors for skin css files
+          content_css: false,               // avoid 404 error for content css file
+          content_style: contentUiCss.toString() + '\n' + contentLocalCss.toString(),
+          paste_block_drop: true
+         }"
+    />
+  </div>
 </template>
 
-<style>
-.tox-statusbar {
-  display: none!important;
-}
+<style scoped>
+  #app-essay-edit-wrapper {
+    height: 100%
+  }
 </style>

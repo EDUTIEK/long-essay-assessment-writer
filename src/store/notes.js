@@ -21,13 +21,13 @@ function startState() {
 
     return {
         // saved in storage
-        keys: [],                   // list of string keys of all notes in the storage
+        keys: [],                   // list of string keys, indexed by notes_no
         notes: {},                  // list of all note objects, indexed by key
-        active_key: null,           // key of the actively edited note
 
         // not saved in storage
-        editNote: new Note(),       // note that is actively edited
+        editNotes: {},              // notes that are actively edited
         lastCheck: 0,               // timestamp (ms) of the last check if an update needs a storage
+        activeKey: 0
     }
 }
 
@@ -103,7 +103,10 @@ export const useNotesStore = defineStore('notes',{
 
                 for (const note_data of data) {
                     const note = new Note(note_data);
-                    this.keys.push(note.getKey());
+                    this.notes[note.getKey()] = note;
+                    this.editNotes[note.getKey()] = note.getClone();
+
+                    this.keys[note.note_no] = note.getKey();
                     await storage.setItem(note.getKey(), JSON.stringify(note.getData()));
                 };
                 await storage.setItem('keys', JSON.stringify(this.keys));
@@ -124,14 +127,15 @@ export const useNotesStore = defineStore('notes',{
         async prepareNotes(notes_count) {
 
           // ensure all notice boards exist
-          for (const no = 0; no < notes_count; no++) {
+          for (let no = 0; no < notes_count; no++) {
             const key = Note.getKeyForNo(no);
             if (!(key in this.notes)) {
               const note = new Note({note_no: no});
               this.notes[key] = note;
+              this.editNotes[key] = note.getClone();
 
               await storage.setItem(note.getKey(), JSON.stringify(note.getData()));
-              this.keys.push(key);
+              this.keys[no] = key;
             }
             await storage.setItem('keys', JSON.stringify(this.keys));
 
@@ -168,37 +172,40 @@ export const useNotesStore = defineStore('notes',{
               return;
             }
 
-            try {
-              // ensure it is not changed because it is bound to tiny
-              const clonedNote = this.editNote.getClone();
-              const storedNote = this.notes[clonedNote.getKey()] ?? new Note();
+            for (const key in this.editNotes) {
+              try {
 
-              if (!clonedNote.isEqual(storedNote) && this.keys.includes(clonedNote.getKey())) {
-                    const apiStore = useApiStore();
-                    const changesStore = useChangesStore();
+                // ensure it is not changed because it is bound to tiny
+                const clonedNote = this.editNotes[key].getClone();
+                const storedNote = this.notes[key] ?? new Note();
 
-                    clonedNote.last_change = apiStore.getServerTime(Date.now());
-                    this.editNote.setData(clonedNote.getData());
-                    this.notes[clonedNote.getKey()] = clonedNote;
+                if (!clonedNote.isEqual(storedNote)) {
+                  const apiStore = useApiStore();
+                  const changesStore = useChangesStore();
 
-                    await storage.setItem(clonedNote.getKey(), JSON.stringify(clonedNote.getData()));
-                    await changesStore.setChange(new Change({
-                        type: Change.TYPE_NOTES,
-                        action: Change.ACTION_SAVE,
-                        key: clonedNote.getKey()
-                    }))
+                  clonedNote.last_change = apiStore.getServerTime(Date.now());
+                  this.editNotes[key].setData(clonedNote.getData());
+                  this.notes[key] = clonedNote;
 
-                    console.log(
-                      "Save Change ",
-                      "| Editor: ", fromEditor,
-                      "| Duration:", Date.now() - currentTime, 'ms');
+                  await storage.setItem(key, JSON.stringify(clonedNote.getData()));
+                  await changesStore.setChange(new Change({
+                    type: Change.TYPE_NOTES,
+                    action: Change.ACTION_SAVE,
+                    key: key
+                  }))
+
+                  console.log(
+                    "Save Change ",
+                    "| Editor: ", fromEditor,
+                    "| Duration:", Date.now() - currentTime, 'ms');
 
                 }
                 // set this here
                 this.lastCheck = currentTime;
-            }
-            catch(error) {
+              }
+              catch(error) {
                 console.error(error);
+              }
             }
 
             lockUpdate = 0;

@@ -32,7 +32,7 @@ class Note {
   }
 
   static getKeyForNo(note_no) {
-   return 'NOTE' +  note_no;
+   return 'NOTE-' +  note_no;
   }
 
   /**
@@ -44,7 +44,7 @@ class Note {
       this.note_no = parseInt(data.note_no);
     }
     if (data.note_text !== undefined && data.note_text !== null) {
-      this.note_text = data.text.toString()
+      this.note_text = data.note_text.toString()
     }
     if (data.last_change !== undefined && data.last_change !== null) {
       this.last_change = parseInt(data.last_change);
@@ -58,7 +58,7 @@ class Note {
   getData() {
     return {
       note_no: this.note_no,
-      note_text: this.text,
+      note_text: this.note_text,
       last_change: this.last_change,
     }
   }
