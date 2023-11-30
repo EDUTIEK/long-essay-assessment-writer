@@ -9,10 +9,10 @@ import {useEssayStore} from "@/store/essay";
 import {useNotesStore} from "@/store/notes";
 import {useAlertStore} from "@/store/alerts";
 import md5 from 'md5';
-import note from "@/data/Note";
+import Note from "@/data/Note";
 import {useChangesStore} from "@/store/changes";
 
-const sendInterval = 5000;      // time (ms) to wait for sending open changes to the backend
+const syncInterval = 5000;      // time (ms) to wait for syncing with the backend
 
 
 /**
@@ -232,8 +232,17 @@ export const useApiStore = defineStore('api', {
                 }
             }
 
-            setInterval(this.checkUpdate, sendInterval);
+            setInterval(this.timedSync, syncInterval);
         },
+
+      /**
+       * Do the regular synchronisation (called from timer)
+       */
+        async timedSync() {
+            await this.saveChangesToBackend();
+            await this.loadUpdateFromBackend();
+        },
+
 
         /**
          * Load all data from the storage
@@ -261,7 +270,7 @@ export const useApiStore = defineStore('api', {
 
 
             // directy check for updates of task settings to avoid delay
-            await this.checkUpdate();
+            await this.loadUpdateFromBackend();
             this.initialized = true;
         },
 
@@ -316,23 +325,32 @@ export const useApiStore = defineStore('api', {
          * - new writing end
          * - messages
          */
-        async checkUpdate() {
+        async loadUpdateFromBackend() {
 
-            let response = {};
+            // don't interfer with a running request
+            if (this.lastSendingTry > 0) {
+              return false;
+            }
+            this.lastSendingTry = Date.now();
+
             try {
-                response = await axios.get( '/update', this.requestConfig(this.dataToken));
+                const response = await axios.get( '/update', this.requestConfig(this.dataToken));
                 this.setTimeOffset(response);
                 this.refreshToken(response);
+
+                const taskStore = useTaskStore();
+                const alertStore = useAlertStore();
+                await taskStore.loadFromData(response.data.task);
+                await alertStore.loadFromData(response.data.alerts);
+
+                this.lastSendingTry = 0;
+                return true;
             }
             catch (error) {
                 console.error(error);
+                this.lastSendingTry = 0;
                 return false;
             }
-
-            const taskStore = useTaskStore();
-            await taskStore.loadFromData(response.data.task);
-            await alertStore.loadFromData(response.data.alerts);
-
         },
 
         /**
@@ -424,7 +442,6 @@ export const useApiStore = defineStore('api', {
             this.lastSendingTry = 0;
             return false;
           }
-
           this.lastSendingTry = 0;
         }
 
