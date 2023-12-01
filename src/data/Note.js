@@ -32,7 +32,7 @@ class Note {
   }
 
   static getKeyForNo(note_no) {
-   return 'NOTE-' +  note_no;
+   return 'NOTE_' +  note_no;
   }
 
   /**
@@ -59,7 +59,7 @@ class Note {
     return {
       note_no: this.note_no,
       note_text: this.note_text,
-      last_change: this.last_change,
+      last_change: this.last_change
     }
   }
 

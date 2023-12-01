@@ -82,6 +82,7 @@ export const useNotesStore = defineStore('notes',{
                 for (const key of this.keys) {
                     const note = new Note(JSON.parse(await storage.getItem(key)));
                     this.notes[key] = note;
+                    this.editNotes[key] = note.getClone();
                 }
 
             } catch (err) {
@@ -140,7 +141,7 @@ export const useNotesStore = defineStore('notes',{
             await storage.setItem('keys', JSON.stringify(this.keys));
 
             if (notes_count > 0) {
-              this.editNote = this.notes[Note.getKeyForNo(0)].getClone();
+              this.activeKey = Note.getKeyForNo(0);
             }
           }
         },
