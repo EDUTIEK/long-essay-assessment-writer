@@ -8,10 +8,11 @@ import {useResourcesStore} from "@/store/resources";
 import {useEssayStore} from "@/store/essay";
 import {useNotesStore} from "@/store/notes";
 import {useAlertStore} from "@/store/alerts";
+import {useChangesStore} from "@/store/changes";
+
 import md5 from 'md5';
 import Note from "@/data/Note";
 import Change from "@/data/Change";
-import {useChangesStore} from "@/store/changes";
 
 const syncInterval = 5000;      // time (ms) to wait for syncing with the backend
 
@@ -42,6 +43,8 @@ export const useApiStore = defineStore('api', {
             showFinalizeFailure: false,         // show a failure message for the final saving
             showAuthorizeFailure: false,        // show a failure message for the final authorization
 
+            // should be unified in the next version
+            lastStepsTry: 0,                    // timestamp of the last try to send writing steps
             lastSendingTry: 0                   // timestamp of the last try to send changes
         }
     },
@@ -50,6 +53,17 @@ export const useApiStore = defineStore('api', {
    * Getter functions (with params) start with 'get', simple state queries not
    */
   getters: {
+
+        isAllSent: state => {
+          const essayStore = useEssayStore();
+          const changesStore = useChangesStore();
+          return !state.isSending && essayStore.openSendings + changesStore.countChanges == 0;
+        },
+
+        isSending: state => {
+          state.lastSendingTry > 0 || state.lastStepsTry > 0;
+        },
+
         getRequestConfig: state => {
 
           /**
@@ -385,14 +399,18 @@ export const useApiStore = defineStore('api', {
             let data = {
                 steps: steps
             }
+
+            this.lastStepsTry = Date.now();
             try {
                 response = await axios.put( '/steps', data, this.getRequestConfig(this.dataToken));
                 this.setTimeOffset(response);
                 this.refreshToken(response);
+                this.lastStepsTry = 0;
                 return true;
             }
             catch (error) {
                 console.error(error);
+                this.lastStepsTry = 0;
                 return false;
             }
         },

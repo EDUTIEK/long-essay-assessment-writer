@@ -5,7 +5,6 @@
  */
 import AppBar from "@/components/AppBar.vue";
 import NavBar from "@/components/NavBar.vue";
-import StateBar from "@/components/StateBar.vue";
 import MainContent from "@/components/MainContent.vue";
 import StartupContent from "@/components/StartupContent.vue";
 import ReviewContent from "@/components/ReviewContent.vue";
@@ -23,7 +22,6 @@ apiStore.init();
       <nav-bar v-if="apiStore.initialized && !apiStore.review"/>
       <main-content v-if="apiStore.initialized && !apiStore.review"/>
       <review-content v-if="apiStore.initialized && apiStore.review"/>
-      <state-bar v-if="apiStore.initialized"/>
     </v-app>
 </template>
 

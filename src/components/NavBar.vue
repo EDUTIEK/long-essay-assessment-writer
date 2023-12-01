@@ -2,12 +2,14 @@
 import { useLayoutStore } from "@/store/layout";
 import { useResourcesStore } from "@/store/resources";
 import { useTaskStore } from '@/store/task';
-import {useSettingsStore} from "@/store/settings";
+import { useSettingsStore } from "@/store/settings";
+import { useApiStore } from "@/store/api";
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
 const taskStore = useTaskStore();
 const settingsStore = useSettingsStore();
+const apiStore = useApiStore();
 
 function openNavigation() {
   document.getElementById('app-navigation-drawer').dispatchEvent(new Event('mouseenter'));
@@ -79,6 +81,17 @@ function getResourceIcon(resource) {
 
       <!-- <v-list-item prepend-icon="mdi-clipboard-outline" title="Notizbrett"></v-list-item>-->
     </v-list>
+
+    <template v-slot:append>
+      <v-list>
+        <v-list-item
+          :disabled="apiStore.isAllSent"
+          :prepend-icon="apiStore.isSending ? 'mdi-cloud-upload' : (apiStore.isAllSent ? 'mdi-cloud-check-outline' : 'mdi-cloud-outline')"
+          :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
+        ></v-list-item>
+      </v-list>
+    </template>
+
 
   </v-navigation-drawer>
 </template>

@@ -66,7 +66,7 @@
 
 .container {
   position: fixed;
-  height: calc((100% - 50px) - 50px);
+  height: calc(100% - 50px);
   width: calc(100% - 72px);
   display: flex;
 }
@@ -91,7 +91,7 @@
 
 .col-footer {
   position: fixed;
-  bottom: 48px;
+  bottom: 0px;
   padding:20px;
 }
 
