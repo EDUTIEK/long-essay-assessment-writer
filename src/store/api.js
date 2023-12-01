@@ -553,8 +553,9 @@ export const useApiStore = defineStore('api', {
 
         /**
          * Finalize the writing
-         * This is called for any regular leaving of the writer (interruption or submission)
+         * This is called from the final review screen
          * The written content is sent to the server and the local storage is cleared
+         * @param {boolean} authorize the final content should be authorized for correction
          */
         async finalize(authorize) {
 
@@ -562,8 +563,10 @@ export const useApiStore = defineStore('api', {
             const taskStore = useTaskStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
+            const notesStore = useNotesStore();
             const layoutStore = useLayoutStore();
             const alertStore = useAlertStore();
+            const changesStore = useChangesStore();
 
             if (authorize || essayStore.openSendings > 0) {
                 if (!await this.saveFinalContentToBackend (
@@ -583,8 +586,10 @@ export const useApiStore = defineStore('api', {
             await taskStore.clearStorage();
             await resourcesStore.clearStorage();
             await essayStore.clearStorage();
+            await notesStore.clearStorage();
             await layoutStore.clearStorage();
             await alertStore.clearStorage();
+            await changesStore.clearStorage();
             localStorage.clear();
 
             window.location = this.returnUrl;

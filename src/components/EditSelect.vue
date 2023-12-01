@@ -11,6 +11,7 @@
   const settingsStore = useSettingsStore();
 
   const selectedEditor = ref('essay');
+  updateSelectedEditor();
 
   function updateSelectedEditor() {
     switch(layoutStore.rightContent) {
@@ -60,7 +61,7 @@
               :key="key"
               :value="key">
          <v-icon icon="mdi-clipboard-outline"></v-icon>
-         {{notesStore.notes[key].note_no + 1}}
+         {{settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1}}
        </v-btn>
      </v-btn-toggle>
    </div>

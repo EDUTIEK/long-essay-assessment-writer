@@ -64,7 +64,9 @@ export const useLayoutStore = defineStore('layout',{
                     // resources may not be ready PDF is not shown instantly
                     // so show show the instructions as default left content
                     // this.leftContent = data.leftContent;
-                    this.rightContent = data.rightContent;
+
+                    // editor sould not start with notes
+                    // this.rightContent = data.rightContent;
                     this.showTimer = data.showTimer;
                 }
 
@@ -77,8 +79,8 @@ export const useLayoutStore = defineStore('layout',{
             try {
                 await storage.setItem('layout', {
                     expandedColumn: this.expandedColumn,
-                    leftContent: this.leftContent,
-                    rightContent: this.rightContent,
+                    //leftContent: this.leftContent,
+                    //rightContent: this.rightContent,
                     showTimer: this.showTimer
                 })
             } catch (err) {

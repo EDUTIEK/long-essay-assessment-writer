@@ -80,9 +80,15 @@ export const useNotesStore = defineStore('notes',{
                 }
 
                 for (const key of this.keys) {
-                    const note = new Note(JSON.parse(await storage.getItem(key)));
-                    this.notes[key] = note;
-                    this.editNotes[key] = note.getClone();
+                    const stored = await storage.getItem(key);
+                    if (stored) {
+                      const parsed = JSON.parse(stored);
+                      if (typeof parsed === 'object' && parsed !== null) {
+                        const note = new Note(parsed);
+                        this.notes[key] = note;
+                        this.editNotes[key] = note.getClone();
+                      }
+                   }
                 }
 
             } catch (err) {
@@ -107,7 +113,7 @@ export const useNotesStore = defineStore('notes',{
                     this.notes[note.getKey()] = note;
                     this.editNotes[note.getKey()] = note.getClone();
 
-                    this.keys[note.note_no] = note.getKey();
+                    this.keys.push(note.getKey());
                     await storage.setItem(note.getKey(), JSON.stringify(note.getData()));
                 };
                 await storage.setItem('keys', JSON.stringify(this.keys));
@@ -136,9 +142,12 @@ export const useNotesStore = defineStore('notes',{
               this.notes[key] = note;
               this.editNotes[key] = note.getClone();
 
-              await storage.setItem(note.getKey(), JSON.stringify(note.getData()));
-              this.keys[no] = key;
+              await storage.setItem(key, JSON.stringify(note.getData()));
+              if (!this.keys.includes(key)) {
+                this.keys.push(key);
+              }
             }
+            this.keys.sort();
             await storage.setItem('keys', JSON.stringify(this.keys));
 
             if (notes_count > 0) {
