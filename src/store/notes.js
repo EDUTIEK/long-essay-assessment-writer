@@ -27,7 +27,7 @@ function startState() {
         // not saved in storage
         editNotes: {},              // notes that are actively edited
         lastCheck: 0,               // timestamp (ms) of the last check if an update needs a storage
-        activeKey: 0
+        activeKey: null
     }
 }
 
@@ -122,7 +122,8 @@ export const useNotesStore = defineStore('notes',{
 
 
       /**
-       * Prepare notes to be used after a loading
+       * Prepare notes to be used
+       * Must be called after loadFromStorage() or loadFromData()
        * @param notes_count
        */
         async prepareNotes(notes_count) {

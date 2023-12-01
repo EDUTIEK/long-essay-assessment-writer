@@ -280,6 +280,7 @@ export const useApiStore = defineStore('api', {
             await resourcesStore.loadFromStorage();
             await essayStore.loadFromStorage();
             await notesStore.loadFromStorage();
+            await notesStore.prepareNotes(settingsStore.notice_boards);
             await layoutStore.loadFromStorage();
             await changesStore.loadFromStorage();
 

@@ -56,8 +56,14 @@ function getResourceIcon(resource) {
 
       <v-list-item @click="layoutStore.showEssay(); closeNavigation();"
                    :prepend-icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"
-                   title="Essay schreiben">
+                   title="Abgabe-Text">
       </v-list-item>
+
+      <v-list-item v-if="settingsStore.hasNotes" @click="layoutStore.showNotes(); closeNavigation();"
+                   :prepend-icon="layoutStore.isNotesVisible ? 'mdi-clipboard': 'mdi-clipboard-outline'"
+                   title="Notizen (werden bei der Abgabe verworfen)">
+      </v-list-item>
+
 
       <v-list-group v-show="resourcesStore.hasFileOrUrlResources">
         <template v-slot:activator="{ props }">

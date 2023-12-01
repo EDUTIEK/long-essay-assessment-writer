@@ -14,7 +14,7 @@ export const useLayoutStore = defineStore('layout',{
     state: () => {
         return {
             // saved in storage
-            expandedColumn: 'left',         // left|right|none
+            expandedColumn: 'none',         // left|right|none
             leftContent: 'instructions',    // instructions|instructionsPdf|resources
             rightContent: 'essay',          // essay|notes
             showTimer: true

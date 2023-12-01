@@ -24,21 +24,24 @@ export const useSettingsStore = defineStore('settings',{
     },
 
     getters: {
-        primaryColorCss: (state) => {
+
+      hasNotes: state => state.notice_boards > 0,
+
+      primaryColorCss: state => {
             if (state.primary_color) {
                 return '#' + state.primary_color
             }
             return '';
         },
 
-        primaryTextColorCss: (state) => {
+        primaryTextColorCss: state => {
             if (state.primary_text_color) {
                 return '#' + state.primary_text_color
             }
             return '';
         },
 
-        primaryTextColorFullCss: (state) => {
+        primaryTextColorFullCss: state => {
             if (state.primary_text_color) {
                 return 'color: #' + state.primary_text_color + ';'
             }

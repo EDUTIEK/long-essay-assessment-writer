@@ -1,5 +1,5 @@
 <script setup>
-  import {ref} from "vue";
+  import {ref, watch} from "vue";
   import {useLayoutStore} from "@/store/layout";
   import {useNotesStore} from '@/store/notes';
   import {useSettingsStore} from "@/store/settings";
@@ -12,10 +12,26 @@
 
   const selectedEditor = ref('essay');
 
+  function updateSelectedEditor() {
+    switch(layoutStore.rightContent) {
+      case 'essay':
+        selectedEditor.value = 'essay';
+        break;
+      case 'notes':
+        selectedEditor.value = notesStore.activeKey;
+    }
+  }
+  watch(() => layoutStore.rightContent, updateSelectedEditor);
+  watch(() => notesStore.activeKey, updateSelectedEditor);
 
   function selectEditor() {
 
     switch (selectedEditor.value) {
+
+      case undefined:
+        updateSelectedEditor();
+        break;
+
       case 'essay':
         layoutStore.showEssay();
         break;
@@ -32,12 +48,12 @@
 
 <template>
  <div id="app-edit-select-wrapper">
-   <div class="appEditChoices" v-if="settingsStore.notice_boards > 0">
+   <div class="appEditChoices" v-if="settingsStore.hasNotes">
      <v-btn-toggle density="comfortable" variant="outlined" divided v-model="selectedEditor" @click="selectEditor()">
        <v-btn size="small"
               value="essay">
          <v-icon icon="mdi-file-edit-outline"></v-icon>
-         Abgabe
+         Abgabe-Text
        </v-btn>
        <v-btn size="small"
               v-for="key in notesStore.keys"
@@ -74,6 +90,8 @@
 
 .appEditChoices {
   height: 50px;
+  width: 100%;
+  text-align: center;
 }
 
 .appEditors {
