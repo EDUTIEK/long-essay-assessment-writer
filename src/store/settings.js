@@ -46,7 +46,52 @@ export const useSettingsStore = defineStore('settings',{
                 return 'color: #' + state.primary_text_color + ';'
             }
             return '';
+        },
+
+        tinyToolbar: state => {
+          switch (state.formatting_options)
+          {
+            case 'full':
+              return 'zoomOut zoomIn | undo redo | formatselect | bold italic underline | bullist numlist | removeformat | charmap | paste';
+            case 'medium':
+              return 'zoomOut zoomIn | undo redo | bold italic underline | bullist numlist | removeformat | charmap | paste';
+            case 'minimal':
+              return 'zoomOut zoomIn | undo redo | bold italic underline | removeformat | charmap | paste';
+            case 'none':
+            default:
+              return 'zoomOut zoomIn | undo redo | charmap |paste';
+          }
+        },
+
+
+      /**
+       * @see https://www.tiny.cloud/docs/configure/content-filtering/#valid_elements
+       */
+      tinyValidElements: state => {
+          switch (state.formatting_options)
+          {
+            case 'full':
+              return 'p/div,br,strong/b,em/i,u,ol,ul,li,h1,h2,h3,h4,h5,h6,pre';
+            case 'medium':
+              return 'p/div,br,strong/b,em/i,u,ol,ul,li';
+            case 'minimal':
+              return 'p/div,p/li,br,strong/b,em/i,u';
+            case 'none':
+            default:
+              return 'p/div,p/li,br';
+          }
+
+        },
+
+
+      /**
+       * @see https://www.tiny.cloud/docs/configure/content-formatting/#formats
+       */
+      tinyFormats: state => {
+        return {
+          underline: {inline: 'u', remove: 'all'}
         }
+      }
     },
 
     actions: {

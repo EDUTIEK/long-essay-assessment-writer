@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios'
 import Cookies from 'js-cookie';
 import {useSettingsStore} from "@/store/settings";
+import {usePreferencesStore} from "@/store/preferences";
 import {useTaskStore} from "@/store/task";
 import {useLayoutStore} from "@/store/layout";
 import {useResourcesStore} from "@/store/resources";
@@ -268,6 +269,7 @@ export const useApiStore = defineStore('api', {
             this.updateConfig();
 
             const settingsStore = useSettingsStore();
+            const preferencesStore = usePreferencesStore();
             const taskStore = useTaskStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
@@ -276,6 +278,7 @@ export const useApiStore = defineStore('api', {
             const changesStore = useChangesStore();
 
             await settingsStore.loadFromStorage();
+            await preferencesStore.loadFromStorage();
             await taskStore.loadFromStorage();
             await resourcesStore.loadFromStorage();
             await essayStore.loadFromStorage();
@@ -312,6 +315,7 @@ export const useApiStore = defineStore('api', {
             }
 
             const settingsStore = useSettingsStore();
+            const preferencesStore = usePreferencesStore();
             const taskStore = useTaskStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
@@ -320,6 +324,7 @@ export const useApiStore = defineStore('api', {
             const layoutStore = useLayoutStore();
 
             await settingsStore.loadFromData(response.data.settings);
+            await preferencesStore.loadFromData(response.data.preferences);
             await taskStore.loadFromData(response.data.task);
             await resourcesStore.loadFromData(response.data.resources);
             await essayStore.loadFromData(response.data.essay);
@@ -426,6 +431,7 @@ export const useApiStore = defineStore('api', {
       async saveChangesToBackend(wait = false) {
         const changesStore = useChangesStore();
         const notesStore = useNotesStore();
+        const preferencesStore = usePreferencesStore();
 
         // wait up to seconds for a running request to finish before giving up
         if (wait) {
@@ -447,7 +453,7 @@ export const useApiStore = defineStore('api', {
           try {
             const data = {
               notes: await notesStore.getChangedData(this.lastSendingTry),
-              preferences: [],
+              preferences: await preferencesStore.getChangedData(this.lastSendingTry)
             };
 
             const response = await axios.put( '/changes', data, this.getRequestConfig(this.dataToken));
