@@ -9,16 +9,11 @@ import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
 // Import the skin
 import 'tinymce/skins/ui/oxide/skin.css';
-
-/* Import content css */
-import contentUiCss from 'tinymce/skins/ui/oxide/content.css';
-import contentLocalCss from '@/styles/content.css';
-
-/* Import plugins */
+// Import plugins
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/paste';
-/* Import tiny vue integration */
+// Import tiny vue integration
 import Editor from '@tinymce/tinymce-vue'
 
 import {useEssayStore} from '@/store/essay';
@@ -92,7 +87,7 @@ function handlePaste(plugin, args) {
           custom_undo_redo_levels: 10,
           skin: false,                      //  avoid 404 errors for skin css files
           content_css: false,               // avoid 404 error for content css file
-          content_style: contentUiCss.toString() + '\n' + contentLocalCss.toString(),
+          content_style: settingsStore.tinyContentStyle,
           paste_block_drop: true,
           paste_preprocess: handlePaste,
           setup: function (editor) {

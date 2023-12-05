@@ -1,0 +1,54 @@
+/**
+ * Used by Essay, Notes, Instructions and Review Components
+ */
+
+.mce-content-body, #app-instructions, #review-text {
+    counter-reset: h1 h2 h3 h4 h5 h6;
+}
+
+h1 { 
+    counter-increment: h1; 
+    counter-reset: h2 h3 h4 h5 h6;
+}
+h1::before { 
+    content: counter(h1, decimal) " "; 
+}
+
+h2 {
+    counter-increment: h2;
+    counter-reset: h3 h4 h5 h6;
+}
+h2::before {
+    content: counter(h1, decimal) "." counter(h2, decimal) " ";
+}
+
+h3 {
+    counter-increment: h3;
+    counter-reset: h4 h5 h6;
+}
+h3::before {
+    content: counter(h1, decimal) "." counter(h2, decimal) "." counter(h3, decimal) " ";
+}
+
+h4 {
+    counter-increment: h4;
+    counter-reset: h5 h6;
+}
+h4::before {
+    content: counter(h1, decimal) "." counter(h2, decimal) "." counter(h3, decimal) "." counter(h4, decimal) " ";
+}
+
+h5 {
+    counter-increment: h5;
+    counter-reset: h6;
+}
+h5::before {
+    content: counter(h1, decimal) "." counter(h2, decimal) "." counter(h3, decimal) "." counter(h4, decimal) "." counter(h5, decimal) " ";
+}
+
+h6 {
+    counter-increment: h6;
+}
+h6::before {
+    content: counter(h1, decimal) "." counter(h2, decimal) "." counter(h3, decimal) "." counter(h4, decimal) "." counter(h5, decimal) "." counter(h6, decimal) " ";
+}

@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia';
 import localForage from "localforage";
 
+import contentUiCss from 'tinymce/skins/ui/oxide/content.css';
+import contentLocalCss from '@/styles/content.css';
+import headlinesNumericCss from '@/styles/headlines-numeric.css';
+
 const storage = localForage.createInstance({
     storeName: "writer-settings",
     description: "Settings data",
@@ -63,7 +67,6 @@ export const useSettingsStore = defineStore('settings',{
           }
         },
 
-
       /**
        * @see https://www.tiny.cloud/docs/configure/content-filtering/#valid_elements
        */
@@ -90,6 +93,22 @@ export const useSettingsStore = defineStore('settings',{
       tinyFormats: state => {
         return {
           underline: {inline: 'u', remove: 'all'}
+        }
+      },
+
+      tinyContentStyle: state => {
+        return contentUiCss.toString() + '\n' + state.contentStyle;
+      },
+
+      contentStyle: state => {
+        const baseStyle = contentLocalCss.toString();
+
+        switch (state.headline_scheme) {
+          case 'numeric':
+            return baseStyle + '\n' + headlinesNumericCss.toString();
+
+          default:
+            return baseStyle;
         }
       }
     },
