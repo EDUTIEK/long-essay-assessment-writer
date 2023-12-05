@@ -135,26 +135,31 @@ export const useNotesStore = defineStore('notes',{
         async prepareNotes(notes_count) {
 
           // ensure all notice boards exist
+          const keys = [];
+          let activeKeyIsValid = false;
+
           for (let no = 0; no < notes_count; no++) {
             const key = Note.getKeyForNo(no);
+            keys.push(key);
+            if (this.activeKey == key) {
+              activeKeyIsValid = true;
+            }
+
             if (!(key in this.notes)) {
               const note = new Note({note_no: no});
               this.notes[key] = note;
               this.editNotes[key] = note.getClone();
 
               await storage.setItem(key, JSON.stringify(note.getData()));
-              if (!this.keys.includes(key)) {
-                this.keys.push(key);
-              }
-            }
-            this.keys.sort();
-            await storage.setItem('keys', JSON.stringify(this.keys));
-
-            if (notes_count > 0) {
-              this.activeKey = Note.getKeyForNo(0);
             }
           }
-        },
+          this.keys = keys;
+          await storage.setItem('keys', JSON.stringify(this.keys));
+
+          if (notes_count > 0 && !activeKeyIsValid) {
+            this.activeKey = Note.getKeyForNo(0);
+          }
+      },
 
 
         /**

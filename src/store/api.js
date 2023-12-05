@@ -345,6 +345,7 @@ export const useApiStore = defineStore('api', {
          * Check for updates from the backend
          * - new writing end
          * - messages
+         * - settings
          */
         async loadUpdateFromBackend() {
 
@@ -361,8 +362,12 @@ export const useApiStore = defineStore('api', {
 
                 const taskStore = useTaskStore();
                 const alertStore = useAlertStore();
+                const settingsStore = useSettingsStore();
+                const notesStore = useNotesStore();
                 await taskStore.loadFromData(response.data.task);
                 await alertStore.loadFromData(response.data.alerts);
+                await settingsStore.loadFromData(response.data.settings);
+                await notesStore.prepareNotes(settingsStore.notice_boards);
 
                 this.lastSendingTry = 0;
                 return true;
