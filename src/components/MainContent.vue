@@ -5,8 +5,11 @@
   import EditSelect from "@/components/EditSelect.vue";
   import {useLayoutStore} from "../store/layout";
   import {useResourcesStore} from "../store/resources";
+  import {useClipbardStore} from "@/store/clipboard";
   const layoutStore = useLayoutStore();
   const resourcesStore = useResourcesStore();
+  const clipboardStore = useClipbardStore();
+
 </script>
 
 <template>
@@ -77,6 +80,21 @@
         </div>
       </div>
     </div>
+
+    <v-dialog width="500" persistent v-model="clipboardStore.show_warning">
+      <v-card>
+        <v-card-text>
+          <p>Sie können nur selbst geschriebenen Text oder Teile aus der Aufgabenstellung kopieren und einfügen.</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="clipboardStore.hideWarning()">
+            Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-main>
 </template>
 

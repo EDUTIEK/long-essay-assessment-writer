@@ -24,12 +24,14 @@ import Editor from '@tinymce/tinymce-vue'
 import {useNotesStore} from '@/store/notes';
 import {useSettingsStore} from "@/store/settings";
 import {usePreferencesStore} from "@/store/preferences";
+import {useClipbardStore} from "@/store/clipboard";
 
 import {onMounted, watch} from 'vue';
 
 const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
+const clipboardStore =useClipbardStore();
 
 const props = defineProps(['noteKey']);
 
@@ -51,6 +53,27 @@ function applyZoom() {
   editor.contentWindow.document.body.style.fontSize= (preferencesStore.editor_zoom * 16) + 'px';
 }
 
+/**
+ * Handle copy to the clipboard
+ * @param {ClipboardEvent} event
+ */
+function handleCopy(event) {
+  clipboardStore.setContent(event.clipboardData.getData('text/html'));
+}
+
+/**
+ * Check if paste is alloed (called from tiny plugin)
+ */
+function handlePaste(plugin, args) {
+
+  if (!clipboardStore.getPasteAllowed(args.content)) {
+    args.content='';
+    clipboardStore.showWarning();
+  }
+}
+
+
+
 
 </script>
 
@@ -61,6 +84,8 @@ function applyZoom() {
       v-model="notesStore.editNotes[props.noteKey].note_text"
       @change="notesStore.updateContent(true)"
       @keyup="notesStore.updateContent(true)"
+      @copy="handleCopy"
+      @cut="handleCopy"
       api-key="no-api-key"
       :init="{
         height: '100%',
@@ -74,6 +99,7 @@ function applyZoom() {
         content_css: false,               // avoid 404 error for content css file
         content_style: contentUiCss.toString() + '\n' + contentLocalCss.toString(),
         paste_block_drop: true,
+        paste_preprocess: handlePaste,
         setup: function (editor) {
           editor.ui.registry.addButton('zoomOut', {tooltip: 'Verkleinern', icon: 'zoom-out', onAction: zoomOut});
           editor.ui.registry.addButton('zoomIn', {tooltip: 'Vergrößern', icon: 'zoom-in', onAction: zoomIn});
