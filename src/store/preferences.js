@@ -19,7 +19,7 @@ export const usePreferencesStore = defineStore('preferences', {
   state: () => {
     return {
       // saved in storage
-      instructions_zoom: 0.25,                            // zoom level of the istructions
+      instructions_zoom: 1,                               // zoom level of the istructions
       editor_zoom: 1                                     // zoom level of the editors (essay and notes)
     }
   },
