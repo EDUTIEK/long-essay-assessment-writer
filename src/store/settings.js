@@ -3,7 +3,7 @@ import localForage from "localforage";
 
 import contentUiCss from 'tinymce/skins/ui/oxide/content.css';
 import contentLocalCss from '@/styles/content.css';
-import headlinesNumericCss from '@/styles/headlines-numeric.css';
+//import headlinesNumericCss from '@/substyles/headlines-numeric.css';
 
 const storage = localForage.createInstance({
     storeName: "writer-settings",
@@ -104,8 +104,8 @@ export const useSettingsStore = defineStore('settings',{
         const baseStyle = contentLocalCss.toString();
 
         switch (state.headline_scheme) {
-          case 'numeric':
-            return baseStyle + '\n' + headlinesNumericCss.toString();
+          // case 'numeric':
+          //   return baseStyle + '\n' + headlinesNumericCss.toString();
 
           default:
             return baseStyle;
