@@ -2,29 +2,10 @@
   import {useTaskStore} from '@/store/task';
   import {usePreferencesStore} from "@/store/preferences";
   import {useClipbardStore} from "@/store/clipboard";
+
   const taskStore = useTaskStore();
   const preferencesStore = usePreferencesStore();
   const clipboardStore =useClipbardStore();
-
-  import {onMounted} from 'vue';
-
-  onMounted(() => {
-    applyZoom();
-  });
-
-  function zoomIn() {
-    preferencesStore.zoomInstructionsIn();
-    applyZoom();
-  }
-
-  function zoomOut() {
-    preferencesStore.zoomInstructionsOut()
-    applyZoom();
-  }
-
-  function applyZoom() {
-    document.getElementById('app-instructions').style.fontSize=(preferencesStore.instructions_zoom * 16) + 'px';
-  }
 
   /**
    * Handle copy to the clipboard
@@ -75,22 +56,33 @@
   <div id="app-instructions-wrapper">
     <div class="appTextButtons">
       <v-btn-group density="comfortable" variant="outlined" divided>
-        <v-btn size="small" icon="mdi-magnify-minus-outline" @click="zoomOut()"></v-btn>
-        <v-btn size="small" icon="mdi-magnify-plus-outline" @click="zoomIn()"></v-btn>
+        <v-btn size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomInstructionsOut()"></v-btn>
+        <v-btn size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
       </v-btn-group>
     </div>
-    <div
-      id="app-instructions"
-      v-html="taskStore.instructions"
-      @copy="handleCopy"
-      @cut="handleCut"
-    ></div>
+    <div class="app-instructions-scroll">
+      <div
+        class="app-instructions"
+        :style="'font-size:' + (preferencesStore.instructions_zoom * 16) + 'px;'"
+        v-html="taskStore.instructions"
+        @copy="handleCopy"
+        @cut="handleCut"
+      ></div>
+    </div>
   </div>
 </template>
 
-<style scoped>
-
+<style>
+  /**
+  Must be global because of v-html used for the instructions
+  */
   @import '@/styles/content.css';
+  @import '@/styles/headlines-numeric.css';
+  @import '@/styles/headlines-edutiek.css';
+
+</style>
+
+<style scoped>
 
   #app-instructions-wrapper {
     height: 100%;
@@ -104,7 +96,7 @@
     height: 50px;
   }
 
-  #app-instructions {
+  .app-instructions-scroll {
     flex-grow: 1;
     width: 100%;
     padding: 20px;

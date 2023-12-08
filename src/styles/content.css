@@ -3,9 +3,10 @@
  * Used by Essay, Notes, Instructions and Review Components
  */
 
-.mce-content-body, #app-instructions, #review-text {
+.mce-content-body, .app-instructions, .review-text {
     font-family: Serif;
     font-size: 16px;
+    max-width: 80em;
 }
 
 table {

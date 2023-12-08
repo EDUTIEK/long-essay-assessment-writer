@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia';
 import localForage from "localforage";
 
-import contentUiCss from 'tinymce/skins/ui/oxide/content.css';
-import contentLocalCss from '@/styles/content.css';
-//import headlinesNumericCss from '@/substyles/headlines-numeric.css';
+// use '?inline' to prevent these styles from being automatically added to the whole page
+import contentUiCss from 'tinymce/skins/ui/oxide/content.css?inline';
+import contentLocalCss from '@/styles/content.css?inline';
+import headlinesNumericCss from '@/styles/headlines-numeric.css?inline';
+import headlinesEdutiekCss from '@/styles/headlines-edutiek.css?inline';
 
 const storage = localForage.createInstance({
     storeName: "writer-settings",
@@ -97,20 +99,33 @@ export const useSettingsStore = defineStore('settings',{
       },
 
       tinyContentStyle: state => {
-        return contentUiCss.toString() + '\n' + state.contentStyle;
-      },
-
-      contentStyle: state => {
-        const baseStyle = contentLocalCss.toString();
+        const baseStyle = contentUiCss.toString() + '\n' +  contentLocalCss.toString();
 
         switch (state.headline_scheme) {
-          // case 'numeric':
-          //   return baseStyle + '\n' + headlinesNumericCss.toString();
+          case 'numeric':
+            return baseStyle + '\n' + headlinesNumericCss.toString();
+
+          case 'edutiek':
+            return baseStyle + '\n' + headlinesEdutiekCss.toString();
 
           default:
             return baseStyle;
         }
+      },
+
+      contentClass: state => {
+        switch (state.headline_scheme) {
+          case 'numeric':
+            return 'headlines-numeric';
+
+          case 'edutiek':
+            return 'headlines-edutiek';
+
+          default:
+            return '';
+        }
       }
+
     },
 
     actions: {

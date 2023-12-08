@@ -3,10 +3,13 @@ import {useApiStore} from '@/store/api';
 import {useTaskStore} from '@/store/task';
 import {useEssayStore} from '@/store/essay';
 import {useSettingsStore} from '@/store/settings';
+import {usePreferencesStore} from "@/store/preferences";
+
 const apiStore = useApiStore();
 const essayStore = useEssayStore();
 const taskStore = useTaskStore();
 const settingsStore = useSettingsStore();
+const preferencesStore = usePreferencesStore();
 
 </script>
 
@@ -21,7 +24,11 @@ const settingsStore = useSettingsStore();
         </div>
 
         <div class="col-content">
-          <div class="review-text" v-html="essayStore.storedContent"></div>
+          <div
+            :class="'review-text ' + settingsStore.contentClass"
+            :style="'font-size:' + (preferencesStore.editor_zoom * 16) + 'px;'"
+            v-html="essayStore.storedContent"
+          ></div>
         </div>
 
         <div class="col-footer text-right bg-grey-lighten-4" >
@@ -58,7 +65,11 @@ const settingsStore = useSettingsStore();
         </div>
 
         <div class="col-content">
-          <div class="review-text" v-html="essayStore.storedContent"></div>
+          <div
+            :class="'review-text ' + settingsStore.contentClass"
+            :style="'font-size:' + (preferencesStore.editor_zoom * 16) + 'px;'"
+            v-html="essayStore.storedContent"
+          ></div>
         </div>
 
         <div class="col-footer text-right bg-grey-lighten-4" >
@@ -108,11 +119,18 @@ const settingsStore = useSettingsStore();
   </v-main>
 </template>
 
+<style>
 
+/**
+ Must be global because of v-html used for the review text
+ */
+@import '@/styles/content.css';
+@import '@/styles/headlines-numeric.css';
+@import '@/styles/headlines-edutiek.css';
+
+</style>
 
 <style scoped>
-
-@import '@/styles/content.css';
 
 /* Structure */
 
