@@ -51,23 +51,16 @@ async function openReview() {
     <alerts v-if="alertStore.hasAlerts"></alerts>
     <timer v-if="taskStore.hasWritingEnd"></timer>
 
-    <v-btn v-show="!apiStore.review">
-      <v-icon left icon="mdi-logout-variant"></v-icon>
-      <span>Beenden ...</span>
-
-      <v-menu activator="parent" anchor="bottom end" origin="end top">
-        <v-card>
-          <v-list>
-            <v-list-item @click="closeWriter()">
-                <v-list-item-title>Unterbrechen</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="openReview">
-              <v-list-item-title>Vorschau / Abgabe ...</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-menu>
+    <v-btn v-show="!apiStore.review" @click="closeWriter()">
+      <v-icon left icon="mdi-pause"></v-icon>
+      <span>Unterbrechen</span>
     </v-btn>
+
+    <v-btn v-show="!apiStore.review" @click="openReview">
+      <v-icon left icon="mdi-eye"></v-icon>
+      <span>Vorschau zur Abgabe </span>
+    </v-btn>
+
   </v-app-bar>
 
 </template>
