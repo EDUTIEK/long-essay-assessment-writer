@@ -6,7 +6,7 @@
 .mce-content-body, .app-instructions, .review-text {
     font-family: Serif;
     font-size: 16px;
-    max-width: 80em;
+    max-width: 60em;
 }
 
 table {
