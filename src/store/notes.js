@@ -47,6 +47,17 @@ export const useNotesStore = defineStore('notes',{
      */
     getters: {
 
+      /**
+       * Check if the user has entered notes
+       */
+      hasWrittenNotes: state => {
+        for (const key in state.notes) {
+          if (state.notes[key].note_text.length > 0) {
+            return true;
+          }
+        }
+        return false;
+      }
     },
 
     actions: {

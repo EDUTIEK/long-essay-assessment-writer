@@ -2,11 +2,13 @@
 import {useApiStore} from '@/store/api';
 import {useTaskStore} from '@/store/task';
 import {useEssayStore} from '@/store/essay';
+import {useNotesStore} from '@/store/notes';
 import {useSettingsStore} from '@/store/settings';
 import {usePreferencesStore} from "@/store/preferences";
 
 const apiStore = useApiStore();
 const essayStore = useEssayStore();
+const notesStore = useNotesStore();
 const taskStore = useTaskStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
@@ -56,11 +58,13 @@ const preferencesStore = usePreferencesStore();
         </div>
         <div class="col-header bg-grey-lighten-4" v-show="taskStore.writingEndReached && !taskStore.isExcluded">
           <h2 class="text-h6">Ihre Bearbeitungszeit ist beendet</h2>
-          <p>Es ist keine weitere Eingabe möglich. Bitte überprüfen Sie, ob Sie den Text in dieser Form zur Bewertung abgeben möchten.</p>
+          <p>Es ist keine weitere Eingabe möglich. Bitte überprüfen Sie, ob Sie den Text in dieser Form zur Bewertung abgeben möchten.
+            <span v-if="notesStore.hasWrittenNotes">Ihre Notizen werden verworfen.</span></p>
         </div>
         <div class="col-header bg-grey-lighten-4" v-show="!taskStore.writingEndReached && !taskStore.isExcluded">
           <h2 class="text-h6">Abgabe-Text</h2>
           <p>Bitte überprüfen Sie, ob Sie den Text in dieser Form zur Bewertung abgeben möchten.
+            <span v-if="notesStore.hasWrittenNotes">Ihre Notizen werden verworfen. Falls Teile davon bewertet werden sollen, kopieren Sie sie bitte in den Abgabetext.</span>
             Nach der Abgabe ist keine weitere Bearbeitung mehr möglich!</p>
         </div>
 
