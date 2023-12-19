@@ -170,8 +170,8 @@ const preferencesStore = usePreferencesStore();
   background-color: lightgray;
 }
 
-.review-text {
-  max-width:80em;
+.review-text, p {
+  max-width:60em;
 }
 
 </style>
