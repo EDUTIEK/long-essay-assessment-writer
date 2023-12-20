@@ -17,7 +17,7 @@ export const useLayoutStore = defineStore('layout',{
             expandedColumn: 'none',         // left|right|none
             leftContent: 'instructions',    // instructions|instructionsPdf|resources
             rightContent: 'essay',          // essay|notes
-            showTimer: true
+            showTimer: false
         }
     },
 
