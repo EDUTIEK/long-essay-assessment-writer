@@ -62,7 +62,7 @@
     </div>
     <div class="app-instructions-scroll">
       <div
-        class="app-instructions"
+        class="long-essay-content"
         :style="'font-size:' + (preferencesStore.instructions_zoom * 16) + 'px;'"
         v-html="taskStore.instructions"
         @copy="handleCopy"

@@ -1,5 +1,5 @@
 /**
- * Used by Essay, Notes, Instructions and Review Components
+ * Edutiek headline style of written contents
  */
 
 .mce-content-body .headlines-edutiek  {
@@ -35,20 +35,20 @@
 }
 
 .mce-content-body h2:before, .headlines-edutiek h2::before {
-    content: counter(h1, upper-latin) ". " counter(h2, upper-roman) ". ";
+    content: counter(h2, upper-roman) ". ";
 }
 
 .mce-content-body h3:before, .headlines-edutiek h3::before {
-    content: counter(h1, upper-latin) ". " counter(h2, upper-roman) ". " counter(h3, decimal) " ";
+    content: counter(h3, decimal) ". ";
 }
 
 .mce-content-body h4:before, .headlines-edutiek h4::before {
-    content: counter(h1, upper-latin) ". " counter(h2, upper-roman) ". " counter(h3, decimal) " " counter(h4, lower-latin) ". ";
+    content: counter(h4, lower-latin) ". ";
 }
 
 .mce-content-body h5:before, .headlines-edutiek h5::before {
-    content: counter(h1, upper-latin) ". " counter(h2, upper-roman) ". " counter(h3, decimal) " " counter(h4, lower-latin) ". " counter(h5, lower-latin) counter(h5, lower-latin) ". ";
+    content: counter(h5, lower-latin) counter(h5, lower-latin) ". ";
 }
 .mce-content-body h6:before, .headlines-edutiek h6::before {
-    content: counter(h1, upper-latin) ". " counter(h2, upper-roman) ". " counter(h3, decimal) " " counter(h4, lower-latin) ". " counter(h5, lower-latin) counter(h5, lower-latin) ". (" counter(h6, decimal) ") ";
+    content: "(" counter(h6, decimal) ") ";
 }

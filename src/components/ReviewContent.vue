@@ -70,7 +70,7 @@ const preferencesStore = usePreferencesStore();
 
         <div class="col-content">
           <div
-            :class="'review-text ' + settingsStore.contentClass"
+            :class="'long-essay-content ' + settingsStore.contentClass"
             :style="'font-size:' + (preferencesStore.editor_zoom * 16) + 'px;'"
             v-html="essayStore.storedContent"
           ></div>
