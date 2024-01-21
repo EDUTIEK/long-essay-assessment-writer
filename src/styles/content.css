@@ -4,7 +4,7 @@
 
 .mce-content-body, .long-essay-content {
     font-family: serif;
-    font-size: 16px;
+    font-size: 1em;
     max-width: 60em;
     line-height: 150%;
 }
@@ -14,7 +14,7 @@
 .mce-content-body h4, .long-essay-content h4,
 .mce-content-body h5, .long-essay-content h5,
 .mce-content-body h6, .long-essay-content h6 {
-    font-size: 16px;
+    font-size: 1em;
     font-weight: bold;
     padding: 0;
     margin-top: 0;
