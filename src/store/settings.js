@@ -122,7 +122,7 @@ export const useSettingsStore = defineStore('settings',{
             return 'headlines-edutiek';
 
           default:
-            return '';
+            return 'headlines-default';
         }
       }
 

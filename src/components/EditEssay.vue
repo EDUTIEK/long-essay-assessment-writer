@@ -30,8 +30,10 @@ const clipboardStore =useClipbardStore();
 
 onMounted(() => {
   applyZoom();
+  applyFormat();
 });
 watch(() => preferencesStore.editor_zoom, applyZoom);
+watch(() =>settingsStore.contentClass, applyFormat);
 
 function zoomIn() {
   preferencesStore.zoomEditorIn();
@@ -44,6 +46,15 @@ function zoomOut() {
 function applyZoom() {
   const editor = tinymce.get('essay');
   editor.contentWindow.document.body.style.fontSize=(preferencesStore.editor_zoom * 16) + 'px';
+}
+
+/**
+ * Add classes for the headline styles to the overlay element of the tiny menu
+ */
+function applyFormat() {
+  for (const element of document.getElementsByClassName('tox-tinymce-aux')) {
+    element.classList.add(settingsStore.contentClass);
+  }
 }
 
 /**
@@ -98,6 +109,23 @@ function handlePaste(plugin, args) {
     />
   </div>
 </template>
+
+<style>
+/**
+ * Styles for the tiny menu and footer must be global
+ */
+
+/* hide the statusbar */
+.tox-statusbar {
+  display: none!important;
+}
+
+/* Make font sizes in the tiny formats menu independent from changing font sizes in the content area */
+.tox-menu p, .tox-menu h1, .tox-menu h2, .tox-menu h3, .tox-menu h4, .tox-menu h5, .tox-menu h6, .tox-menu pre   {
+  font-size:1em!important;
+}
+
+</style>
 
 <style scoped>
   #app-essay-edit-wrapper {

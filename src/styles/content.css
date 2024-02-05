@@ -26,3 +26,39 @@
     margin-left: 10px;
     margin-bottom: 20px;
 }
+
+.mce-content-body li, .long-essay-content li {
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+.mce-content-body p, .long-essay-content p {
+    margin-bottom: 10px;
+}
+
+.mce-content-body, .long-essay-content, .tox-menu {
+    counter-reset: h1 h2 h3 h4 h5 h6;
+}
+.mce-content-body h1, .long-essay-content h1, .tox-menu h1 {
+    counter-increment: h1;
+    counter-reset: h2 h3 h4 h5 h6;
+}
+.mce-content-body h2, .long-essay-content h2, .tox-menu h2 {
+    counter-increment: h2;
+    counter-reset: h3 h4 h5 h6;
+}
+.mce-content-body h3, .long-essay-content h3, .tox-menu h3 {
+    counter-increment: h3;
+    counter-reset: h4 h5 h6;
+}
+.mce-content-body h4, .long-essay-content h4, .tox-menu h4 {
+    counter-increment: h4;
+    counter-reset: h5 h6;
+}
+.mce-content-body h5, .long-essay-content h5, .tox-menu h5 {
+    counter-increment: h5;
+    counter-reset: h6;
+}
+.mce-content-body h6, .long-essay-content h6, .tox-menu h6 {
+    counter-increment: h6;
+}

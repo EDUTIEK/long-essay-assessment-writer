@@ -3,6 +3,7 @@
 /**
  * Main Application
  */
+import { watch } from 'vue';
 import AppBar from "@/components/AppBar.vue";
 import NavBar from "@/components/NavBar.vue";
 import MainContent from "@/components/MainContent.vue";
@@ -27,51 +28,18 @@ apiStore.init();
 
 <style>
 
+/**
+ * Global content styles will be applied by class
+ */
+@import '@/styles/content.css';
+@import '@/styles/headlines-numeric.css';
+@import '@/styles/headlines-edutiek.css';
+
+
 html {
   overflow-y: hidden !important;
 }
 
-/* hide the statusbar from tiny editor */
-
-.tox-statusbar {
-  display: none!important;
-}
-
-/* Make font sizes in the tiny menu independent from changing font sizes in the content area */
-.tox-menu p {
-  font-size:16px!important;
-}
-.tox-menu h1 {
-  font-size:32px!important;
-}
-.tox-menu h2 {
-  font-size:18px!important;
-}
-.tox-menu h3 {
-  font-size:16px!important;
-}
-.tox-menu h4 {
-  font-size:14px!important;
-}
-.tox-menu h5 {
-  font-size:13px!important;
-}
-.tox-menu h6 {
-  font-size:12px!important;
-}
-.tox-menu pre {
-  font-size:16px!important;
-}
-
-/* needed for instructions and review screen, must be global */
-.col-content li {
-  margin-left: 20px;
-  margin-bottom: 5px;
-}
-
-.col-content p {
-  margin-bottom: 10px;
-}
 
 /* needed to avoid highlight of selected NavBar item, must be global */
 .v-list-item__overlay {

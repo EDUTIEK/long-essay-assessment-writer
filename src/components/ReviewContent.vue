@@ -123,17 +123,6 @@ const preferencesStore = usePreferencesStore();
   </v-main>
 </template>
 
-<style>
-
-/**
- Must be global because of v-html used for the review text
- */
-@import '@/styles/content.css';
-@import '@/styles/headlines-numeric.css';
-@import '@/styles/headlines-edutiek.css';
-
-</style>
-
 <style scoped>
 
 /* Structure */
