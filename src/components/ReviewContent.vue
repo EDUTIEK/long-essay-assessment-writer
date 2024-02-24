@@ -76,7 +76,7 @@ const preferencesStore = usePreferencesStore();
           ></div>
         </div>
 
-        <div class="col-footer text-right bg-grey-lighten-4" >
+        <div class="col-footer bg-grey-lighten-4" >
           <v-btn class="ma-2" @click="apiStore.finalize(true)" :color="settingsStore.primaryColorCss" v-show="!taskStore.isExcluded">
             <v-icon :color="settingsStore.primaryTextColorCss" icon="mdi-file-send-outline"></v-icon>
             <span :style="settingsStore.primaryTextColorFullCss">Zur Bewertung abgeben</span>
@@ -129,7 +129,7 @@ const preferencesStore = usePreferencesStore();
 
 .container {
   position: fixed;
-  height: calc((100% - 50px) - 50px);
+  height: calc((100% - 50px));
   width: 100%;
   display: flex;
 }
@@ -146,7 +146,7 @@ const preferencesStore = usePreferencesStore();
 }
 
 .col-content {
-  height: calc(((100% - 100px)) - 70px);
+  height: calc(100% - 150px);
   background-color: white;
   overflow-y: scroll;
   width: 100%;
@@ -157,7 +157,7 @@ const preferencesStore = usePreferencesStore();
 
 .col-footer {
   position: fixed;
-  bottom: 48px;
+  bottom: 0;
   padding:20px;
   width: 100%;
   background-color: lightgray;

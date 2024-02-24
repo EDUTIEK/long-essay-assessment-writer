@@ -95,10 +95,12 @@ function handlePaste(plugin, args) {
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
           formats: settingsStore.tinyFormats,
+          style_formats: settingsStore.tinyStyles,
           custom_undo_redo_levels: 10,
           skin: false,                      //  avoid 404 errors for skin css files
           content_css: false,               // avoid 404 error for content css file
           content_style: settingsStore.tinyContentStyle,
+          browser_spellcheck: settingsStore.allow_spellcheck,
           paste_block_drop: true,
           paste_preprocess: handlePaste,
           setup: function (editor) {
@@ -111,18 +113,14 @@ function handlePaste(plugin, args) {
 </template>
 
 <style>
+
 /**
- * Styles for the tiny menu and footer must be global
+ * Styles for tiny must be global
  */
 
 /* hide the statusbar */
 .tox-statusbar {
   display: none!important;
-}
-
-/* Make font sizes in the tiny formats menu independent from changing font sizes in the content area */
-.tox-menu p, .tox-menu h1, .tox-menu h2, .tox-menu h3, .tox-menu h4, .tox-menu h5, .tox-menu h6, .tox-menu pre   {
-  font-size:1em!important;
 }
 
 </style>

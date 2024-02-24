@@ -33,6 +33,7 @@
 }
 
 .mce-content-body p, .long-essay-content p {
+    margin-top: 0;
     margin-bottom: 10px;
 }
 
@@ -61,4 +62,12 @@
 }
 .mce-content-body h6, .long-essay-content h6, .tox-menu h6 {
     counter-increment: h6;
+}
+
+/*
+    Make font sizes in the tiny formats menu independent from changing font sizes in the content area
+    May be refined by headlines css files
+*/
+.tox-menu p, .tox-menu h1, .tox-menu h2, .tox-menu h3, .tox-menu h4, .tox-menu h5, .tox-menu h6, .tox-menu pre, .tox-menu li   {
+    font-size:1em!important;
 }

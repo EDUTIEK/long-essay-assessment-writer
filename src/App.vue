@@ -32,6 +32,8 @@ apiStore.init();
  * Global content styles will be applied by class
  */
 @import '@/styles/content.css';
+@import '@/styles/headlines-single.css';
+@import '@/styles/headlines-three.css';
 @import '@/styles/headlines-numeric.css';
 @import '@/styles/headlines-edutiek.css';
 

@@ -77,8 +77,6 @@
   Must be global because of v-html used for the instructions
   */
   @import '@/styles/content.css';
-  @import '@/styles/headlines-numeric.css';
-  @import '@/styles/headlines-edutiek.css';
 
 </style>
 
