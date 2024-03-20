@@ -114,7 +114,8 @@ export const useResourcesStore = defineStore('resources',{
                 await storage.setItem('resourceKeys', JSON.stringify(this.keys));
                 await storage.setItem('activeKey', this.activeKey);
 
-                await this.loadFiles();
+                // proload files in the background (don't wait)
+                this.loadFiles();
             }
             catch (err) {
                 console.log(err);
@@ -143,12 +144,12 @@ export const useResourcesStore = defineStore('resources',{
                     try {
                         console.log('preload ' + resource.title + '...');
                         response = await axios( resource.url, {responseType: 'blob', timeout: 60000});
-                        resource.objectUrl = URL.createObjectURL(response.data)
+                        // resource.objectUrl = URL.createObjectURL(response.data)
                         console.log('finished. ');
                     }
                     catch (error) {
                         console.error(error);
-                        return false;
+                        // return false;
                     }
                 }
                 index++;
