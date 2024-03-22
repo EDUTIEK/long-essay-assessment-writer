@@ -146,7 +146,7 @@ const preferencesStore = usePreferencesStore();
 }
 
 .col-content {
-  height: calc(100% - 150px);
+  height: calc(100% - 200px);
   background-color: white;
   overflow-y: scroll;
   width: 100%;
@@ -157,6 +157,7 @@ const preferencesStore = usePreferencesStore();
 
 .col-footer {
   position: fixed;
+  height: 100px;
   bottom: 0;
   padding:20px;
   width: 100%;
