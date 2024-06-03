@@ -27,13 +27,13 @@ const preferencesStore = usePreferencesStore();
 
         <div class="col-content">
           <div
-            :class="'review-text ' + settingsStore.contentClass"
+            :class="'long-essay-content ' + settingsStore.contentClass"
             :style="'font-size:' + (preferencesStore.editor_zoom * 16) + 'px;'"
             v-html="essayStore.storedContent"
           ></div>
         </div>
 
-        <div class="col-footer text-right bg-grey-lighten-4" >
+        <div class="col-footer bg-grey-lighten-4" >
           <v-btn class="ma-2" :color="settingsStore.primaryColorCss" @click="apiStore.retry()">
             <v-icon :color="settingsStore.primaryTextColorCss" icon="mdi-refresh" ></v-icon>
             <span :style="settingsStore.primaryTextColorFullCss">Erneut versuchen</span>
