@@ -74,6 +74,7 @@ function handlePaste(plugin, args) {
     args.content='';
     clipboardStore.showWarning();
   }
+  console.log(args.content);
 }
 
 </script>
@@ -102,6 +103,7 @@ function handlePaste(plugin, args) {
           content_style: settingsStore.tinyContentStyle,
           browser_spellcheck: settingsStore.allow_spellcheck,
           paste_block_drop: true,
+          paste_convert_word_fake_lists: false,
           paste_preprocess: handlePaste,
           setup: function (editor) {
               editor.ui.registry.addButton('zoomOut', {tooltip: 'Verkleinern', icon: 'zoom-out', onAction: zoomOut});

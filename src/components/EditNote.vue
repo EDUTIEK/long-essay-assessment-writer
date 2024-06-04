@@ -94,6 +94,7 @@ function handlePaste(plugin, args) {
         content_css: false,               // avoid 404 error for content css file
         content_style: settingsStore.tinyContentStyle,
         paste_block_drop: true,
+        paste_convert_word_fake_lists: false,
         paste_preprocess: handlePaste,
         setup: function (editor) {
           editor.ui.registry.addButton('zoomOut', {tooltip: 'Verkleinern', icon: 'zoom-out', onAction: zoomOut});
