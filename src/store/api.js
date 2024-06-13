@@ -332,7 +332,7 @@ export const useApiStore = defineStore('api', {
             await notesStore.prepareNotes(settingsStore.notice_boards);
 
             await changesStore.clearStorage();
-            await layoutStore.clearStorage();
+            await layoutStore.initialize();
 
             // send the time when the working on the task is started
             if (!response.data.essay.started) {

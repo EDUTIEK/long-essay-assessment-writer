@@ -34,6 +34,11 @@ export const useResourcesStore = defineStore('resources',{
             return state.resources.find(element => element.type == 'instruct');
         },
 
+        hasFileResources(state) {
+          const resource = state.resources.find(element => element.type == 'file');
+          return resource ? true : false;
+        },
+
         hasFileOrUrlResources(state) {
             const resource = state.resources.find(element => element.type == 'file' || element.type == 'url');
             return resource ? true : false;
@@ -100,6 +105,7 @@ export const useResourcesStore = defineStore('resources',{
 
                 this.keys = [];
                 this.resources = [];
+                this.activeKey = '';
 
                 let index = 0;
                 while (index < data.length) {
@@ -107,6 +113,9 @@ export const useResourcesStore = defineStore('resources',{
                     resource.url = apiStore.getResourceUrl(resource.key);
                     this.resources.push(resource);
                     this.keys.push(resource.key);
+                    if (resource.type == 'file' && this.activeKey == '') {
+                      this.activeKey = resource.key;
+                    }
                     await storage.setItem(resource.key, resource);
                     index++;
                 }

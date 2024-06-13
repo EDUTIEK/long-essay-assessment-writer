@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia';
 import localForage from "localforage";
+import { useResourcesStore } from "@/store/resources";
+import { useTaskStore } from '@/store/task';
+
 const storage = localForage.createInstance({
     storeName: "writer-layout",
     description: "Layout data",
 });
-
 
 /**
  * Layout Store
@@ -44,6 +46,21 @@ export const useLayoutStore = defineStore('layout',{
     },
 
     actions: {
+
+        async initialize() {
+          await this.clearStorage();
+
+          const resourcesStore = useResourcesStore();
+          const taskStore = useTaskStore();
+
+          this.leftContent = taskStore.hasInstructions ? 'instructions' :
+            resourcesStore.hasInstruction ? 'instructionsPdf' :
+              resourcesStore.hasFileResources ? 'resources' : ''
+
+          if (!this.leftContent) {
+            this.expandedColumn = 'right';
+          }
+        },
 
         async clearStorage() {
             try {
