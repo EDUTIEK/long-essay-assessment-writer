@@ -24,7 +24,7 @@
           </span>
           <v-btn-group density="comfortable">
             <!-- expand right column -->
-            <v-btn size="x-small" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">
+            <v-btn size="small" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>{{
                   layoutStore.isEssaySelected ? 'Abgabe-Text'
@@ -33,7 +33,7 @@
                 </span>
             </v-btn>
             <!-- expand left column -->
-            <v-btn size="x-small" @click="layoutStore.setLeftExpanded(true)" v-show="!layoutStore.isLeftExpanded">
+            <v-btn size="small" @click="layoutStore.setLeftExpanded(true)" v-show="!layoutStore.isLeftExpanded">
               <span>Erweitern</span>
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
@@ -57,7 +57,7 @@
           <v-btn-group density="comfortable">
 
             <!-- expand left column -->
-            <v-btn size="x-small" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
+            <v-btn size="small" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
                 <span> {{
                     layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
                       : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
@@ -67,7 +67,7 @@
             </v-btn>
 
             <!-- expand right column -->
-            <v-btn size="x-small" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
+            <v-btn size="small" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>Erweitern</span>
             </v-btn>

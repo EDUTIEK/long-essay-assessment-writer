@@ -28,7 +28,7 @@ const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore =useClipbardStore();
 
-const props = defineProps(['noteKey']);
+const props = defineProps(['noteKey', 'noteLabel']);
 
 onMounted(() => {
   applyZoom();
@@ -74,6 +74,7 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-note-edit-wrapper">
+    <label :for="props.noteKey" class="sr-only">{{ 'Editor ' + props.noteLabel }}</label>
     <editor
       :id="props.noteKey"
       v-model="notesStore.editNotes[props.noteKey].note_text"
@@ -85,7 +86,7 @@ function handlePaste(plugin, args) {
       :init="{
         height: '100%',
         menubar: false,
-        plugins: 'lists charmap paste',
+        plugins: 'lists charmap paste help',
         toolbar: settingsStore.tinyToolbar,
         valid_elements: settingsStore.tinyValidElements,
         formats: settingsStore.tinyFormats,
@@ -96,6 +97,10 @@ function handlePaste(plugin, args) {
         paste_block_drop: true,
         paste_convert_word_fake_lists: false,
         paste_preprocess: handlePaste,
+          help_tabs: [
+            'shortcuts',
+            'keyboardnav'
+          ],
         setup: function (editor) {
           editor.ui.registry.addButton('zoomOut', {tooltip: 'Verkleinern', icon: 'zoom-out', onAction: zoomOut});
           editor.ui.registry.addButton('zoomIn', {tooltip: 'Vergrößern', icon: 'zoom-in', onAction: zoomIn});

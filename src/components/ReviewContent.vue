@@ -77,7 +77,7 @@ const preferencesStore = usePreferencesStore();
         </div>
 
         <div class="col-footer bg-grey-lighten-4" >
-          <v-btn class="ma-2" @click="apiStore.finalize(true)" :color="settingsStore.primaryColorCss" v-show="!taskStore.isExcluded">
+          <v-btn class="ma-2 primary" @click="apiStore.finalize(true)" :color="settingsStore.primaryColorCss" v-show="!taskStore.isExcluded">
             <v-icon :color="settingsStore.primaryTextColorCss" icon="mdi-file-send-outline"></v-icon>
             <span :style="settingsStore.primaryTextColorFullCss">Zur Bewertung abgeben</span>
           </v-btn>
@@ -167,5 +167,12 @@ const preferencesStore = usePreferencesStore();
 .review-text, p {
   max-width:60em;
 }
+
+
+:focus, :focus-visible {
+  outline-offset: 1px!important;
+  outline: 4px dotted blue!important;
+}
+
 
 </style>

@@ -43,13 +43,25 @@ html {
 }
 
 
-/* needed to avoid highlight of selected NavBar item, must be global */
-.v-list-item__overlay {
-  visibility: hidden !important;
+/* Content for screen readers only */
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
+  -webkit-clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
 }
 
-.v-navigation-drawer__content {
-  background-color: #fafafa;
+
+:focus, :focus-visible {
+  outline-offset: 1px!important;
+  outline: 2px dotted blue!important;
 }
 
 

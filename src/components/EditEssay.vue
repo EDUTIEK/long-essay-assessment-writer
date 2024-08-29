@@ -13,6 +13,8 @@ import 'tinymce/skins/ui/oxide/skin.css';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/paste';
+import 'tinymce/plugins/help';
+import '@/plugins/tiny_de';
 // Import tiny vue integration
 import Editor from '@tinymce/tinymce-vue'
 
@@ -81,6 +83,7 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-essay-edit-wrapper">
+    <label for="essay" class="sr-only">Editor Abgabe-Text</label>
     <editor
         id="essay"
         v-model="essayStore.currentContent"
@@ -92,7 +95,7 @@ function handlePaste(plugin, args) {
         :init="{
           height: '100%',
           menubar: false,
-          plugins: 'lists charmap paste',
+          plugins: 'lists charmap paste help',
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
           formats: settingsStore.tinyFormats,
@@ -105,6 +108,10 @@ function handlePaste(plugin, args) {
           paste_block_drop: true,
           paste_convert_word_fake_lists: false,
           paste_preprocess: handlePaste,
+          help_tabs: [
+            'shortcuts',
+            'keyboardnav'
+          ],
           setup: function (editor) {
               editor.ui.registry.addButton('zoomOut', {tooltip: 'Verkleinern', icon: 'zoom-out', onAction: zoomOut});
               editor.ui.registry.addButton('zoomIn', {tooltip: 'Vergrößern', icon: 'zoom-in', onAction: zoomIn});

@@ -61,14 +61,14 @@ export const useSettingsStore = defineStore('settings',{
           switch (state.formatting_options)
           {
             case 'full':
-              return 'zoomOut zoomIn | undo redo | styleselect | bold italic underline | bullist numlist | removeformat | charmap | paste';
+              return 'zoomOut zoomIn | undo redo | styleselect | bold italic underline | bullist numlist | removeformat | charmap | paste help';
             case 'medium':
-              return 'zoomOut zoomIn | undo redo | bold italic underline | bullist numlist | removeformat | charmap | paste';
+              return 'zoomOut zoomIn | undo redo | bold italic underline | bullist numlist | removeformat | charmap | paste help';
             case 'minimal':
-              return 'zoomOut zoomIn | undo redo | bold italic underline | removeformat | charmap | paste';
+              return 'zoomOut zoomIn | undo redo | bold italic underline | removeformat | charmap | paste help';
             case 'none':
             default:
-              return 'zoomOut zoomIn | undo redo | charmap |paste';
+              return 'zoomOut zoomIn | undo redo | charmap |paste help';
           }
         },
 

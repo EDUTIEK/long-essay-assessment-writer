@@ -45,56 +45,64 @@ function getResourceIcon(resource) {
 
     <v-list>
       <v-list-item v-show="taskStore.hasInstructions" @click="layoutStore.showInstructions(); closeNavigation();"
-                   :prepend-icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"
-                   title="Aufgabenstellung">
+                    :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')">
+          <template v-slot:prepend>
+            <v-icon :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')"
+                    :icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
+          </template>
       </v-list-item>
 
       <v-list-item v-show="resourcesStore.hasInstruction" @click="layoutStore.showInstructionsPdf(); closeNavigation();"
-                   :prepend-icon="layoutStore.isInstructionsPdfVisible ? 'mdi-text-box': 'mdi-text-box-outline'"
-                   title="Aufgabenstellung (PDF)">
+                  :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')">
+        <template v-slot:prepend>
+          <v-icon :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')"
+                  :icon="layoutStore.isInstructionsPdfVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
+        </template>
       </v-list-item>
 
+      <v-divider class="border-opacity-75" ></v-divider>
+
       <v-list-item @click="layoutStore.showEssay(); closeNavigation();"
-                   :prepend-icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"
-                   title="Abgabe-Text">
+                  :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')">
+        <template v-slot:prepend>
+          <v-icon :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')"
+                  :icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
+        </template>
       </v-list-item>
 
       <v-list-item v-if="settingsStore.hasNotes" @click="layoutStore.showNotes(); closeNavigation();"
-                   :prepend-icon="layoutStore.isNotesVisible ? 'mdi-clipboard': 'mdi-clipboard-outline'"
-                   title="Notizen (werden bei der Abgabe verworfen)">
+                   :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')">
+        <template v-slot:prepend>
+          <v-icon :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')"
+                  :icon="layoutStore.isNotesVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
+        </template>
       </v-list-item>
 
+      <v-divider class="border-opacity-75" ></v-divider>
 
-      <v-list-group v-show="resourcesStore.hasFileOrUrlResources">
-        <template v-slot:activator="{ props }">
-          <v-list-item active-class="appNavActive" v-bind="props"
-                       @mouseenter="openNavigation()"
-                       :prepend-icon="layoutStore.isResourcesVisible ? 'mdi-book-open' : 'mdi-book-open-outline'"
-                       color="grey-darken-4"
-                       title="Material">
-          </v-list-item>
+      <v-list-item v-for="resource in resourcesStore.getFileOrUrlResources"
+                   @click="selectResource(resource); closeNavigation();"
+                   :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
+                   :key="resource.key">
+        <template v-slot:prepend>
+          <v-icon :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
+                  :icon="getResourceIcon(resource)"></v-icon>
         </template>
+      </v-list-item>
 
-        <v-list-item v-for="resource in resourcesStore.getFileOrUrlResources"
-                     @click="selectResource(resource); closeNavigation();"
-                     :prepend-icon="getResourceIcon(resource)"
-                     :title="resource.title"
-                     :key="resource.key">
-        </v-list-item>
-
-      </v-list-group>
-
-
-      <!-- <v-list-item prepend-icon="mdi-clipboard-outline" title="Notizbrett"></v-list-item>-->
     </v-list>
 
     <template v-slot:append>
       <v-list>
         <v-list-item
           :disabled="apiStore.isAllSent"
-          :prepend-icon="apiStore.isSending ? 'mdi-cloud-upload' : (apiStore.isAllSent ? 'mdi-cloud-check-outline' : 'mdi-cloud-outline')"
           :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
-        ></v-list-item>
+        >
+          <template v-slot:prepend>
+            <v-icon :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
+                    :icon="apiStore.isSending ? 'mdi-cloud-upload' : (apiStore.isAllSent ? 'mdi-cloud-check-outline' : 'mdi-cloud-outline')"></v-icon>
+          </template>
+        </v-list-item>
       </v-list>
     </template>
 
@@ -110,8 +118,11 @@ function getResourceIcon(resource) {
 }
 
 /* avoid highlight, when selected, see also App.vue */
+/*
 .v-list-item, v-list-group {
   color: #000000 !important;
 }
+*/
+
 
 </style>

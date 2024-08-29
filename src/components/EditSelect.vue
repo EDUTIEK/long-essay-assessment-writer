@@ -61,9 +61,11 @@
               :key="key"
               :value="key">
          <v-icon icon="mdi-clipboard-outline"></v-icon>
-         {{settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1}}
+         <span class="sr-only">{{settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)}}</span>
+         <span aria-hidden="true">{{settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1}}</span>
        </v-btn>
      </v-btn-toggle>
+     <p class="editorHint">Drücken Sie im Editor <code>Alt+0</code> für Hilfe</p>
    </div>
    <div class="appEditors">
      <edit-essay v-show="layoutStore.isEssaySelected" />
@@ -72,7 +74,9 @@
        v-show="layoutStore.isNotesSelected && notesStore.activeKey == key"
        v-for="key in notesStore.keys"
        :key="key"
-       :noteKey="key">
+       :noteKey="key"
+       :noteLabel="settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)"
+     >
      </edit-note>
 
    </div>
@@ -90,12 +94,16 @@
 }
 
 .appEditChoices {
-  height: 50px;
+  height: 65px;
   width: 100%;
   text-align: center;
 }
 
 .appEditors {
   flex-grow: 1;
+}
+
+.editorHint {
+  font-size: 12px;
 }
 </style>
