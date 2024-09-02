@@ -1,20 +1,34 @@
 <script setup>
 /*
 * Import TinyMCE
+* @see https://www.tiny.cloud/docs/tinymce/latest/vite-es6-npm/
 */
-import 'tinymce';
-// Default icons are required for TinyMCE 5.3 or above
-import 'tinymce/icons/default';
-// A theme is also required
-import 'tinymce/themes/silver';
-// Import the skin
-import 'tinymce/skins/ui/oxide/skin.css';
-// Import plugins
+import tinymce from 'tinymce';
+
+/* Default icons are required. After that, import custom icons if applicable */
+import 'tinymce/icons/default/icons.min.js';
+
+/* Required TinyMCE components */
+import 'tinymce/themes/silver/theme.min.js';
+import 'tinymce/models/dom/model.min.js';
+
+/* Import a skin (can be a custom skin instead of the default) */
+import 'tinymce/skins/ui/oxide/skin.js';
+
+/* Import plugins */
+import '@/plugins/tiny_de.js';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/paste';
+import 'tinymce/plugins/help/js/i18n/keynav/en.js';
+import 'tinymce/plugins/help/js/i18n/keynav/de.js';
 import 'tinymce/plugins/help';
-import '@/plugins/tiny_de';
+
+/* content UI CSS is required */
+import 'tinymce/skins/ui/oxide/content.js';
+
+/* The default content CSS can be changed or replaced with appropriate CSS for the editor content. */
+import 'tinymce/skins/content/default/content.js';
+
 // Import tiny vue integration
 import Editor from '@tinymce/tinymce-vue'
 
@@ -30,10 +44,10 @@ const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore =useClipbardStore();
 
-onMounted(() => {
+function handleInit() {
   applyZoom();
   applyFormat();
-});
+}
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() =>settingsStore.contentClass, applyFormat);
 
@@ -47,7 +61,7 @@ function zoomOut() {
 
 function applyZoom() {
   const editor = tinymce.get('essay');
-  editor.contentWindow.document.body.style.fontSize=(preferencesStore.editor_zoom * 16) + 'px';
+  editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom * 16) + 'px');
 }
 
 /**
@@ -76,7 +90,6 @@ function handlePaste(plugin, args) {
     args.content='';
     clipboardStore.showWarning();
   }
-  console.log(args.content);
 }
 
 </script>
@@ -91,22 +104,25 @@ function handlePaste(plugin, args) {
         @keyup="essayStore.updateContent(true)"
         @copy="handleCopy"
         @cut="handleCopy"
+        @init="handleInit"
         api-key="no-api-key"
         :init="{
+          license_key: 'gpl',
+          language: 'de',
           height: '100%',
           menubar: false,
-          plugins: 'lists charmap paste help',
+          plugins: 'lists charmap help',
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
           formats: settingsStore.tinyFormats,
           style_formats: settingsStore.tinyStyles,
           custom_undo_redo_levels: 10,
-          skin: false,                      //  avoid 404 errors for skin css files
-          content_css: false,               // avoid 404 error for content css file
+          skin: 'default',
+          content_css: 'default',
           content_style: settingsStore.tinyContentStyle,
           browser_spellcheck: settingsStore.allow_spellcheck,
           paste_block_drop: true,
-          paste_convert_word_fake_lists: false,
+          paste_as_text: true,
           paste_preprocess: handlePaste,
           help_tabs: [
             'shortcuts',
@@ -119,6 +135,7 @@ function handlePaste(plugin, args) {
          }"
     />
   </div>
+
 </template>
 
 <style>

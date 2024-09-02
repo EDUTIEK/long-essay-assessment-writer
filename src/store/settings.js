@@ -61,7 +61,7 @@ export const useSettingsStore = defineStore('settings',{
           switch (state.formatting_options)
           {
             case 'full':
-              return 'zoomOut zoomIn | undo redo | styleselect | bold italic underline | bullist numlist | removeformat | charmap | paste help';
+              return 'zoomOut zoomIn | undo redo | styles | bold italic underline | bullist numlist | removeformat | charmap | paste help';
             case 'medium':
               return 'zoomOut zoomIn | undo redo | bold italic underline | bullist numlist | removeformat | charmap | paste help';
             case 'minimal':
