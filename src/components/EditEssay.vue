@@ -122,7 +122,7 @@ function handlePaste(plugin, args) {
           content_style: settingsStore.tinyContentStyle,
           browser_spellcheck: settingsStore.allow_spellcheck,
           paste_block_drop: true,
-          paste_as_text: true,
+          paste_as_text: false,
           paste_preprocess: handlePaste,
           help_tabs: [
             'shortcuts',

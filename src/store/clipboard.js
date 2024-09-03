@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia';
-import {useSettingsStore} from "@/store/settings";
+import {useSettingsStore} from "@/store/settings"
+
+function normalize(html) {
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const text = temp.innerText || temp.textContent;
+  return text.replace(/[\s\n\r]+/g, '');
+}
 
 /**
  * Clipboard Store
@@ -30,10 +37,13 @@ export const useClipbardStore = defineStore('clipboard', {
           return true;
         }
 
-        //console.log(content);
-        //console.log(state.content);
+        console.log('content:', content);
+        console.log('normalized content:', normalize(content));
 
-        if (content == state.content) {
+        console.log('state.content:', state.content);
+        console.log('normalized state.content:', normalize(state.content));
+
+        if (normalize(content) == normalize(state.content)) {
           return true;
         }
         return false;
