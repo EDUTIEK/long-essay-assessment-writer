@@ -107,6 +107,7 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-note-edit-wrapper">
+    <label class="hidden" :for="props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
     <editor
       :id="props.noteKey"
       v-model="notesStore.editNotes[props.noteKey].note_text"

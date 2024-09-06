@@ -41,7 +41,7 @@ function getResourceIcon(resource) {
 </script>
 
 <template>
-  <v-navigation-drawer id="app-navigation-drawer" elevation="2" width="500" permanent rail expand-on-hover>
+  <v-navigation-drawer id="app-navigation-drawer" aria-label="Navigationsleiste" elevation="2" width="500" permanent rail expand-on-hover>
 
     <v-list>
       <v-list-item v-show="taskStore.hasInstructions" @click="layoutStore.showInstructions(); closeNavigation();"

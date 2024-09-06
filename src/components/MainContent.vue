@@ -15,13 +15,13 @@
 <template>
   <v-main fill-height>
     <div id="app-main-container">
-      <div  class="column" :class="{ colExpanded: layoutStore.isLeftExpanded, colNormal: !layoutStore.isLeftExpanded}" v-show="layoutStore.isLeftVisible">
+      <section aria-label="Linke Spalte" class="column" :class="{ colExpanded: layoutStore.isLeftExpanded, colNormal: !layoutStore.isLeftExpanded}" v-show="layoutStore.isLeftVisible">
         <div class="col-header">
-          <span class="headline">{{
+          <h1 class="headline">{{
               layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
                 : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
                     : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''}}
-          </span>
+          </h1>
           <v-btn-group density="comfortable">
             <!-- expand right column -->
             <v-btn size="small" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">
@@ -33,8 +33,9 @@
                 </span>
             </v-btn>
             <!-- expand left column -->
-            <v-btn size="small" @click="layoutStore.setLeftExpanded(true)" v-show="!layoutStore.isLeftExpanded">
-              <span>Erweitern</span>
+            <v-btn aria-labelledby="app-expand-left-column" size="small" @click="layoutStore.setLeftExpanded(true)" v-show="!layoutStore.isLeftExpanded">
+              <span aria-hidden="true">Erweitern</span>
+              <span id="app-expand-left-column" class="sr-only">Linke Spalte erweitern</span>
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
           </v-btn-group>
@@ -44,14 +45,14 @@
           <instructions-pdf v-if="layoutStore.isInstructionsPdfVisible" />
           <resources v-if="layoutStore.isResourcesVisible" />
         </div>
-      </div>
-      <div class="column" :class="{ colExpanded: layoutStore.isRightExpanded, colNormal: !layoutStore.isRightExpanded}" v-show="layoutStore.isRightVisible" >
+      </section>
+      <section aria-label="Rechte Spalte" class="column" :class="{ colExpanded: layoutStore.isRightExpanded, colNormal: !layoutStore.isRightExpanded}" v-show="layoutStore.isRightVisible" >
         <div class="col-header">
-          <span class="headline">{{
+          <h1 class="headline">{{
             layoutStore.isEssayVisible ? 'Abgabe-Text'
               : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : ''
             }}
-          </span>
+          </h1>
           <v-btn-group density="comfortable">
             <!-- expand left column -->
             <v-btn size="small" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
@@ -63,16 +64,17 @@
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
             <!-- expand right column -->
-            <v-btn size="small" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
+            <v-btn aria-labelledby="app-expand-right-column" size="small" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
-              <span>Erweitern</span>
+              <span aria-hidden="true">Erweitern</span>
+              <span id="app-expand-right-column" class="sr-only">Rechte Spalte erweitern</span>
             </v-btn>
           </v-btn-group>
         </div>
         <div class="col-content">
           <edit-select/>
         </div>
-      </div>
+      </section>
     </div>
 
     <v-dialog width="500" persistent v-model="clipboardStore.show_warning">
@@ -126,7 +128,9 @@
 }
 
 .headline {
+  font-size: 1rem;
   font-weight: bold;
+  display: inline;
 }
 
 .v-btn-group {

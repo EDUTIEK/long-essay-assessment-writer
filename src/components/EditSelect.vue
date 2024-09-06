@@ -53,17 +53,19 @@
  <div id="app-edit-select-wrapper">
    <div class="appEditChoices">
      <v-btn-toggle v-if="settingsStore.hasNotes" density="comfortable" variant="outlined" divided v-model="selectedEditor" @click="selectEditor()">
-       <v-btn size="small"
+       <v-btn aria-labelledby="app-edit-select-text" size="small"
               value="essay">
          <v-icon icon="mdi-file-edit-outline"></v-icon>
-         Abgabe-Text
+         <span class="sr-only" id="app-edit-select-text">Abgabe-Text bearbeiten</span>
+         <span aria-hidden="true">Text</span>
        </v-btn>
        <v-btn size="small"
               v-for="key in notesStore.keys"
+              :aria-labelledby="'app-edit-select-note' + notesStore.notes[key].note_no"
               :key="key"
               :value="key">
          <v-icon icon="mdi-clipboard-outline"></v-icon>
-         <span class="sr-only">{{settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)}}</span>
+         <span class="sr-only" :id="'app-edit-select-note' + notesStore.notes[key].note_no">{{settingsStore.notice_boards == 1 ? 'Notizen bearbeiten' : 'Notiz ' + (notesStore.notes[key].note_no + 1) + ' bearbeiten'}}</span>
          <span aria-hidden="true">{{settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1}}</span>
        </v-btn>
      </v-btn-toggle>

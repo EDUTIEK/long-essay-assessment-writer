@@ -105,7 +105,7 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-essay-edit-wrapper">
-    <label for="essay" class="sr-only">Editor Abgabe-Text</label>
+    <label for="essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
     <editor
         id="essay"
         v-model="essayStore.currentContent"

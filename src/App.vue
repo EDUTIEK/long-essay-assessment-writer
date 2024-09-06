@@ -42,6 +42,9 @@ html {
   overflow-y: hidden !important;
 }
 
+.hidden {
+  display: none;
+}
 
 /* Content for screen readers only */
 .sr-only {

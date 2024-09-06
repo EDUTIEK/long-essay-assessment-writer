@@ -11,30 +11,82 @@ const showHelp = ref(false);
     Hilfe
   </v-btn>
 
-   <v-dialog v-model="showHelp">
+   <v-dialog v-model="showHelp" max-width="1000">
       <v-card>
         <v-card-text>
-          <h1>Navigation mit der Tastatur</h1>
-
-          <p>Um von einem Abschnitt der Benutzeroberfläche zum nächsten zu wechseln, drücken Sie <strong>TAB</strong>.</p>
-          <p>Um von einem Abschnitt der Benutzeroberfläche zum vorherigen zu wechseln, drücken Sie <strong>UMSCHALT+TAB</strong>.</p>
-          <p>Um zwischen Elementen in einem Abschnitt zu wechseln, drücken Sie die entsprechende <strong>Pfeiltaste</strong>.</p>
-
-          <h2>Navigation im Editorbereich</h2>
-
-          <p>Drücken Sie <strong>Alt + F10</strong> um von der Texteingabe in die Symbolleiste des Editors zu wechseln.</p>
-          <p>Drücken Sie <strong>ESC</strong>, um die Symbolleiste wieder zu verlassen.</p>
-          <p>Die Pfeiltasten <strong>Links</strong> und <strong>Rechts</strong> wechseln zwischen Schaltflächen in der Symbolleiste.</p>
-          <p>Das Popupmenü der Absatzformate öffnen Sie mit der <strong>Eingabetaste</strong>.</p>
-          <p>Das Popupmenü der Absatzformate schließen Sie mit der <strong>ESC</strong>-Taste.</p>
-          <p>Die Pfeiltasten <strong>Abwärts</strong> und <strong>Aufwärts</strong> wechseln zwischen Elementen im Popupmenü der Absartformate.</p>
-
-          <h2>Tastenbefehle im Editorbereich</h2>
-          <table>
+          <h1>Allgemeine Navigation</h1>
+          <v-table>
             <thead>
             <tr>
-              <th>Aktion</th>
-              <th>Tastenkombination</th>
+              <th width="50%">Aktion</th>
+              <th width="50%">Tastenkombination</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Nächstes Element</td>
+              <td>Tab</td>
+            </tr>
+            <tr>
+              <td>Vorheriges Element</td>
+              <td>Shift + Tab</td>
+            </tr>
+            <tr>
+              <td>Elemente in der Navigationsleiste</td>
+              <td>Pfeil abwärts und aufwärts</td>
+            </tr>
+            </tbody>
+
+          </v-table>
+
+          <h1>Navigation im Editor</h1>
+
+          <v-table>
+            <thead>
+            <tr>
+              <th width="50%">Aktion</th>
+              <th width="50%">Tastenkombination</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>In Symbolleiste wechseln</td>
+              <td>Alt + F10</td>
+            </tr>
+            <tr>
+              <td>Symbolleiste verlassen</td>
+              <td>Esc</td>
+            </tr>
+            <tr>
+              <td>In Symbolleiste zwischen Schaltflächen wechseln</td>
+              <td>Pfeil links und rechts</td>
+            </tr>
+            <tr>
+              <td>Popup der Absatzformate aufklappen</td>
+              <td>Eingabetaste</td>
+            </tr>
+            <tr>
+              <td>Im Popup zwischen Absatzformaten wechseln</td>
+              <td>Pfeil abwärts und aufwärts</td>
+            </tr>
+            <tr>
+              <td>Im Popup ein Absatzformat wählen</td>
+              <td>Eingabetaste</td>
+            </tr>
+            <tr>
+              <td>Popup der Absatzformate schließen</td>
+              <td>Esc</td>
+            </tr>
+
+            </tbody>
+          </v-table>
+
+          <h1>Tastenbefehle im Editor</h1>
+          <v-table title="Tastenbefehle im Editor">
+            <thead>
+            <tr>
+              <th width="50%">Aktion</th>
+              <th width="50%">Tastenkombination</th>
             </tr>
             </thead>
             <tbody>
@@ -56,7 +108,7 @@ const showHelp = ref(false);
             </tr>
             <tr>
               <td>Wiederholen</td>
-              <td>Ctrl + Y or Ctrl + Shift + Z</td>
+              <td>Ctrl + Y oder Ctrl + Shift + Z</td>
             </tr>
             <tr>
               <td>Rückgängig machen</td>
@@ -91,13 +143,12 @@ const showHelp = ref(false);
               <td>Shift + Alt + 7</td>
             </tr>
             </tbody>
-          </table>
+          </v-table>
 
         </v-card-text>
         <v-card-actions>
           <v-btn @click="showHelp=false">
-            <v-icon left icon="mdi-check"></v-icon>
-            <span>OK</span>
+            <span>Hilfe schließen</span>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -106,5 +157,7 @@ const showHelp = ref(false);
 
 
 <style scoped>
-
+h1 {
+  font-size: 1.5rem;
+}
 </style>
