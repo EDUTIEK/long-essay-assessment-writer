@@ -5,6 +5,7 @@
  */
 import Timer from "@/components/Timer.vue";
 import Alerts from "@/components/Alerts.vue";
+import Help from "@/components/Help.vue";
 
 import {useApiStore} from '@/store/api';
 import {useTaskStore} from "../store/task";
@@ -48,6 +49,7 @@ async function openReview() {
     <v-app-bar-title>{{getTitle()}}</v-app-bar-title>
     <v-spacer></v-spacer>
 
+    <help></help>
     <alerts v-if="alertStore.hasAlerts"></alerts>
     <timer v-if="taskStore.hasWritingEnd"></timer>
 

@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import localForage from "localforage";
 
-// use '?inline' to prevent these styles from being automatically added to the whole page
-import contentUiCss from 'tinymce/skins/ui/oxide/content.css?inline';
 import contentLocalCss from '@/styles/content.css?inline';
 import headlinesSingleCss from '@/styles/headlines-single.css?inline';
 import headlinesThreeCss from '@/styles/headlines-three.css?inline';
@@ -61,14 +59,14 @@ export const useSettingsStore = defineStore('settings',{
           switch (state.formatting_options)
           {
             case 'full':
-              return 'zoomOut zoomIn | undo redo | styles | bold italic underline | bullist numlist | removeformat | charmap | paste help';
+                  return 'undo redo styles bold italic underline bullist numlist removeformat charmap';
             case 'medium':
-              return 'zoomOut zoomIn | undo redo | bold italic underline | bullist numlist | removeformat | charmap | paste help';
+              return 'undo redo bold italic underline bullist numlistremoveformat charmap';
             case 'minimal':
-              return 'zoomOut zoomIn | undo redo | bold italic underline | removeformat | charmap | paste help';
+              return 'undo redo bold italic underline removeformat charmap';
             case 'none':
             default:
-              return 'zoomOut zoomIn | undo redo | charmap |paste help';
+              return 'undo redo charmap';
           }
         },
 
@@ -90,6 +88,9 @@ export const useSettingsStore = defineStore('settings',{
           }
 
         },
+
+      tinyH1Size: state => state.headline_scheme == 'three' ? 1.3 : 1,
+      tinyH2Size: state => state.headline_scheme == 'three' ? 1.15 : 1,
 
       tinyStyles: state => {
         switch (state.headline_scheme) {
@@ -134,7 +135,7 @@ export const useSettingsStore = defineStore('settings',{
       },
 
       tinyContentStyle: state => {
-        const baseStyle = contentUiCss.toString() + '\n' +  contentLocalCss.toString();
+        const baseStyle = contentLocalCss.toString();
 
         switch (state.headline_scheme) {
           case 'single':

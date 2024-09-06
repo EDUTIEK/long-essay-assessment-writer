@@ -58,11 +58,60 @@ html {
   white-space: nowrap;
 }
 
+/**
+  Focus for Tab navigation
+ */
 
-:focus, :focus-visible {
-  outline-offset: 1px!important;
-  outline: 2px dotted blue!important;
+.v-btn:focus::after, .v-btn:focus-visible::after {
+  pointer-events: none;
+  border: 2px solid blue!important;
+  border-radius: inherit;
+  opacity: 100%!important;
+  transition: none!important;
 }
 
+.v-list-item:focus::after, .v-list-item:focus-visible::after {
+  pointer-events: none;
+  border: 2px solid blue!important;
+  border-radius: inherit;
+  opacity: 100%!important;
+  transition: none!important;
+}
+
+
+/**
+ * Tiny styles must be global
+ */
+.tox-tinymce {
+  border: 1px solid #cccccc!important;
+  border-radius: 0!important;
+}
+
+.tox-toolbar__group {
+  padding: 0 2px!important;
+}
+
+.tox-tbtn {
+  /*
+  font-size: 20px!important;
+  */
+}
+
+.tox-editor-header {
+  /*
+width: 134%!important;
+transform: scale(0.75)!important;
+transform-origin: 0% 0% 0px!important;
+*/
+
+  box-shadow: none!important;
+  border-bottom: 1px solid #cccccc!important;
+  margin-bottom: 0!important
+}
+
+/* hide the statusbar */
+.tox-statusbar {
+  display: none!important;
+}
 
 </style>

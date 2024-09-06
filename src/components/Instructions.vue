@@ -56,14 +56,14 @@
   <div id="app-instructions-wrapper">
     <div class="appTextButtons">
       <v-btn-group density="comfortable" variant="outlined" divided>
-        <v-btn title="Verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomInstructionsOut()"></v-btn>
-        <v-btn title="Vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
+        <v-btn title="Aufgabenstellungs-Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomInstructionsOut()"></v-btn>
+        <v-btn title="Aufgabenstellungs-Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
       </v-btn-group>
     </div>
     <div class="app-instructions-scroll">
       <div
         class="long-essay-content"
-        :style="'font-size:' + (preferencesStore.instructions_zoom * 16) + 'px;'"
+        :style="'font-size:' + (preferencesStore.instructions_zoom) + 'rem;'"
         v-html="taskStore.instructions"
         @copy="handleCopy"
         @cut="handleCut"
@@ -91,7 +91,6 @@
   .appTextButtons {
     text-align: center;
     padding-bottom: 5px;
-    height: 50px;
   }
 
   .app-instructions-scroll {

@@ -1,6 +1,5 @@
 <script setup>
 /*
-/*
 * Import TinyMCE
 * @see https://www.tiny.cloud/docs/tinymce/latest/vite-es6-npm/
 */
@@ -54,17 +53,26 @@ function handleInit() {
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() =>settingsStore.contentClass, applyFormat);
 
-function zoomIn() {
-  preferencesStore.zoomEditorIn();
-}
-
-function zoomOut() {
-  preferencesStore.zoomEditorOut();
-}
-
 function applyZoom() {
-  const editor = tinymce.get('essay');
-  editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom * 16) + 'px');
+  try {
+    const editor = tinymce.get(props.noteKey);
+    if (editor) {
+      editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom) + 'rem');
+      editor.dom.setStyle(editor.dom.select('h1'),
+        'font-size',
+        (preferencesStore.editor_zoom * settingsStore.tinyH1Size) + 'rem');
+      editor.dom.setStyle(editor.dom.select('h2'),
+        'font-size',
+        (preferencesStore.editor_zoom * settingsStore.tinyH2Size) + 'rem');
+      editor.dom.setStyle(editor.dom.select('h3'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
+      editor.dom.setStyle(editor.dom.select('h4'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
+      editor.dom.setStyle(editor.dom.select('h5'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
+      editor.dom.setStyle(editor.dom.select('h6'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
+    }
+  }
+  catch(e) {
+    // prevent error when tiny is unloaded
+  }
 }
 
 /**
@@ -85,7 +93,7 @@ function handleCopy(event) {
 }
 
 /**
- * Check if paste is alloed (called from tiny plugin)
+ * Check if paste is allowed (called from tiny plugin)
  */
 function handlePaste(plugin, args) {
 
@@ -99,11 +107,10 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-note-edit-wrapper">
-    <label :for="props.noteKey" class="sr-only">{{ 'Editor ' + props.noteLabel }}</label>
     <editor
       :id="props.noteKey"
       v-model="notesStore.editNotes[props.noteKey].note_text"
-      @change="notesStore.updateContent(true)"
+      @change="applyZoom(); notesStore.updateContent(true)"
       @keyup="notesStore.updateContent(true)"
       @copy="handleCopy"
       @cut="handleCopy"
@@ -114,6 +121,7 @@ function handlePaste(plugin, args) {
           language: 'de',
           height: '100%',
           menubar: false,
+          statusbar: false,
           plugins: 'lists charmap help',
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
@@ -124,39 +132,29 @@ function handlePaste(plugin, args) {
           content_css: 'default',
           content_style: settingsStore.tinyContentStyle,
           browser_spellcheck: settingsStore.allow_spellcheck,
-          paste_block_drop: true,
-          paste_as_text: false,
+          highlight_on_focus: true,
+          iframe_aria_text: 'Editor ' + props.noteLabel,
+          paste_as_text: false,         // keep formats when copying between clipboards
+          paste_block_drop: true,       // prevent unfiltered content from drag & drop
+          paste_merge_formats: true,    // default
+          paste_tab_spaces: 4,          // default
+          smart_paste: false,           // don't create hyperlinks automatically
+          paste_data_images: false,     // don't paste images
+          paste_remove_styles_if_webkit: true,  // default
+          paste_webkit_styles: 'none',          // default
           paste_preprocess: handlePaste,
           help_tabs: [
             'shortcuts',
             'keyboardnav'
           ],
-          setup: function (editor) {
-              editor.ui.registry.addButton('zoomOut', {tooltip: 'Verkleinern', icon: 'zoom-out', onAction: zoomOut});
-              editor.ui.registry.addButton('zoomIn', {tooltip: 'Vergrößern', icon: 'zoom-in', onAction: zoomIn});
-            }
          }"
     />
   </div>
 
 </template>
 
-<style>
-
-/**
- * Styles for tiny must be global
- */
-
-/* hide the statusbar */
-.tox-statusbar {
-  display: none!important;
-}
-
-</style>
-
 <style scoped>
 #app-note-edit-wrapper {
   height: 100%
 }
-
 </style>

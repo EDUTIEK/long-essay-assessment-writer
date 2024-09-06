@@ -37,9 +37,7 @@
               <span>Erweitern</span>
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
-
           </v-btn-group>
-
         </div>
         <div class="col-content">
           <instructions v-if="layoutStore.isInstructionsVisible" />
@@ -55,7 +53,6 @@
             }}
           </span>
           <v-btn-group density="comfortable">
-
             <!-- expand left column -->
             <v-btn size="small" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
                 <span> {{
@@ -65,15 +62,12 @@
                 </span>
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
-
             <!-- expand right column -->
             <v-btn size="small" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>Erweitern</span>
             </v-btn>
-
           </v-btn-group>
-
         </div>
         <div class="col-content">
           <edit-select/>
@@ -118,7 +112,7 @@
 }
 
 .col-header {
-  min-height: 40px;
+  height: 40px;
   width: 100%;
   padding:10px;
 }

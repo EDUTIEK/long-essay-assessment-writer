@@ -3,12 +3,14 @@
   import {useLayoutStore} from "@/store/layout";
   import {useNotesStore} from '@/store/notes';
   import {useSettingsStore} from "@/store/settings";
+  import {usePreferencesStore} from "@/store/preferences";
   import EditNote from "@/components/EditNote.vue";
   import EditEssay from "@/components/EditEssay.vue";
 
   const layoutStore = useLayoutStore();
   const notesStore = useNotesStore();
   const settingsStore = useSettingsStore();
+  const preferencesStore = usePreferencesStore();
 
   const selectedEditor = ref('essay');
   updateSelectedEditor();
@@ -49,8 +51,8 @@
 
 <template>
  <div id="app-edit-select-wrapper">
-   <div class="appEditChoices" v-if="settingsStore.hasNotes">
-     <v-btn-toggle density="comfortable" variant="outlined" divided v-model="selectedEditor" @click="selectEditor()">
+   <div class="appEditChoices">
+     <v-btn-toggle v-if="settingsStore.hasNotes" density="comfortable" variant="outlined" divided v-model="selectedEditor" @click="selectEditor()">
        <v-btn size="small"
               value="essay">
          <v-icon icon="mdi-file-edit-outline"></v-icon>
@@ -65,7 +67,11 @@
          <span aria-hidden="true">{{settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1}}</span>
        </v-btn>
      </v-btn-toggle>
-     <p class="editorHint">Drücken Sie im Editor <code>Alt+0</code> für Hilfe</p>
+     <span aria-hidden="true" v-if="settingsStore.hasNotes">&nbsp;</span>
+     <v-btn-group density="comfortable" variant="outlined" divided>
+       <v-btn title="Editor-Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomEditorOut()"></v-btn>
+       <v-btn title="Editor-Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomEditorIn()"></v-btn>
+     </v-btn-group>
    </div>
    <div class="appEditors">
      <edit-essay v-show="layoutStore.isEssaySelected" />
@@ -78,7 +84,6 @@
        :noteLabel="settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)"
      >
      </edit-note>
-
    </div>
 
  </div>
@@ -94,16 +99,11 @@
 }
 
 .appEditChoices {
-  height: 65px;
-  width: 100%;
   text-align: center;
+  padding-bottom: 5px;
 }
 
 .appEditors {
   flex-grow: 1;
-}
-
-.editorHint {
-  font-size: 12px;
 }
 </style>

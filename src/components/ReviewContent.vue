@@ -28,7 +28,7 @@ const preferencesStore = usePreferencesStore();
         <div class="col-content">
           <div
             :class="'long-essay-content ' + settingsStore.contentClass"
-            :style="'font-size:' + (preferencesStore.editor_zoom * 16) + 'px;'"
+            :style="'font-size:' + (preferencesStore.editor_zoom) + 'rem;'"
             v-html="essayStore.storedContent"
           ></div>
         </div>
@@ -166,12 +166,6 @@ const preferencesStore = usePreferencesStore();
 
 .review-text, p {
   max-width:60em;
-}
-
-
-:focus, :focus-visible {
-  outline-offset: 1px!important;
-  outline: 4px dotted blue!important;
 }
 
 
