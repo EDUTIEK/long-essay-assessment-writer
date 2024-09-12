@@ -19,9 +19,7 @@ import 'tinymce/skins/ui/oxide/skin.js';
 import '@/plugins/tiny_de.js';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/help/js/i18n/keynav/en.js';
-import 'tinymce/plugins/help/js/i18n/keynav/de.js';
-import 'tinymce/plugins/help';
+import 'tinymce/plugins/wordcount';
 
 /* content UI CSS is required */
 import 'tinymce/skins/ui/oxide/content.js';
@@ -49,9 +47,11 @@ const props = defineProps(['noteKey', 'noteLabel']);
 function handleInit() {
   applyZoom();
   applyFormat();
+  applyWordCount();
 }
 watch(() => preferencesStore.editor_zoom, applyZoom);
-watch(() =>settingsStore.contentClass, applyFormat);
+watch(() => settingsStore.contentClass, applyFormat);
+watch(() => preferencesStore.word_count_enabled, applyWordCount);
 
 function applyZoom() {
   try {
@@ -81,6 +81,20 @@ function applyZoom() {
 function applyFormat() {
   for (const element of document.getElementsByClassName('tox-tinymce-aux')) {
     element.classList.add(settingsStore.contentClass);
+  }
+}
+
+/**
+ * Set the visibility of the word counter
+ */
+function applyWordCount() {
+  for (const element of document.getElementsByClassName('tox-statusbar')) {
+    if (preferencesStore.word_count_enabled) {
+      element.classList.remove('hidden');
+    }
+    else {
+      element.classList.add('hidden');
+    }
   }
 }
 
@@ -122,8 +136,11 @@ function handlePaste(plugin, args) {
           language: 'de',
           height: '100%',
           menubar: false,
-          statusbar: false,
-          plugins: 'lists charmap help',
+          statusbar: true,
+          elementpath: false,
+          branding: false,
+          resize: false,
+          plugins: 'lists charmap wordcount',
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
           formats: settingsStore.tinyFormats,
@@ -143,11 +160,7 @@ function handlePaste(plugin, args) {
           paste_data_images: false,     // don't paste images
           paste_remove_styles_if_webkit: true,  // default
           paste_webkit_styles: 'none',          // default
-          paste_preprocess: handlePaste,
-          help_tabs: [
-            'shortcuts',
-            'keyboardnav'
-          ],
+          paste_preprocess: handlePaste
          }"
     />
   </div>

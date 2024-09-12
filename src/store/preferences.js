@@ -19,8 +19,9 @@ export const usePreferencesStore = defineStore('preferences', {
   state: () => {
     return {
       // saved in storage
-      instructions_zoom: 1,                               // zoom level of the istructions
-      editor_zoom: 1                                     // zoom level of the editors (essay and notes)
+      instructions_zoom: 1,                // zoom level of the instructions
+      editor_zoom: 1,                      // zoom level of the editors (essay and notes)
+      word_count_enabled: false            // enabling of the word counter
     }
   },
 
@@ -29,7 +30,8 @@ export const usePreferencesStore = defineStore('preferences', {
     allData: state => {
       return {
         instructions_zoom: state.instructions_zoom,
-        editor_zoom: state.editor_zoom
+        editor_zoom: state.editor_zoom,
+        word_count_enabled: state.word_count_enabled
       }
     },
   },
@@ -128,6 +130,11 @@ export const usePreferencesStore = defineStore('preferences', {
 
     zoomEditorOut() {
       this.editor_zoom = this.editor_zoom * 0.9;
+      this.update();
+    },
+
+    toggleWordCountEnabled() {
+      this.word_count_enabled = !this.word_count_enabled;
       this.update();
     }
 

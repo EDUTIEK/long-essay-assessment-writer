@@ -73,6 +73,11 @@
      <v-btn-group density="comfortable" variant="outlined" divided>
        <v-btn title="Editor-Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomEditorOut()"></v-btn>
        <v-btn title="Editor-Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomEditorIn()"></v-btn>
+       <v-btn
+         :title="preferencesStore.word_count_enabled ? 'Zähler verbergen' : 'Zähler anzeigen'" size="small"
+         :icon="preferencesStore.word_count_enabled ? 'mdi-numeric' : 'mdi-numeric-off'"
+         @click="preferencesStore.toggleWordCountEnabled()">
+       </v-btn>
      </v-btn-group>
    </div>
    <div class="appEditors">
