@@ -19,9 +19,6 @@ import 'tinymce/skins/ui/oxide/skin.js';
 import '@/plugins/tiny_de.js';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/help/js/i18n/keynav/en.js';
-import 'tinymce/plugins/help/js/i18n/keynav/de.js';
-import 'tinymce/plugins/help';
 
 /* content UI CSS is required */
 import 'tinymce/skins/ui/oxide/content.js';
@@ -121,7 +118,7 @@ function handlePaste(plugin, args) {
           height: '100%',
           menubar: false,
           statusbar: false,
-          plugins: 'lists charmap help',
+          plugins: 'lists charmap',
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
           formats: settingsStore.tinyFormats,
@@ -141,11 +138,7 @@ function handlePaste(plugin, args) {
           paste_data_images: false,     // don't paste images
           paste_remove_styles_if_webkit: true,  // default
           paste_webkit_styles: 'none',          // default
-          paste_preprocess: handlePaste,
-          help_tabs: [
-            'shortcuts',
-            'keyboardnav'
-          ],
+          paste_preprocess: handlePaste
          }"
     />
   </div>
