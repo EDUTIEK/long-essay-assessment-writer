@@ -29,6 +29,12 @@ function selectResource(resource) {
   }
 }
 
+function handleKey(event) {
+  if (event.keyCode == 27) {
+    closeNavigation();
+  }
+}
+
 function getResourceIcon(resource) {
   switch (resource.type) {
     case "url":
@@ -44,6 +50,7 @@ function getResourceIcon(resource) {
   <v-navigation-drawer id="app-navigation-drawer" elevation="2" width="500" permanent rail expand-on-hover
     @focusin="openNavigation"
     @focusout="closeNavigation"
+    @keydown="handleKey"
 >
     <!--
       Put list items instead of the whole list in the tab sequence
@@ -137,10 +144,4 @@ button {
   background-color: #fafafa;
 }
 
-/* avoid highlight, when selected, see also App.vue */
-/*
-.v-list-item, v-list-group {
-  color: #000000 !important;
-}
-*/
 </style>
