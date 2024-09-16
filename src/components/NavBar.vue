@@ -11,11 +11,11 @@ const taskStore = useTaskStore();
 const settingsStore = useSettingsStore();
 const apiStore = useApiStore();
 
-function openNavigation() {
+function openNavigation(event) {
   document.getElementById('app-navigation-drawer').dispatchEvent(new Event('mouseenter'));
 }
 
-function closeNavigation() {
+function closeNavigation(event) {
   document.getElementById('app-navigation-drawer').dispatchEvent(new Event('mouseleave'));
 }
 
@@ -41,65 +41,77 @@ function getResourceIcon(resource) {
 </script>
 
 <template>
-  <v-navigation-drawer id="app-navigation-drawer" aria-label="Navigationsleiste" elevation="2" width="500" permanent rail expand-on-hover>
-
-    <v-list>
-      <v-list-item v-show="taskStore.hasInstructions" @click="layoutStore.showInstructions(); closeNavigation();"
+  <v-navigation-drawer id="app-navigation-drawer" elevation="2" width="500" permanent rail expand-on-hover
+    @focusin="openNavigation"
+    @focusout="closeNavigation"
+>
+    <!--
+      Put list items instead of the whole list in the tab sequence
+      https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
+    -->
+    <v-list tabindex="-1">
+      <v-list-item aria-role="button" tabindex="0" v-show="taskStore.hasInstructions" @click="layoutStore.showInstructions(); closeNavigation;"
+                    :aria-label="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ', ist ausgewählt' : '')"
                     :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')">
           <template v-slot:prepend>
-            <v-icon :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')"
+            <v-icon aria-role="hidden"
                     :icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
           </template>
       </v-list-item>
 
-      <v-list-item v-show="resourcesStore.hasInstruction" @click="layoutStore.showInstructionsPdf(); closeNavigation();"
+      <v-list-item aria-role="button" tabindex="0" v-show="resourcesStore.hasInstruction" @click="layoutStore.showInstructionsPdf(); closeNavigation;"
+                  :aria-label="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ', ist ausgewählt' : '')"
                   :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')">
         <template v-slot:prepend>
-          <v-icon :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')"
+          <v-icon aria-role="hidden"
                   :icon="layoutStore.isInstructionsPdfVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
         </template>
       </v-list-item>
 
       <v-divider class="border-opacity-75" ></v-divider>
 
-      <v-list-item @click="layoutStore.showEssay(); closeNavigation();"
+      <v-list-item aria-role="button" tabindex="0" @click="layoutStore.showEssay(); closeNavigation;"
+                  :aria-label="'Abgabe-Text' + (layoutStore.isEssayVisible ? ', ist ausgewählt' : '')"
                   :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')">
         <template v-slot:prepend>
-          <v-icon :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')"
+          <v-icon aria-role="hidden"
                   :icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
         </template>
       </v-list-item>
 
-      <v-list-item v-if="settingsStore.hasNotes" @click="layoutStore.showNotes(); closeNavigation();"
+      <v-list-item aria-role="button" tabindex="0" v-if="settingsStore.hasNotes" @click="layoutStore.showNotes(); closeNavigation;"
+                   :aria-label="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ', ist ausgewählt' : '')"
                    :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')">
         <template v-slot:prepend>
-          <v-icon :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')"
+          <v-icon aria-role="hidden"
                   :icon="layoutStore.isNotesVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
         </template>
       </v-list-item>
 
       <v-divider class="border-opacity-75" ></v-divider>
 
-      <v-list-item v-for="resource in resourcesStore.getFileOrUrlResources"
-                   @click="selectResource(resource); closeNavigation();"
+      <v-list-item aria-role="button" tabindex="0" v-for="resource in resourcesStore.getFileOrUrlResources"
+                   @click="selectResource(resource); closeNavigation;"
+                   :aria-label="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ?  ', ist ausgewählt' : '')"
                    :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
                    :key="resource.key">
         <template v-slot:prepend>
-          <v-icon :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
+          <v-icon aria-role="hidden"
                   :icon="getResourceIcon(resource)"></v-icon>
         </template>
       </v-list-item>
-
     </v-list>
 
     <template v-slot:append>
-      <v-list>
+      <v-list tabindex="-1">
         <v-list-item
-          :disabled="apiStore.isAllSent"
+          tabindex="-1"
+          disabled
+          :aria-label="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
           :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
         >
           <template v-slot:prepend>
-            <v-icon :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
+            <v-icon aria-role="hidden"
                     :icon="apiStore.isSending ? 'mdi-cloud-upload' : (apiStore.isAllSent ? 'mdi-cloud-check-outline' : 'mdi-cloud-outline')"></v-icon>
           </template>
         </v-list-item>
@@ -112,6 +124,14 @@ function getResourceIcon(resource) {
 
 <style scoped>
 
+
+button {
+  width: 100%;
+  justify-content: left;
+  text-align: left;
+}
+
+
 .v-list {
   overflow-x: hidden;
   background-color: #fafafa;
@@ -123,6 +143,4 @@ function getResourceIcon(resource) {
   color: #000000 !important;
 }
 */
-
-
 </style>

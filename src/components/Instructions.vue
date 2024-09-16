@@ -56,8 +56,8 @@
   <div id="app-instructions-wrapper">
     <div class="appTextButtons">
       <v-btn-group density="comfortable" variant="outlined" divided>
-        <v-btn title="Aufgabenstellungs-Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomInstructionsOut()"></v-btn>
-        <v-btn title="Aufgabenstellungs-Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
+        <v-btn title="Aufgabenstellung Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomInstructionsOut()"></v-btn>
+        <v-btn title="Aufgabenstellung Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
       </v-btn-group>
     </div>
     <div class="app-instructions-scroll">
