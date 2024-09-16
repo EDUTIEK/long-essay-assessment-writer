@@ -56,7 +56,7 @@
        <v-btn aria-labelledby="app-edit-select-text" size="small"
               value="essay">
          <v-icon icon="mdi-file-edit-outline"></v-icon>
-         <span class="sr-only" id="app-edit-select-text">Abgabe-Text bearbeiten</span>
+         <span class="sr-only" id="app-edit-select-text">Abgabe   Text bearbeiten</span>
          <span aria-hidden="true">Text</span>
        </v-btn>
        <v-btn size="small"
@@ -71,8 +71,8 @@
      </v-btn-toggle>
      <span aria-hidden="true" v-if="settingsStore.hasNotes">&nbsp;</span>
      <v-btn-group density="comfortable" variant="outlined" divided>
-       <v-btn title="Editor-Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomEditorOut()"></v-btn>
-       <v-btn title="Editor-Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomEditorIn()"></v-btn>
+       <v-btn title="Editor Text verkleinern" size="small" icon="mdi-magnify-minus-outline" @click="preferencesStore.zoomEditorOut()"></v-btn>
+       <v-btn title="Editor Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomEditorIn()"></v-btn>
      </v-btn-group>
    </div>
    <div class="appEditors">
