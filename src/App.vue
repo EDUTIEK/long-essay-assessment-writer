@@ -65,14 +65,7 @@ html {
   Focus for Tab navigation
  */
 
-.v-btn:focus::after, .v-btn:focus-visible::after {
-  pointer-events: none;
-  border: 2px solid blue!important;
-  border-radius: inherit;
-  opacity: 100%!important;
-  transition: none!important;
-}
-
+.v-btn:focus::after, .v-btn:focus-visible::after,
 .v-list-item:focus::after, .v-list-item:focus-visible::after {
   pointer-events: none;
   border: 2px solid blue!important;
@@ -94,14 +87,8 @@ html {
   padding: 0 2px!important;
 }
 
-.tox-tbtn {
-  /*
-  font-size: 20px!important;
-  */
-}
-
 .tox-editor-header {
-  /*
+/*
 width: 134%!important;
 transform: scale(0.75)!important;
 transform-origin: 0% 0% 0px!important;
