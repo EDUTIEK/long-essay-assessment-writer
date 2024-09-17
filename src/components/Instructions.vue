@@ -21,6 +21,11 @@
     event.preventDefault();
   }
 
+  function handleBeforeinput(event) {
+    event.preventDefault();
+    return false;
+  }
+
   /**
    * Get an HTML string from the selected text
    * @see https://stackoverflow.com/questions/5083682/get-selected-html-in-browser-via-javascript
@@ -60,14 +65,14 @@
         <v-btn title="Aufgabenstellung Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
       </v-btn-group>
     </div>
-    <div class="app-instructions-scroll">
-      <div
-        class="long-essay-content"
+    <div class="app-instructions-scroll long-essay-content"
+        contenteditable="true"
         :style="'font-size:' + (preferencesStore.instructions_zoom) + 'rem;'"
         v-html="taskStore.instructions"
+        @beforeinput="handleBeforeinput"
         @copy="handleCopy"
-        @cut="handleCut"
-      ></div>
+        @cut="handleCopy"
+      >
     </div>
   </div>
 </template>
