@@ -19,6 +19,7 @@ import 'tinymce/skins/ui/oxide/skin.js';
 import '@/plugins/tiny_de.js';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/wordcount';
 
 /* content UI CSS is required */
 import 'tinymce/skins/ui/oxide/content.js';
@@ -34,7 +35,7 @@ import {useSettingsStore} from "@/store/settings";
 import {usePreferencesStore} from "@/store/preferences";
 import {useClipbardStore} from "@/store/clipboard";
 
-import {onMounted, watch} from 'vue';
+import {onMounted, watch, ref} from 'vue';
 
 const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
@@ -43,12 +44,27 @@ const clipboardStore =useClipbardStore();
 
 const props = defineProps(['noteKey', 'noteLabel']);
 
+const wordCount = ref(0);
+const characterCount = ref(0);
+
 function handleInit() {
   applyZoom();
   applyFormat();
+  updateWordCount();
 }
 watch(() => preferencesStore.editor_zoom, applyZoom);
-watch(() =>settingsStore.contentClass, applyFormat);
+watch(() => settingsStore.contentClass, applyFormat);
+
+function handleChange() {
+  notesStore.updateContent(true);
+  applyZoom();
+  updateWordCount();
+}
+
+function handleKeyUp() {
+  notesStore.updateContent(true);
+  updateWordCount();
+}
 
 function applyZoom() {
   try {
@@ -81,6 +97,20 @@ function applyFormat() {
   }
 }
 
+function updateWordCount() {
+  try {
+    const editor = tinymce.get(props.noteKey);
+    if (editor) {
+      const plugin = editor.plugins.wordcount;
+      wordCount.value = plugin.body.getWordCount();
+      characterCount.value = plugin.body.getCharacterCount();
+    }
+  }
+  catch(e) {
+    // prevent error when tiny is unloaded
+  }
+}
+
 /**
  * Handle copy to the clipboard
  * @param {ClipboardEvent} event
@@ -93,7 +123,6 @@ function handleCopy(event) {
  * Check if paste is allowed (called from tiny plugin)
  */
 function handlePaste(plugin, args) {
-
   if (!clipboardStore.getPasteAllowed(args.content)) {
     args.content='';
     clipboardStore.showWarning();
@@ -105,50 +134,70 @@ function handlePaste(plugin, args) {
 <template>
   <div id="app-note-edit-wrapper">
     <label class="hidden" :for="props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
-    <editor
-      :id="props.noteKey"
-      v-model="notesStore.editNotes[props.noteKey].note_text"
-      @change="applyZoom(); notesStore.updateContent(true)"
-      @keyup="notesStore.updateContent(true)"
-      @copy="handleCopy"
-      @cut="handleCopy"
-      @init="handleInit"
-      api-key="no-api-key"
-      :init="{
-         license_key: 'gpl',
-          language: 'de',
-          height: '100%',
-          menubar: false,
-          statusbar: false,
-          plugins: 'lists charmap',
-          toolbar: settingsStore.tinyToolbar,
-          valid_elements: settingsStore.tinyValidElements,
-          formats: settingsStore.tinyFormats,
-          style_formats: settingsStore.tinyStyles,
-          custom_undo_redo_levels: 10,
-          skin: 'default',
-          content_css: 'default',
-          content_style: settingsStore.tinyContentStyle,
-          browser_spellcheck: settingsStore.allow_spellcheck,
-          highlight_on_focus: true,
-          iframe_aria_text: 'Editor ' + props.noteLabel,
-          paste_as_text: false,         // keep formats when copying between clipboards
-          paste_block_drop: true,       // prevent unfiltered content from drag & drop
-          paste_merge_formats: true,    // default
-          paste_tab_spaces: 4,          // default
-          smart_paste: false,           // don't create hyperlinks automatically
-          paste_data_images: false,     // don't paste images
-          paste_remove_styles_if_webkit: true,  // default
-          paste_webkit_styles: 'none',          // default
-          paste_preprocess: handlePaste
-         }"
-    />
+    <div class="tinyWrapper">
+      <editor
+        :id="props.noteKey"
+        v-model="notesStore.editNotes[props.noteKey].note_text"
+        @change="handleChange"
+        @keyup="handleKeyUp"
+        @copy="handleCopy"
+        @cut="handleCopy"
+        @init="handleInit"
+        api-key="no-api-key"
+        :init="{
+           license_key: 'gpl',
+            language: 'de',
+            height: '100%',
+            menubar: false,
+            statusbar: false,
+            plugins: 'lists charmap wordcount',
+            toolbar: settingsStore.tinyToolbar,
+            valid_elements: settingsStore.tinyValidElements,
+            formats: settingsStore.tinyFormats,
+            style_formats: settingsStore.tinyStyles,
+            custom_undo_redo_levels: 10,
+            skin: 'default',
+            content_css: 'default',
+            content_style: settingsStore.tinyContentStyle,
+            browser_spellcheck: settingsStore.allow_spellcheck,
+            highlight_on_focus: true,
+            iframe_aria_text: 'Editor ' + props.noteLabel,
+            paste_as_text: false,         // keep formats when copying between clipboards
+            paste_block_drop: true,       // prevent unfiltered content from drag & drop
+            paste_merge_formats: true,    // default
+            paste_tab_spaces: 4,          // default
+            smart_paste: false,           // don't create hyperlinks automatically
+            paste_data_images: false,     // don't paste images
+            paste_remove_styles_if_webkit: true,  // default
+            paste_webkit_styles: 'none',          // default
+            paste_preprocess: handlePaste
+           }"
+      />
+    </div>
+    <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
+      <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
+             :text = "preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
+      </v-btn>
+    </div>
   </div>
-
 </template>
 
 <style scoped>
-#app-note-edit-wrapper {
-  height: 100%
-}
+  #app-note-edit-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tinyWrapper {
+    flex-grow: 1;
+  }
+
+  .wordCountWrapper {
+    height: 30px;
+    border: 1px solid #cccccc;
+    border-top: 0;
+    font-size: 16px;
+  }
+
 </style>

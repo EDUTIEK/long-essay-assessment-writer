@@ -59,14 +59,14 @@ export const useSettingsStore = defineStore('settings',{
           switch (state.formatting_options)
           {
             case 'full':
-                  return 'undo redo styles bold italic underline bullist numlist removeformat charmap';
+                  return 'undo redo styles bold italic underline bullist numlist removeformat charmap wordcount';
             case 'medium':
-              return 'undo redo bold italic underline bullist numlistremoveformat charmap';
+              return 'undo redo bold italic underline bullist numlistremoveformat charmap wordcount';
             case 'minimal':
-              return 'undo redo bold italic underline removeformat charmap';
+              return 'undo redo bold italic underline removeformat charmap wordcount';
             case 'none':
             default:
-              return 'undo redo charmap';
+              return 'undo redo charmap wordcount';
           }
         },
 

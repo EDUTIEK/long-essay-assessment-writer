@@ -43,7 +43,7 @@ html {
 }
 
 .hidden {
-  display: none;
+  display: none!important;
 }
 
 /* Content for screen readers only */
@@ -100,8 +100,10 @@ transform-origin: 0% 0% 0px!important;
 }
 
 /* hide the statusbar */
+/*
 .tox-statusbar {
   display: none!important;
 }
+*/
 
 </style>
