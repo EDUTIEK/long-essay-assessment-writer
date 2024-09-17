@@ -35,21 +35,34 @@ import {useSettingsStore} from "@/store/settings";
 import {usePreferencesStore} from "@/store/preferences";
 import {useClipbardStore} from "@/store/clipboard";
 
-import {onMounted, watch} from 'vue';
+import {onMounted, watch, ref} from 'vue';
 
 const essayStore = useEssayStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore =useClipbardStore();
 
+const wordCount = ref(0);
+const characterCount = ref(0);
+
 function handleInit() {
   applyZoom();
   applyFormat();
-  applyWordCount();
+  updateWordCount();
 }
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() => settingsStore.contentClass, applyFormat);
-watch(() => preferencesStore.word_count_enabled, applyWordCount);
+
+function handleChange() {
+  essayStore.updateContent(true);
+  applyZoom();
+  updateWordCount();
+}
+
+function handleKeyUp() {
+  essayStore.updateContent(true);
+  updateWordCount();
+}
 
 function applyZoom() {
   try {
@@ -82,17 +95,17 @@ function applyFormat() {
   }
 }
 
-/**
- * Set the visibility of the word counter
- */
-function applyWordCount() {
-  for (const element of document.getElementsByClassName('tox-statusbar')) {
-    if (preferencesStore.word_count_enabled) {
-      element.classList.remove('hidden');
+function updateWordCount() {
+  try {
+    const editor = tinymce.get('essay');
+    if (editor) {
+      const plugin = editor.plugins.wordcount;
+      wordCount.value = plugin.body.getWordCount();
+      characterCount.value = plugin.body.getCharacterCount();
     }
-    else {
-      element.classList.add('hidden');
-    }
+  }
+  catch(e) {
+    // prevent error when tiny is unloaded
   }
 }
 
@@ -108,7 +121,6 @@ function handleCopy(event) {
  * Check if paste is allowed (called from tiny plugin)
  */
 function handlePaste(plugin, args) {
-
   if (!clipboardStore.getPasteAllowed(args.content)) {
     args.content='';
     clipboardStore.showWarning();
@@ -120,11 +132,12 @@ function handlePaste(plugin, args) {
 <template>
   <div id="app-essay-edit-wrapper">
     <label for="essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
-    <editor
+    <div class="tinyWrapper">
+      <editor
         id="essay"
         v-model="essayStore.currentContent"
-        @change="applyZoom(); essayStore.updateContent(true)"
-        @keyup="essayStore.updateContent(true)"
+        @change="handleChange"
+        @keyup="handleKeyUp"
         @copy="handleCopy"
         @cut="handleCopy"
         @init="handleInit"
@@ -134,10 +147,7 @@ function handlePaste(plugin, args) {
           language: 'de',
           height: '100%',
           menubar: false,
-          statusbar: true,
-          elementpath: false,
-          branding: false,
-          resize: false,
+          statusbar: false,
           plugins: 'lists charmap wordcount',
           toolbar: settingsStore.tinyToolbar,
           valid_elements: settingsStore.tinyValidElements,
@@ -160,13 +170,32 @@ function handlePaste(plugin, args) {
           paste_webkit_styles: 'none',          // default
           paste_preprocess: handlePaste
          }"
-    />
+      />
+    </div>
+    <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
+      <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
+        :text = "preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
+      </v-btn>
+    </div>
   </div>
-
 </template>
 
 <style scoped>
   #app-essay-edit-wrapper {
-    height: 100%
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
+
+  .tinyWrapper {
+    flex-grow: 1;
+  }
+
+  .wordCountWrapper {
+    height: 30px;
+    border: 1px solid #cccccc;
+    border-top: 0;
+    font-size: 16px;
+  }
+
 </style>

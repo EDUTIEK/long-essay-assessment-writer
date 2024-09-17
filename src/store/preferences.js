@@ -21,7 +21,8 @@ export const usePreferencesStore = defineStore('preferences', {
       // saved in storage
       instructions_zoom: 1,                // zoom level of the instructions
       editor_zoom: 1,                      // zoom level of the editors (essay and notes)
-      word_count_enabled: false            // enabling of the word counter
+      word_count_enabled: false,           // enabling of the word counter
+      word_count_characters: false         // word counter show characters
     }
   },
 
@@ -31,7 +32,8 @@ export const usePreferencesStore = defineStore('preferences', {
       return {
         instructions_zoom: state.instructions_zoom,
         editor_zoom: state.editor_zoom,
-        word_count_enabled: state.word_count_enabled
+        word_count_enabled: state.word_count_enabled,
+        word_count_characters: state.word_count_characters
       }
     },
   },
@@ -136,7 +138,11 @@ export const usePreferencesStore = defineStore('preferences', {
     toggleWordCountEnabled() {
       this.word_count_enabled = !this.word_count_enabled;
       this.update();
-    }
+    },
 
+    toggleWordCountCharacters() {
+      this.word_count_characters = !this.word_count_characters;
+      this.update();
+    }
   },
 });
