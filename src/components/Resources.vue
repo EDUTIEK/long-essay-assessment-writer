@@ -1,12 +1,22 @@
 <script setup>
+  import {useLayoutStore} from '@/store/layout';
   import {useResourcesStore} from '@/store/resources';
+  import { nextTick, watch } from 'vue';
 
+  const layoutStore = useLayoutStore();
   const resourcesStore = useResourcesStore();
 
+  async function handleFocusChange() {
+    if (layoutStore.focusTarget == 'left' && layoutStore.isResourcesVisible) {
+      await nextTick();
+      document.getElementById('app-resources').focus();
+    }
+  }
+  watch(() => layoutStore.focusChange, handleFocusChange);
 </script>
 
 <template>
- <div class="resources">
+ <div id="app-resources" tabindex="0" class="resources">
    <template v-for="resource in resourcesStore.resources" :key="resource.key">
      <div v-if="resource.type=='file'" v-show="resourcesStore.isActive(resource)">
        <!--

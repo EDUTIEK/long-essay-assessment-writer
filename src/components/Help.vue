@@ -1,17 +1,17 @@
 <script setup>
 
-import { ref } from 'vue';
+import {useLayoutStore} from "../store/layout";
+const layoutStore = useLayoutStore();
 
-const showHelp = ref(false);
 </script>
 
 <template>
-  <v-btn @click="showHelp=true">
+  <v-btn class="app-header-item" @click="layoutStore.showHelp=true">
     <v-icon left icon="mdi-help"></v-icon>
     Hilfe
   </v-btn>
 
-   <v-dialog v-model="showHelp" max-width="1000">
+   <v-dialog v-model="layoutStore.showHelp" max-width="1000">
       <v-card>
         <v-card-text>
           <h1>Allgemeine Navigation</h1>
@@ -32,8 +32,20 @@ const showHelp = ref(false);
               <td>Shift + Tab</td>
             </tr>
             <tr>
-              <td>Elemente in der Navigationsleiste</td>
-              <td>Pfeil abwärts und aufwärts</td>
+              <td>Header Schaltflächen</td>
+              <td>Alt + 0</td>
+            </tr>
+            <tr>
+              <td>Navigationsleiste Schaltflächen </td>
+              <td>Alt + 1</td>
+            </tr>
+            <tr>
+              <td>Inhalt linke Spalte</td>
+              <td>Alt + 2</td>
+            </tr>
+            <tr>
+              <td>Inhalt rechte Spalte</td>
+              <td>Alt + 3</td>
             </tr>
             </tbody>
 
@@ -147,7 +159,7 @@ const showHelp = ref(false);
 
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="showHelp=false">
+          <v-btn @click="layoutStore.showHelp=false">
             <span>Hilfe schließen</span>
           </v-btn>
         </v-card-actions>

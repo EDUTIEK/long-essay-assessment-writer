@@ -1,12 +1,23 @@
 <script setup>
   import {useTaskStore} from '@/store/task';
+  import { useLayoutStore } from '@/store/layout';
   import {usePreferencesStore} from "@/store/preferences";
   import {useClipbardStore} from "@/store/clipboard";
+  import tinymce from 'tinymce';
+  import { nextTick, watch } from 'vue';
 
   const taskStore = useTaskStore();
+  const layoutStore = useLayoutStore();
   const preferencesStore = usePreferencesStore();
   const clipboardStore =useClipbardStore();
 
+  async function handleFocusChange() {
+    if (layoutStore.focusTarget == 'left' && layoutStore.isInstructionsVisible) {
+      await nextTick();
+      document.getElementById('app-instructions').focus();
+    }
+  }
+  watch(() => layoutStore.focusChange, handleFocusChange);
   /**
    * Handle copy to the clipboard
    * @param {ClipboardEvent} event
@@ -65,7 +76,7 @@
         <v-btn title="Aufgabenstellung Text vergrößern" size="small" icon="mdi-magnify-plus-outline" @click="preferencesStore.zoomInstructionsIn()"></v-btn>
       </v-btn-group>
     </div>
-    <div class="app-instructions-scroll long-essay-content"
+    <div id="app-instructions" class="app-instructions-scroll long-essay-content"
         contenteditable="true"
         :style="'font-size:' + (preferencesStore.instructions_zoom) + 'rem;'"
         v-html="taskStore.instructions"

@@ -34,13 +34,14 @@ import {useNotesStore} from '@/store/notes';
 import {useSettingsStore} from "@/store/settings";
 import {usePreferencesStore} from "@/store/preferences";
 import {useClipbardStore} from "@/store/clipboard";
-
-import {onMounted, watch, ref} from 'vue';
+import {useLayoutStore} from "@/store/layout";
+import { onMounted, watch, ref, nextTick } from 'vue';
 
 const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore =useClipbardStore();
+const layoutStore = useLayoutStore();
 
 const props = defineProps(['noteKey', 'noteLabel']);
 
@@ -55,6 +56,17 @@ function handleInit() {
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() => settingsStore.contentClass, applyFormat);
 
+async function handleFocusChange() {
+  if (layoutStore.focusTarget == 'right' && layoutStore.isNotesSelected) {
+    await nextTick();
+    const editor = tinymce.get('app-note-' + notesStore.activeKey);
+    if (editor) {
+      editor.focus();
+    }
+  }
+}
+watch(() => layoutStore.focusChange, handleFocusChange);
+
 function handleChange() {
   notesStore.updateContent(true);
   applyZoom();
@@ -68,7 +80,7 @@ function handleKeyUp() {
 
 function applyZoom() {
   try {
-    const editor = tinymce.get(props.noteKey);
+    const editor = tinymce.get('app-note-' + props.noteKey);
     if (editor) {
       editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h1'),
@@ -99,7 +111,7 @@ function applyFormat() {
 
 function updateWordCount() {
   try {
-    const editor = tinymce.get(props.noteKey);
+    const editor = tinymce.get('app-note-' + props.noteKey);
     if (editor) {
       const plugin = editor.plugins.wordcount;
       wordCount.value = plugin.body.getWordCount();
@@ -136,9 +148,10 @@ function handlePaste(plugin, args) {
     <label class="hidden" :for="props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
     <div class="tinyWrapper">
       <editor
-        :id="props.noteKey"
+        :id="'app-note-' + props.noteKey"
         v-model="notesStore.editNotes[props.noteKey].note_text"
         @change="handleChange"
+        @keydown="layoutStore.handleKeyDown"
         @keyup="handleKeyUp"
         @copy="handleCopy"
         @cut="handleCopy"

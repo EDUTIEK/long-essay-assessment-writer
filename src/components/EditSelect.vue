@@ -56,7 +56,7 @@
        <v-btn aria-labelledby="app-edit-select-text" size="small"
               value="essay">
          <v-icon icon="mdi-file-edit-outline"></v-icon>
-         <span class="sr-only" id="app-edit-select-text">Abgabe   Text bearbeiten</span>
+         <span class="sr-only" id="app-edit-select-text">Abgabe Text bearbeiten</span>
          <span aria-hidden="true">Text</span>
        </v-btn>
        <v-btn size="small"
@@ -81,6 +81,7 @@
      </v-btn-group>
    </div>
    <div class="appEditors">
+     <!-- Ally: use v-show to keep cursor at position when only one columns is shown and columns are switched -->
      <edit-essay v-show="layoutStore.isEssaySelected" />
      <edit-note
        v-if="settingsStore.notice_boards > 0"

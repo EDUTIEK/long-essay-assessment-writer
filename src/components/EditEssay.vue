@@ -34,13 +34,15 @@ import {useEssayStore} from '@/store/essay';
 import {useSettingsStore} from "@/store/settings";
 import {usePreferencesStore} from "@/store/preferences";
 import {useClipbardStore} from "@/store/clipboard";
+import {useLayoutStore} from "@/store/layout";
 
-import {onMounted, watch, ref} from 'vue';
+import {onMounted, watch, ref, nextTick} from 'vue';
 
 const essayStore = useEssayStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore =useClipbardStore();
+const layoutStore = useLayoutStore();
 
 const wordCount = ref(0);
 const characterCount = ref(0);
@@ -52,6 +54,15 @@ function handleInit() {
 }
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() => settingsStore.contentClass, applyFormat);
+
+async function handleFocusChange() {
+  if (layoutStore.focusTarget == 'right' && layoutStore.isEssayVisible) {
+    await nextTick();
+    const editor = tinymce.get('app-essay');
+    editor.focus();
+  }
+}
+watch(() => layoutStore.focusChange, handleFocusChange);
 
 function handleChange() {
   essayStore.updateContent(true);
@@ -66,7 +77,7 @@ function handleKeyUp() {
 
 function applyZoom() {
   try {
-    const editor = tinymce.get('essay');
+    const editor = tinymce.get('app-essay');
     if (editor) {
       editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h1'),
@@ -97,7 +108,7 @@ function applyFormat() {
 
 function updateWordCount() {
   try {
-    const editor = tinymce.get('essay');
+    const editor = tinymce.get('app-essay');
     if (editor) {
       const plugin = editor.plugins.wordcount;
       wordCount.value = plugin.body.getWordCount();
@@ -134,9 +145,10 @@ function handlePaste(plugin, args) {
     <label for="essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
     <div class="tinyWrapper">
       <editor
-        id="essay"
+        id="app-essay"
         v-model="essayStore.currentContent"
         @change="handleChange"
+        @keydown="layoutStore.handleKeyDown"
         @keyup="handleKeyUp"
         @copy="handleCopy"
         @cut="handleCopy"

@@ -10,6 +10,9 @@
   const resourcesStore = useResourcesStore();
   const clipboardStore = useClipbardStore();
 
+  //Enable keyboard hotkeys
+  document.addEventListener('keydown', layoutStore.handleKeyDown);
+
 </script>
 
 <template>
@@ -41,9 +44,10 @@
           </v-btn-group>
         </div>
         <div class="col-content">
-          <instructions v-if="layoutStore.isInstructionsVisible" />
-          <instructions-pdf v-if="layoutStore.isInstructionsPdfVisible" />
-          <resources v-if="layoutStore.isResourcesVisible" />
+          <!-- Ally: use v-show to keep cursor at position when only one columns is shown and columns are switched -->
+          <instructions v-show="layoutStore.isInstructionsVisible" />
+          <instructions-pdf v-show="layoutStore.isInstructionsPdfVisible" />
+          <resources v-show="layoutStore.isResourcesVisible" />
         </div>
       </section>
       <section aria-label="Rechte Spalte" class="column" :class="{ colExpanded: layoutStore.isRightExpanded, colNormal: !layoutStore.isRightExpanded}" v-show="layoutStore.isRightVisible" >
@@ -58,7 +62,8 @@
             <v-btn size="small" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
                 <span> {{
                     layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
-                      : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
+                        : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
+                          : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
                   }}
                 </span>
               <v-icon icon="mdi-chevron-right"></v-icon>

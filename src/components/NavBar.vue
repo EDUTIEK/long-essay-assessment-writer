@@ -4,12 +4,24 @@ import { useResourcesStore } from "@/store/resources";
 import { useTaskStore } from '@/store/task';
 import { useSettingsStore } from "@/store/settings";
 import { useApiStore } from "@/store/api";
+import { nextTick, watch } from 'vue';
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
 const taskStore = useTaskStore();
 const settingsStore = useSettingsStore();
 const apiStore = useApiStore();
+
+async function handleFocusChange() {
+  if (layoutStore.focusTarget == 'navigation') {
+    await nextTick();
+    for (const element of document.getElementsByClassName('app-navigation-item')) {
+      element.focus();
+      break;
+    }
+  }
+}
+watch(() => layoutStore.focusChange, handleFocusChange);
 
 function openNavigation(event) {
   document.getElementById('app-navigation-drawer').dispatchEvent(new Event('mouseenter'));
@@ -32,6 +44,9 @@ function selectResource(resource) {
 function handleKey(event) {
   if (event.keyCode == 27) {
     closeNavigation();
+  }
+  else {
+    layoutStore.handleKeyDown(event);
   }
 }
 
@@ -57,7 +72,7 @@ function getResourceIcon(resource) {
       https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
     -->
     <v-list tabindex="-1">
-      <v-list-item aria-role="button" tabindex="0" v-show="taskStore.hasInstructions" @click="layoutStore.showInstructions(); closeNavigation;"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="taskStore.hasInstructions" @click="loseNavigation; layoutStore.showInstructions();"
                     :aria-label="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ', ist ausgewählt' : '')"
                     :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')">
           <template v-slot:prepend>
@@ -66,7 +81,7 @@ function getResourceIcon(resource) {
           </template>
       </v-list-item>
 
-      <v-list-item aria-role="button" tabindex="0" v-show="resourcesStore.hasInstruction" @click="layoutStore.showInstructionsPdf(); closeNavigation;"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="resourcesStore.hasInstruction" @click="closeNavigation; layoutStore.showInstructionsPdf();"
                   :aria-label="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ', ist ausgewählt' : '')"
                   :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')">
         <template v-slot:prepend>
@@ -77,7 +92,7 @@ function getResourceIcon(resource) {
 
       <v-divider class="border-opacity-75" ></v-divider>
 
-      <v-list-item aria-role="button" tabindex="0" @click="layoutStore.showEssay(); closeNavigation;"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" @click="closeNavigation; layoutStore.showEssay();"
                   :aria-label="'Abgabe-Text' + (layoutStore.isEssayVisible ? ', ist ausgewählt' : '')"
                   :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')">
         <template v-slot:prepend>
@@ -86,7 +101,7 @@ function getResourceIcon(resource) {
         </template>
       </v-list-item>
 
-      <v-list-item aria-role="button" tabindex="0" v-if="settingsStore.hasNotes" @click="layoutStore.showNotes(); closeNavigation;"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-if="settingsStore.hasNotes" @click="closeNavigation; layoutStore.showNotes();"
                    :aria-label="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ', ist ausgewählt' : '')"
                    :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')">
         <template v-slot:prepend>
@@ -97,8 +112,8 @@ function getResourceIcon(resource) {
 
       <v-divider class="border-opacity-75" ></v-divider>
 
-      <v-list-item aria-role="button" tabindex="0" v-for="resource in resourcesStore.getFileOrUrlResources"
-                   @click="selectResource(resource); closeNavigation;"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-for="resource in resourcesStore.getFileOrUrlResources"
+                   @click="closeNavigation; selectResource(resource);"
                    :aria-label="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ?  ', ist ausgewählt' : '')"
                    :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
                    :key="resource.key">
@@ -143,5 +158,10 @@ button {
   overflow-x: hidden;
   background-color: #fafafa;
 }
+
+.v-list-item {
+  background-color: #fafafa!important;
+}
+
 
 </style>

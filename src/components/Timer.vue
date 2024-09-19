@@ -38,7 +38,7 @@
 
 
 <template>
-  <v-btn @click="layoutStore.toggleTimer()" v-show="!taskStore.writingEndReached">
+  <v-btn class="app-header-item" @click="layoutStore.toggleTimer()" v-show="!taskStore.writingEndReached">
     <v-icon left icon="mdi-clock-outline"></v-icon>
     <span v-show=layoutStore.showTimer>{{ formatTimespan(taskStore.remaining_time) }}</span>
     <span v-show=!layoutStore.showTimer>Restzeit</span>

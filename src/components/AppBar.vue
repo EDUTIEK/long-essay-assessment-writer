@@ -11,11 +11,25 @@ import {useApiStore} from '@/store/api';
 import {useTaskStore} from "../store/task";
 import {useAlertStore} from '@/store/alerts';
 import {useEssayStore} from '@/store/essay';
+import { useLayoutStore } from '@/store/layout';
+import { nextTick, watch } from 'vue';
 
 const apiStore = useApiStore();
 const taskStore = useTaskStore();
 const alertStore = useAlertStore();
 const essayStore = useEssayStore();
+const layoutStore = useLayoutStore();
+
+async function handleFocusChange() {
+  if (layoutStore.focusTarget == 'header') {
+    await nextTick();
+    for (const element of document.getElementsByClassName('app-header-item')) {
+      element.focus();
+      break;
+    }
+  }
+}
+watch(() => layoutStore.focusChange, handleFocusChange);
 
 function getTitle() {
   return (taskStore.writer_name == null ? '' : taskStore.writer_name + ', ') + (taskStore.title ?? '');
@@ -53,12 +67,12 @@ async function openReview() {
     <alerts v-if="alertStore.hasAlerts"></alerts>
     <timer v-if="taskStore.hasWritingEnd"></timer>
 
-    <v-btn v-show="!apiStore.review" @click="closeWriter()">
+    <v-btn class="app-header-item" v-show="!apiStore.review" @click="closeWriter()">
       <v-icon left icon="mdi-pause"></v-icon>
       <span>Unterbrechen</span>
     </v-btn>
 
-    <v-btn v-show="!apiStore.review" @click="openReview">
+    <v-btn class="app-header-item" v-show="!apiStore.review" @click="openReview">
       <v-icon left icon="mdi-eye"></v-icon>
       <span>Vorschau zur Abgabe </span>
     </v-btn>

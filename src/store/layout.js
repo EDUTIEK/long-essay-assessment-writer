@@ -19,7 +19,12 @@ export const useLayoutStore = defineStore('layout',{
             expandedColumn: 'none',         // left|right|none
             leftContent: 'instructions',    // instructions|instructionsPdf|resources
             rightContent: 'essay',          // essay|notes
-            showTimer: false
+            showTimer: false,
+            showHelp: false,
+
+            // not saved in storage
+            focusTarget: '',                // target for setting the focus (header|navigation|left|right)
+            focusChange: 0                  // indicator to set the focus to the target
         }
     },
 
@@ -106,32 +111,32 @@ export const useLayoutStore = defineStore('layout',{
         },
 
         showInstructions() {
-            this.setLeftVisible();
             this.leftContent = 'instructions';
+            this.setLeftVisible();
             this.saveToStorage();
         },
 
         showInstructionsPdf() {
-          this.setLeftVisible();
           this.leftContent = 'instructionsPdf';
+          this.setLeftVisible();
           this.saveToStorage();
         },
 
         showResources() {
-            this.setLeftVisible();
             this.leftContent = 'resources';
+            this.setLeftVisible();
             this.saveToStorage();
         },
 
         showEssay() {
-            this.setRightVisible();
             this.rightContent = 'essay';
+            this.setRightVisible();
             this.saveToStorage();
         },
 
         showNotes() {
-            this.setRightVisible();
             this.rightContent = 'notes';
+            this.setRightVisible();
             this.saveToStorage();
         },
 
@@ -140,6 +145,7 @@ export const useLayoutStore = defineStore('layout',{
                 this.expandedColumn = 'left';
                 this.saveToStorage();
             }
+            this.setFocusChange('left');
         },
 
         setRightVisible() {
@@ -147,6 +153,7 @@ export const useLayoutStore = defineStore('layout',{
                 this.expandedColumn = 'right';
                 this.saveToStorage();
             }
+            this.setFocusChange('right');
         },
 
         setLeftExpanded(expanded) {
@@ -159,9 +166,34 @@ export const useLayoutStore = defineStore('layout',{
             this.saveToStorage();
         },
 
+        setFocusChange(target) {
+            this.focusTarget = target;
+            this.focusChange = Date.now();
+        },
+
         toggleTimer() {
             this.showTimer = !this.showTimer;
             this.saveToStorage();
+        },
+
+        handleKeyDown(event) {
+            console.log(event);
+          if (event.altKey) {
+            switch (event.key) {
+              case '0':
+                  this.setFocusChange('header');
+                  break;
+              case '1':
+                 this.setFocusChange('navigation');
+                 break;
+              case '2':
+                this.setLeftVisible();
+                break;
+              case '3':
+                this.setRightVisible();
+                break;
+            }
+          }
         }
     }
 });
