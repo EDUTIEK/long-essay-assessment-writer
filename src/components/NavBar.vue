@@ -72,9 +72,10 @@ function getResourceIcon(resource) {
       https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
     -->
     <v-list tabindex="-1">
-      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="taskStore.hasInstructions" @click="loseNavigation; layoutStore.showInstructions();"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="taskStore.hasInstructions" @click="closeNavigation; layoutStore.showInstructions();"
                     :aria-label="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ', ist ausgewählt' : '')"
-                    :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')">
+                    :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')"
+                    :ripple="false">
           <template v-slot:prepend>
             <v-icon aria-role="hidden"
                     :icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
@@ -83,7 +84,8 @@ function getResourceIcon(resource) {
 
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="resourcesStore.hasInstruction" @click="closeNavigation; layoutStore.showInstructionsPdf();"
                   :aria-label="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ', ist ausgewählt' : '')"
-                  :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')">
+                  :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')"
+                   :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
                   :icon="layoutStore.isInstructionsPdfVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
@@ -94,7 +96,8 @@ function getResourceIcon(resource) {
 
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" @click="closeNavigation; layoutStore.showEssay();"
                   :aria-label="'Abgabe-Text' + (layoutStore.isEssayVisible ? ', ist ausgewählt' : '')"
-                  :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')">
+                  :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')"
+                  :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
                   :icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
@@ -103,7 +106,8 @@ function getResourceIcon(resource) {
 
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-if="settingsStore.hasNotes" @click="closeNavigation; layoutStore.showNotes();"
                    :aria-label="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ', ist ausgewählt' : '')"
-                   :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')">
+                   :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')"
+                   :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
                   :icon="layoutStore.isNotesVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
@@ -116,7 +120,8 @@ function getResourceIcon(resource) {
                    @click="closeNavigation; selectResource(resource);"
                    :aria-label="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ?  ', ist ausgewählt' : '')"
                    :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
-                   :key="resource.key">
+                   :key="resource.key"
+                   :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
                   :icon="getResourceIcon(resource)"></v-icon>
