@@ -145,7 +145,7 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-note-edit-wrapper">
-    <label class="hidden" :for="props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
+    <label class="hidden" :for="'app-note-' + props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
     <div class="tinyWrapper">
       <editor
         :id="'app-note-' + props.noteKey"

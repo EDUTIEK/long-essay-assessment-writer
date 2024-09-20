@@ -142,7 +142,7 @@ function handlePaste(plugin, args) {
 
 <template>
   <div id="app-essay-edit-wrapper">
-    <label for="essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
+    <label for="app-essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
     <div class="tinyWrapper">
       <editor
         id="app-essay"
