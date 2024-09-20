@@ -37,15 +37,15 @@ const layoutStore = useLayoutStore();
             </tr>
             <tr>
               <td>Navigationsleiste Schaltflächen </td>
-              <td>Alt + 1</td>
+              <td>Alt + #</td>
             </tr>
             <tr>
               <td>Inhalt linke Spalte</td>
-              <td>Alt + 2</td>
+              <td>Alt + 1</td>
             </tr>
             <tr>
               <td>Inhalt rechte Spalte</td>
-              <td>Alt + 3</td>
+              <td>Alt + 2</td>
             </tr>
             </tbody>
 

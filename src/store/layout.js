@@ -184,13 +184,13 @@ export const useLayoutStore = defineStore('layout',{
                   this.setFocusChange('header');
                   break;
               case '1':
-                 this.setFocusChange('navigation');
-                 break;
-              case '2':
                 this.setLeftVisible();
                 break;
-              case '3':
+              case '2':
                 this.setRightVisible();
+                break;
+              case '#':
+                this.setFocusChange('navigation');
                 break;
             }
           }
