@@ -15,6 +15,8 @@ export const useAlertStore = defineStore('alerts',{
             // saved in storage
             keys: [],                   // list of string keys
             alerts: [],                 // list of alert objects
+
+            // not saved in storage
             activeKey: '',              // key of the active alert
             showAllAlerts: false
         }
@@ -68,16 +70,12 @@ export const useAlertStore = defineStore('alerts',{
             try {
                 const keys = await storage.getItem('alertKeys');
                 if (keys) {
-                    this.keys =  JSON.parse(keys);
+                    this.keys = JSON.parse(keys);
                 }
-                this.activeKey = await storage.getItem('activeKey') ?? '';
                 this.alerts = [];
-
-                let index = 0;
-                while (index < this.alerts.length) {
-                    let alert = await storage.getItem(this.keys[index]);
-                    this.alerts.push(alert);
-                    index++;
+                for (const key of this.keys) {
+                    let alert = await storage.getItem(key);
+                    this.alerts.unshift(alert);     // show alerts in reverse order
                 }
 
             } catch (err) {
@@ -85,31 +83,26 @@ export const useAlertStore = defineStore('alerts',{
             }
         },
 
-        async loadFromData(data) {
-
+        async loadFromData(data, show_new = false) {
             try {
                 await storage.clear();
 
                 let keys = [];
                 let alerts = [];
 
-                let index = 0;
-                while (index < data.length) {
-                    let alert = data[index];
-                    if (typeof(this.getAlert(alert.key)) == 'undefined') {
+                for (const alert of data) {
+                    if (show_new && !this.keys.includes(alert.key)) {
                         this.activeKey = alert.key;
                     }
-                    alerts.push(alert);
+                    alerts.unshift(alert);          // show alerts in reverse order
                     keys.push(alert.key);
                     await storage.setItem(alert.key, alert);
-                    index++;
                 }
 
                 this.keys = keys;
                 this.alerts = alerts;
 
                 await storage.setItem('alertKeys', JSON.stringify(this.keys));
-                await storage.setItem('activeKey', this.activeKey);
             }
             catch (err) {
                 console.log(err);

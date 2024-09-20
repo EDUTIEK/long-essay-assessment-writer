@@ -271,6 +271,7 @@ export const useApiStore = defineStore('api', {
             const settingsStore = useSettingsStore();
             const preferencesStore = usePreferencesStore();
             const taskStore = useTaskStore();
+            const alertStore = useAlertStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
             const notesStore = useNotesStore();
@@ -280,6 +281,7 @@ export const useApiStore = defineStore('api', {
             await settingsStore.loadFromStorage();
             await preferencesStore.loadFromStorage();
             await taskStore.loadFromStorage();
+            await alertStore.loadFromStorage();
             await resourcesStore.loadFromStorage();
             await essayStore.loadFromStorage();
             await notesStore.loadFromStorage();
@@ -317,6 +319,7 @@ export const useApiStore = defineStore('api', {
             const settingsStore = useSettingsStore();
             const preferencesStore = usePreferencesStore();
             const taskStore = useTaskStore();
+            const alertStore = useAlertStore();
             const resourcesStore = useResourcesStore();
             const essayStore = useEssayStore();
             const notesStore = useNotesStore();
@@ -326,6 +329,7 @@ export const useApiStore = defineStore('api', {
             await settingsStore.loadFromData(response.data.settings);
             await preferencesStore.loadFromData(response.data.preferences);
             await taskStore.loadFromData(response.data.task);
+            await alertStore.loadFromData(response.data.alerts, false);
             await resourcesStore.loadFromData(response.data.resources);
             await essayStore.loadFromData(response.data.essay);
             await notesStore.loadFromData(response.data.notes);
@@ -365,7 +369,7 @@ export const useApiStore = defineStore('api', {
                 const settingsStore = useSettingsStore();
                 const notesStore = useNotesStore();
                 await taskStore.loadFromData(response.data.task);
-                await alertStore.loadFromData(response.data.alerts);
+                await alertStore.loadFromData(response.data.alerts, true);
                 await settingsStore.loadFromData(response.data.settings);
                 await notesStore.prepareNotes(settingsStore.notice_boards);
 

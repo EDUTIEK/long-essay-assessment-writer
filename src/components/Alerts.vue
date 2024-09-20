@@ -10,10 +10,10 @@ const alertStore = useAlertStore();
     <span v-show="alertStore.countAlerts > 1">{{ alertStore.countAlerts }} Nachrichten</span>
   </v-btn>
 
-   <v-dialog persistent v-model="alertStore.hasActiveAlert">
+   <v-dialog persistent v-model="alertStore.hasActiveAlert" max-width="1000">
       <v-card>
         <v-card-title>
-          Nachricht der Aufsicht:
+          Nachricht der Aufsicht
         </v-card-title>
         <v-card-text>
           <p>{{alertStore.activeMessage}}</p>
@@ -27,17 +27,16 @@ const alertStore = useAlertStore();
       </v-card>
     </v-dialog>
 
-  <v-dialog persistent v-model="alertStore.showAllAlerts">
+  <v-dialog v-model="alertStore.showAllAlerts" max-width="1000">
     <v-card>
       <v-card-title>
-        Nachrichten der Aufsicht:
+        Nachrichten der Aufsicht
       </v-card-title>
       <v-card-text>
-        <template v-for="alert in alertStore.alerts" v-bind:key="alert.key">
-          <p><strong>{{ alertStore.formatTimestamp(alert.time) }}</strong></p>
-          <p>{{ alert.message }}</p>
-          <br>
-        </template>
+        <v-list-item v-for="alert in alertStore.alerts" v-bind:key="alert.key"
+          :title="alertStore.formatTimestamp(alert.time)"
+          :subtitle="alert.message">
+        </v-list-item>
       </v-card-text>
       <v-card-actions>
         <v-btn @click="alertStore.hideAlert()">

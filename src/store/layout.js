@@ -177,7 +177,6 @@ export const useLayoutStore = defineStore('layout',{
         },
 
         handleKeyDown(event) {
-            console.log(event);
           if (event.altKey) {
             switch (event.key) {
               case '0':
