@@ -3,13 +3,12 @@
 /**
  * Main Application
  */
-import { watch } from 'vue';
 import AppBar from "@/components/AppBar.vue";
 import NavBar from "@/components/NavBar.vue";
 import MainContent from "@/components/MainContent.vue";
 import StartupContent from "@/components/StartupContent.vue";
 import ReviewContent from "@/components/ReviewContent.vue";
-import {useApiStore} from '@/store/api';
+import { useApiStore } from '@/store/api';
 
 const apiStore = useApiStore();
 apiStore.init();
@@ -17,13 +16,13 @@ apiStore.init();
 </script>
 
 <template>
-    <v-app fill-height>
-      <startup-content v-if="!apiStore.initialized" />
-      <app-bar v-if="apiStore.initialized"/>
-      <nav-bar v-if="apiStore.initialized && !apiStore.review"/>
-      <main-content v-if="apiStore.initialized && !apiStore.review"/>
-      <review-content v-if="apiStore.initialized && apiStore.review"/>
-    </v-app>
+  <v-app fill-height>
+    <startup-content v-if="!apiStore.initialized"/>
+    <app-bar v-if="apiStore.initialized"/>
+    <nav-bar v-if="apiStore.initialized && !apiStore.review"/>
+    <main-content v-if="apiStore.initialized && !apiStore.review"/>
+    <review-content v-if="apiStore.initialized && apiStore.review"/>
+  </v-app>
 </template>
 
 <style>
@@ -43,7 +42,7 @@ html {
 }
 
 .hidden {
-  display: none!important;
+  display: none !important;
 }
 
 /* Content for screen readers only */
@@ -68,10 +67,10 @@ html {
 .v-btn:focus::after, .v-btn:focus-visible::after,
 .v-list-item:focus::after, .v-list-item:focus-visible::after {
   pointer-events: none;
-  border: 2px solid blue!important;
+  border: 2px solid blue !important;
   border-radius: inherit;
-  opacity: 100%!important;
-  transition: none!important;
+  opacity: 100% !important;
+  transition: none !important;
 }
 
 
@@ -79,24 +78,24 @@ html {
  * Tiny styles must be global
  */
 .tox-tinymce {
-  border: 1px solid #cccccc!important;
-  border-radius: 0!important;
+  border: 1px solid #cccccc !important;
+  border-radius: 0 !important;
 }
 
 .tox-toolbar__group {
-  padding: 0 2px!important;
+  padding: 0 2px !important;
 }
 
 .tox-editor-header {
-/*
-width: 134%!important;
-transform: scale(0.75)!important;
-transform-origin: 0% 0% 0px!important;
-*/
+  /*
+  width: 134%!important;
+  transform: scale(0.75)!important;
+  transform-origin: 0% 0% 0px!important;
+  */
 
-  box-shadow: none!important;
-  border-bottom: 1px solid #cccccc!important;
-  margin-bottom: 0!important
+  box-shadow: none !important;
+  border-bottom: 1px solid #cccccc !important;
+  margin-bottom: 0 !important
 }
 
 /* hide the statusbar */

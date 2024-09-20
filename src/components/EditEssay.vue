@@ -30,18 +30,18 @@ import 'tinymce/skins/content/default/content.js';
 // Import tiny vue integration
 import Editor from '@tinymce/tinymce-vue'
 
-import {useEssayStore} from '@/store/essay';
-import {useSettingsStore} from "@/store/settings";
-import {usePreferencesStore} from "@/store/preferences";
-import {useClipbardStore} from "@/store/clipboard";
-import {useLayoutStore} from "@/store/layout";
+import { useEssayStore } from '@/store/essay';
+import { useSettingsStore } from "@/store/settings";
+import { usePreferencesStore } from "@/store/preferences";
+import { useClipbardStore } from "@/store/clipboard";
+import { useLayoutStore } from "@/store/layout";
 
-import {onMounted, watch, ref, nextTick} from 'vue';
+import { nextTick, ref, watch } from 'vue';
 
 const essayStore = useEssayStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
-const clipboardStore =useClipbardStore();
+const clipboardStore = useClipbardStore();
 const layoutStore = useLayoutStore();
 
 const wordCount = ref(0);
@@ -52,6 +52,7 @@ function handleInit() {
   applyFormat();
   updateWordCount();
 }
+
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() => settingsStore.contentClass, applyFormat);
 
@@ -62,6 +63,7 @@ async function handleFocusChange() {
     editor.focus();
   }
 }
+
 watch(() => layoutStore.focusChange, handleFocusChange);
 
 function handleChange() {
@@ -81,18 +83,18 @@ function applyZoom() {
     if (editor) {
       editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h1'),
-        'font-size',
-        (preferencesStore.editor_zoom * settingsStore.tinyH1Size) + 'rem');
+          'font-size',
+          (preferencesStore.editor_zoom * settingsStore.tinyH1Size) + 'rem');
       editor.dom.setStyle(editor.dom.select('h2'),
-        'font-size',
-        (preferencesStore.editor_zoom * settingsStore.tinyH2Size) + 'rem');
+          'font-size',
+          (preferencesStore.editor_zoom * settingsStore.tinyH2Size) + 'rem');
       editor.dom.setStyle(editor.dom.select('h3'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h4'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h5'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h6'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
     }
   }
-  catch(e) {
+  catch (e) {
     // prevent error when tiny is unloaded
   }
 }
@@ -115,7 +117,7 @@ function updateWordCount() {
       characterCount.value = plugin.body.getCharacterCount();
     }
   }
-  catch(e) {
+  catch (e) {
     // prevent error when tiny is unloaded
   }
 }
@@ -133,7 +135,7 @@ function handleCopy(event) {
  */
 function handlePaste(plugin, args) {
   if (!clipboardStore.getPasteAllowed(args.content)) {
-    args.content='';
+    args.content = '';
     clipboardStore.showWarning();
   }
 }
@@ -145,16 +147,16 @@ function handlePaste(plugin, args) {
     <label for="app-essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
     <div class="tinyWrapper">
       <editor
-        id="app-essay"
-        v-model="essayStore.currentContent"
-        @change="handleChange"
-        @keydown="layoutStore.handleKeyDown"
-        @keyup="handleKeyUp"
-        @copy="handleCopy"
-        @cut="handleCopy"
-        @init="handleInit"
-        api-key="no-api-key"
-        :init="{
+          id="app-essay"
+          v-model="essayStore.currentContent"
+          @change="handleChange"
+          @keydown="layoutStore.handleKeyDown"
+          @keyup="handleKeyUp"
+          @copy="handleCopy"
+          @cut="handleCopy"
+          @init="handleInit"
+          api-key="no-api-key"
+          :init="{
           license_key: 'gpl',
           language: 'de',
           height: '100%',
@@ -186,28 +188,28 @@ function handlePaste(plugin, args) {
     </div>
     <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
       <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
-        :text = "preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
+             :text="preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
       </v-btn>
     </div>
   </div>
 </template>
 
 <style scoped>
-  #app-essay-edit-wrapper {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+#app-essay-edit-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .tinyWrapper {
-    flex-grow: 1;
-  }
+.tinyWrapper {
+  flex-grow: 1;
+}
 
-  .wordCountWrapper {
-    height: 30px;
-    border: 1px solid #cccccc;
-    border-top: 0;
-    font-size: 16px;
-  }
+.wordCountWrapper {
+  height: 30px;
+  border: 1px solid #cccccc;
+  border-top: 0;
+  font-size: 16px;
+}
 
 </style>

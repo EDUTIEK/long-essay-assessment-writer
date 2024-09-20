@@ -1,29 +1,33 @@
 <script setup>
-  import Instructions from "@/components/Instructions.vue";
-  import InstructionsPdf from '@/components/InstructionsPdf.vue';
-  import Resources from "@/components/Resources.vue";
-  import EditSelect from "@/components/EditSelect.vue";
-  import {useLayoutStore} from "../store/layout";
-  import {useResourcesStore} from "../store/resources";
-  import {useClipbardStore} from "@/store/clipboard";
-  const layoutStore = useLayoutStore();
-  const resourcesStore = useResourcesStore();
-  const clipboardStore = useClipbardStore();
+import Instructions from "@/components/Instructions.vue";
+import InstructionsPdf from '@/components/InstructionsPdf.vue';
+import Resources from "@/components/Resources.vue";
+import EditSelect from "@/components/EditSelect.vue";
+import { useLayoutStore } from "../store/layout";
+import { useResourcesStore } from "../store/resources";
+import { useClipbardStore } from "@/store/clipboard";
 
-  //Enable keyboard hotkeys
-  document.addEventListener('keydown', layoutStore.handleKeyDown);
+const layoutStore = useLayoutStore();
+const resourcesStore = useResourcesStore();
+const clipboardStore = useClipbardStore();
+
+//Enable keyboard hotkeys
+document.addEventListener('keydown', layoutStore.handleKeyDown);
 
 </script>
 
 <template>
   <v-main fill-height>
     <div id="app-main-container">
-      <section aria-label="Linke Spalte" class="column" :class="{ colExpanded: layoutStore.isLeftExpanded, colNormal: !layoutStore.isLeftExpanded}" v-show="layoutStore.isLeftVisible">
+      <section aria-label="Linke Spalte" class="column"
+               :class="{ colExpanded: layoutStore.isLeftExpanded, colNormal: !layoutStore.isLeftExpanded}"
+               v-show="layoutStore.isLeftVisible">
         <div class="col-header">
           <h1 class="headline">{{
               layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
-                : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
-                    : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''}}
+                  : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
+                      : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
+            }}
           </h1>
           <v-btn-group density="comfortable">
             <!-- expand right column -->
@@ -31,12 +35,13 @@
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>{{
                   layoutStore.isEssaySelected ? 'Abgabe-Text'
-                    : layoutStore.isNotesSelected ? 'Notizen' : ''
+                      : layoutStore.isNotesSelected ? 'Notizen' : ''
                 }}
                 </span>
             </v-btn>
             <!-- expand left column -->
-            <v-btn aria-labelledby="app-expand-left-column" size="small" @click="layoutStore.setLeftExpanded(true)" v-show="!layoutStore.isLeftExpanded">
+            <v-btn aria-labelledby="app-expand-left-column" size="small" @click="layoutStore.setLeftExpanded(true)"
+                   v-show="!layoutStore.isLeftExpanded">
               <span aria-hidden="true">Erweitern</span>
               <span id="app-expand-left-column" class="sr-only">Linke Spalte erweitern</span>
               <v-icon icon="mdi-chevron-right"></v-icon>
@@ -45,16 +50,18 @@
         </div>
         <div class="col-content">
           <!-- Ally: use v-show to keep cursor at position when only one columns is shown and columns are switched -->
-          <instructions v-show="layoutStore.isInstructionsVisible" />
-          <instructions-pdf v-show="layoutStore.isInstructionsPdfVisible" />
-          <resources v-show="layoutStore.isResourcesVisible" />
+          <instructions v-show="layoutStore.isInstructionsVisible"/>
+          <instructions-pdf v-show="layoutStore.isInstructionsPdfVisible"/>
+          <resources v-show="layoutStore.isResourcesVisible"/>
         </div>
       </section>
-      <section aria-label="Rechte Spalte" class="column" :class="{ colExpanded: layoutStore.isRightExpanded, colNormal: !layoutStore.isRightExpanded}" v-show="layoutStore.isRightVisible" >
+      <section aria-label="Rechte Spalte" class="column"
+               :class="{ colExpanded: layoutStore.isRightExpanded, colNormal: !layoutStore.isRightExpanded}"
+               v-show="layoutStore.isRightVisible">
         <div class="col-header">
           <h1 class="headline">{{
-            layoutStore.isEssayVisible ? 'Abgabe-Text'
-              : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : ''
+              layoutStore.isEssayVisible ? 'Abgabe-Text'
+                  : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : ''
             }}
           </h1>
           <v-btn-group density="comfortable">
@@ -63,13 +70,14 @@
                 <span> {{
                     layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
                         : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
-                          : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
+                            : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
                   }}
                 </span>
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
             <!-- expand right column -->
-            <v-btn aria-labelledby="app-expand-right-column" size="small" @click="layoutStore.setRightExpanded(true)" v-show="!layoutStore.isRightExpanded">
+            <v-btn aria-labelledby="app-expand-right-column" size="small" @click="layoutStore.setRightExpanded(true)"
+                   v-show="!layoutStore.isRightExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span aria-hidden="true">Erweitern</span>
               <span id="app-expand-right-column" class="sr-only">Rechte Spalte erweitern</span>
@@ -113,7 +121,7 @@
 }
 
 .column {
-  height:100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -121,14 +129,14 @@
 .col-header {
   height: 40px;
   width: 100%;
-  padding:10px;
+  padding: 10px;
 }
 
 .col-content {
   flex-grow: 1;
   background-color: white;
   width: 100%;
-  padding:10px;
+  padding: 10px;
   overflow-y: hidden;
 }
 

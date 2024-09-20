@@ -7,10 +7,10 @@ import Timer from "@/components/Timer.vue";
 import Alerts from "@/components/Alerts.vue";
 import Help from "@/components/Help.vue";
 
-import {useApiStore} from '@/store/api';
-import {useTaskStore} from "../store/task";
-import {useAlertStore} from '@/store/alerts';
-import {useEssayStore} from '@/store/essay';
+import { useApiStore } from '@/store/api';
+import { useTaskStore } from "../store/task";
+import { useAlertStore } from '@/store/alerts';
+import { useEssayStore } from '@/store/essay';
 import { useLayoutStore } from '@/store/layout';
 import { nextTick, watch } from 'vue';
 
@@ -29,6 +29,7 @@ async function handleFocusChange() {
     }
   }
 }
+
 watch(() => layoutStore.focusChange, handleFocusChange);
 
 function getTitle() {
@@ -43,9 +44,8 @@ async function closeWriter() {
   await essayStore.updateContent(false, true);
   await sleep(500);
   if (essayStore.openSendings > 0) {
-    apiStore.review=true;
-  }
-  else {
+    apiStore.review = true;
+  } else {
     window.location = apiStore.returnUrl;
   }
 }
@@ -53,14 +53,14 @@ async function closeWriter() {
 async function openReview() {
   await essayStore.updateContent(false, true);
   await sleep(500);
-  apiStore.review=true;
+  apiStore.review = true;
 }
 
 </script>
 
 <template>
-  <v-app-bar elevation="1" color="white" density="compact" >
-    <v-app-bar-title>{{getTitle()}}</v-app-bar-title>
+  <v-app-bar elevation="1" color="white" density="compact">
+    <v-app-bar-title>{{ getTitle() }}</v-app-bar-title>
     <v-spacer></v-spacer>
 
     <help></help>

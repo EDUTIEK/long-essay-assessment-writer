@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import {useSettingsStore} from "@/store/settings"
+import { useSettingsStore } from "@/store/settings"
 
 function normalize(html) {
   const temp = document.createElement('div');

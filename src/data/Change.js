@@ -1,4 +1,3 @@
-
 /**
  * Notion of a change that has been sent to the backend
  */

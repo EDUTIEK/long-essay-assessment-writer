@@ -21,6 +21,7 @@ async function handleFocusChange() {
     }
   }
 }
+
 watch(() => layoutStore.focusChange, handleFocusChange);
 
 function openNavigation(event) {
@@ -34,8 +35,7 @@ function closeNavigation(event) {
 function selectResource(resource) {
   if (resource.type == 'url') {
     window.open(resource.source, 'long-essay-writer-resource-' + resource.key)
-  }
-  else {
+  } else {
     resourcesStore.selectResource(resource);
     layoutStore.showResources();
   }
@@ -44,8 +44,7 @@ function selectResource(resource) {
 function handleKey(event) {
   if (event.keyCode == 27) {
     closeNavigation();
-  }
-  else {
+  } else {
     layoutStore.handleKeyDown(event);
   }
 }
@@ -63,28 +62,30 @@ function getResourceIcon(resource) {
 
 <template>
   <v-navigation-drawer id="app-navigation-drawer" elevation="2" width="500" permanent rail expand-on-hover
-    @focusin="openNavigation"
-    @focusout="closeNavigation"
-    @keydown="handleKey"
->
+                       @focusin="openNavigation"
+                       @focusout="closeNavigation"
+                       @keydown="handleKey"
+  >
     <!--
       Put list items instead of the whole list in the tab sequence
       https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
     -->
     <v-list tabindex="-1">
-      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="taskStore.hasInstructions" @click="closeNavigation; layoutStore.showInstructions();"
-                    :aria-label="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ', ist ausgewählt' : '')"
-                    :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')"
-                    :ripple="false">
-          <template v-slot:prepend>
-            <v-icon aria-role="hidden"
-                    :icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
-          </template>
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="taskStore.hasInstructions"
+                   @click="closeNavigation; layoutStore.showInstructions();"
+                   :aria-label="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ', ist ausgewählt' : '')"
+                   :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')"
+                   :ripple="false">
+        <template v-slot:prepend>
+          <v-icon aria-role="hidden"
+                  :icon="layoutStore.isInstructionsVisible ? 'mdi-text-box': 'mdi-text-box-outline'"></v-icon>
+        </template>
       </v-list-item>
 
-      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="resourcesStore.hasInstruction" @click="closeNavigation; layoutStore.showInstructionsPdf();"
-                  :aria-label="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ', ist ausgewählt' : '')"
-                  :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-show="resourcesStore.hasInstruction"
+                   @click="closeNavigation; layoutStore.showInstructionsPdf();"
+                   :aria-label="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ', ist ausgewählt' : '')"
+                   :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
@@ -92,19 +93,21 @@ function getResourceIcon(resource) {
         </template>
       </v-list-item>
 
-      <v-divider class="border-opacity-75" ></v-divider>
+      <v-divider class="border-opacity-75"></v-divider>
 
-      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" @click="closeNavigation; layoutStore.showEssay();"
-                  :aria-label="'Abgabe-Text' + (layoutStore.isEssayVisible ? ', ist ausgewählt' : '')"
-                  :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')"
-                  :ripple="false">
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
+                   @click="closeNavigation; layoutStore.showEssay();"
+                   :aria-label="'Abgabe-Text' + (layoutStore.isEssayVisible ? ', ist ausgewählt' : '')"
+                   :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')"
+                   :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
                   :icon="layoutStore.isEssayVisible ? 'mdi-file-edit': 'mdi-file-edit-outline'"></v-icon>
         </template>
       </v-list-item>
 
-      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-if="settingsStore.hasNotes" @click="closeNavigation; layoutStore.showNotes();"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-if="settingsStore.hasNotes"
+                   @click="closeNavigation; layoutStore.showNotes();"
                    :aria-label="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ', ist ausgewählt' : '')"
                    :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')"
                    :ripple="false">
@@ -114,9 +117,10 @@ function getResourceIcon(resource) {
         </template>
       </v-list-item>
 
-      <v-divider class="border-opacity-75" ></v-divider>
+      <v-divider class="border-opacity-75"></v-divider>
 
-      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-for="resource in resourcesStore.getFileOrUrlResources"
+      <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
+                   v-for="resource in resourcesStore.getFileOrUrlResources"
                    @click="closeNavigation; selectResource(resource);"
                    :aria-label="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ?  ', ist ausgewählt' : '')"
                    :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
@@ -132,10 +136,10 @@ function getResourceIcon(resource) {
     <template v-slot:append>
       <v-list tabindex="-1">
         <v-list-item
-          tabindex="-1"
-          disabled
-          :aria-label="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
-          :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
+            tabindex="-1"
+            disabled
+            :aria-label="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
+            :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
         >
           <template v-slot:prepend>
             <v-icon aria-role="hidden"
@@ -165,7 +169,7 @@ button {
 }
 
 .v-list-item {
-  background-color: #fafafa!important;
+  background-color: #fafafa !important;
 }
 
 

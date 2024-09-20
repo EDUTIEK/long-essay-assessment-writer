@@ -1,12 +1,13 @@
 <script setup>
-import {useApiStore} from '@/store/api';
+import { useApiStore } from '@/store/api';
+
 const apiStore = useApiStore();
 </script>
 
 <template>
   <v-main fill-height>
 
-    <v-app-bar elevation="1" color="white" density="compact" >
+    <v-app-bar elevation="1" color="white" density="compact">
       <p>Lade Daten...</p>
       <v-spacer></v-spacer>
       <v-btn :href="apiStore.returnUrl">
@@ -32,7 +33,8 @@ const apiStore = useApiStore();
     <v-dialog persistent v-model="apiStore.showReplaceConfirmation">
       <v-card>
         <v-card-text>
-          <p>In Ihrem Browser sind Eingaben eines anderen Benutzers oder einer anderen Aufgabe vorhanden, die noch nicht übertragen wurden.
+          <p>In Ihrem Browser sind Eingaben eines anderen Benutzers oder einer anderen Aufgabe vorhanden, die noch nicht
+            übertragen wurden.
             Durch das Laden werden diese Eingaben gelöscht.</p>
           <p>Möchten Sie die neue Aufgabe laden?</p>
         </v-card-text>

@@ -2,8 +2,8 @@
  * Edutiek headline style of written contents
  */
 
-.mce-content-body h1:before, .headlines-edutiek h1::before { 
-    content: counter(h1, upper-latin) ". "; 
+.mce-content-body h1:before, .headlines-edutiek h1::before {
+    content: counter(h1, upper-latin) ". ";
 }
 
 .mce-content-body h2:before, .headlines-edutiek h2::before {
@@ -21,6 +21,7 @@
 .mce-content-body h5:before, .headlines-edutiek h5::before {
     content: counter(h5, lower-latin) counter(h5, lower-latin) ". ";
 }
+
 .mce-content-body h6:before, .headlines-edutiek h6::before {
     content: "(" counter(h6, decimal) ") ";
 }

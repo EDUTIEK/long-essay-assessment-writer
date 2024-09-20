@@ -30,17 +30,17 @@ import 'tinymce/skins/content/default/content.js';
 // Import tiny vue integration
 import Editor from '@tinymce/tinymce-vue'
 
-import {useNotesStore} from '@/store/notes';
-import {useSettingsStore} from "@/store/settings";
-import {usePreferencesStore} from "@/store/preferences";
-import {useClipbardStore} from "@/store/clipboard";
-import {useLayoutStore} from "@/store/layout";
-import { onMounted, watch, ref, nextTick } from 'vue';
+import { useNotesStore } from '@/store/notes';
+import { useSettingsStore } from "@/store/settings";
+import { usePreferencesStore } from "@/store/preferences";
+import { useClipbardStore } from "@/store/clipboard";
+import { useLayoutStore } from "@/store/layout";
+import { nextTick, ref, watch } from 'vue';
 
 const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
-const clipboardStore =useClipbardStore();
+const clipboardStore = useClipbardStore();
 const layoutStore = useLayoutStore();
 
 const props = defineProps(['noteKey', 'noteLabel']);
@@ -53,6 +53,7 @@ function handleInit() {
   applyFormat();
   updateWordCount();
 }
+
 watch(() => preferencesStore.editor_zoom, applyZoom);
 watch(() => settingsStore.contentClass, applyFormat);
 
@@ -65,6 +66,7 @@ async function handleFocusChange() {
     }
   }
 }
+
 watch(() => layoutStore.focusChange, handleFocusChange);
 
 function handleChange() {
@@ -84,18 +86,18 @@ function applyZoom() {
     if (editor) {
       editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h1'),
-        'font-size',
-        (preferencesStore.editor_zoom * settingsStore.tinyH1Size) + 'rem');
+          'font-size',
+          (preferencesStore.editor_zoom * settingsStore.tinyH1Size) + 'rem');
       editor.dom.setStyle(editor.dom.select('h2'),
-        'font-size',
-        (preferencesStore.editor_zoom * settingsStore.tinyH2Size) + 'rem');
+          'font-size',
+          (preferencesStore.editor_zoom * settingsStore.tinyH2Size) + 'rem');
       editor.dom.setStyle(editor.dom.select('h3'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h4'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h5'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
       editor.dom.setStyle(editor.dom.select('h6'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
     }
   }
-  catch(e) {
+  catch (e) {
     // prevent error when tiny is unloaded
   }
 }
@@ -118,7 +120,7 @@ function updateWordCount() {
       characterCount.value = plugin.body.getCharacterCount();
     }
   }
-  catch(e) {
+  catch (e) {
     // prevent error when tiny is unloaded
   }
 }
@@ -136,7 +138,7 @@ function handleCopy(event) {
  */
 function handlePaste(plugin, args) {
   if (!clipboardStore.getPasteAllowed(args.content)) {
-    args.content='';
+    args.content = '';
     clipboardStore.showWarning();
   }
 }
@@ -148,16 +150,16 @@ function handlePaste(plugin, args) {
     <label class="hidden" :for="'app-note-' + props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
     <div class="tinyWrapper">
       <editor
-        :id="'app-note-' + props.noteKey"
-        v-model="notesStore.editNotes[props.noteKey].note_text"
-        @change="handleChange"
-        @keydown="layoutStore.handleKeyDown"
-        @keyup="handleKeyUp"
-        @copy="handleCopy"
-        @cut="handleCopy"
-        @init="handleInit"
-        api-key="no-api-key"
-        :init="{
+          :id="'app-note-' + props.noteKey"
+          v-model="notesStore.editNotes[props.noteKey].note_text"
+          @change="handleChange"
+          @keydown="layoutStore.handleKeyDown"
+          @keyup="handleKeyUp"
+          @copy="handleCopy"
+          @cut="handleCopy"
+          @init="handleInit"
+          api-key="no-api-key"
+          :init="{
            license_key: 'gpl',
             language: 'de',
             height: '100%',
@@ -189,28 +191,28 @@ function handlePaste(plugin, args) {
     </div>
     <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
       <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
-             :text = "preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
+             :text="preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
       </v-btn>
     </div>
   </div>
 </template>
 
 <style scoped>
-  #app-note-edit-wrapper {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+#app-note-edit-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .tinyWrapper {
-    flex-grow: 1;
-  }
+.tinyWrapper {
+  flex-grow: 1;
+}
 
-  .wordCountWrapper {
-    height: 30px;
-    border: 1px solid #cccccc;
-    border-top: 0;
-    font-size: 16px;
-  }
+.wordCountWrapper {
+  height: 30px;
+  border: 1px solid #cccccc;
+  border-top: 0;
+  font-size: 16px;
+}
 
 </style>

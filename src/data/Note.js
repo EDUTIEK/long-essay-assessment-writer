@@ -32,7 +32,7 @@ class Note {
   }
 
   static getKeyForNo(note_no) {
-   return 'NOTE_' +  note_no;
+    return 'NOTE_' + note_no;
   }
 
   /**
