@@ -59,13 +59,21 @@ watch(() => layoutStore.focusChange, handleFocusChange);
 
 
 async function test() {
-  let num = 1;
-  while (num <= pdfDoc.numPages) {
-    const page = await pdfDoc.getPage(num);
-    const annotations = await page.getAnnotations();
-    console.log(annotations);
-    num++;
+  const storage = pdfDoc._transport.annotationStorage;
+  const annotations = storage.getAll();
+
+  for (const key in annotations) {
+    const value = storage.getValue(key, {});
+    console.log(value);
   }
+
+  // let num = 1;
+  // while (num <= pdfDoc.numPages) {
+  //   const page = await pdfDoc.getPage(num);
+  //   const annotations = await page.getAnnotations();
+  //   console.log(page);
+  //   num++;
+  // }
 }
 
 
