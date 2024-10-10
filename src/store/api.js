@@ -10,6 +10,7 @@ import { useEssayStore } from "@/store/essay";
 import { useNotesStore } from "@/store/notes";
 import { useAlertStore } from "@/store/alerts";
 import { useChangesStore } from "@/store/changes";
+import { useAnnotationsStore } from '@/store/annotations';
 
 import md5 from 'md5';
 import Change from "@/data/Change";
@@ -269,6 +270,7 @@ export const useApiStore = defineStore('api', {
       const notesStore = useNotesStore();
       const layoutStore = useLayoutStore();
       const changesStore = useChangesStore();
+      const annotationsStore = useAnnotationsStore();
 
       await settingsStore.loadFromStorage();
       await preferencesStore.loadFromStorage();
@@ -280,6 +282,7 @@ export const useApiStore = defineStore('api', {
       await notesStore.prepareNotes(settingsStore.notice_boards);
       await layoutStore.loadFromStorage();
       await changesStore.loadFromStorage();
+      await annotationsStore.loadFromStorage();
 
 
       // directy check for updates of task settings to avoid delay
@@ -317,6 +320,7 @@ export const useApiStore = defineStore('api', {
       const notesStore = useNotesStore();
       const changesStore = useChangesStore();
       const layoutStore = useLayoutStore();
+      const annotationsStore = useAnnotationsStore();
 
       await settingsStore.loadFromData(response.data.settings);
       await preferencesStore.loadFromData(response.data.preferences);
@@ -328,6 +332,7 @@ export const useApiStore = defineStore('api', {
       await notesStore.prepareNotes(settingsStore.notice_boards);
 
       await changesStore.clearStorage();
+      await annotationsStore.loadFromStorage();
       await layoutStore.initialize();
 
       // send the time when the working on the task is started
