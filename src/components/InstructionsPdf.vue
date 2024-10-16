@@ -21,21 +21,13 @@ async function handleIframeLoaded(event) {
 
   const win = event.target.contentWindow;
 
-  // enhable app hotkeys in pdf frame
-  win.addEventListener("keydown", layoutStore.handleKeyDown);
-
-  // seems not to be needed, objects are already there in load event
-  // https://medium.com/@chhavikhandelwal/ensuring-smooth-execution-how-to-wait-for-objects-on-window-load-in-javascript-a39fbd1d2e73
-
   pdfLib = win.pdfjsLib;
   pdfConstants = win.PDFViewerApplicationConstants;
   pdfOptions = win.PDFViewerApplicationOptions;
   pdfApp = win.PDFViewerApplication;
-  //console.log(pdfApp);
 
   pdfApp.eventBus.on('pagesloaded', async function (event) {
     pdfDoc = pdfApp.pdfDocument;
-    //console.log(pdfDoc);
   });
 }
 
