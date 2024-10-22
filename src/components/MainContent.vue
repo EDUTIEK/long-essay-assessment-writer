@@ -26,7 +26,7 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
           <h1 class="headline">{{
               layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
                   : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
-                      : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
+                      : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : 'Linke Spalte'
             }}
           </h1>
           <v-btn-group density="comfortable">
@@ -35,7 +35,7 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>{{
                   layoutStore.isEssaySelected ? 'Abgabe-Text'
-                      : layoutStore.isNotesSelected ? 'Notizen' : ''
+                      : layoutStore.isNotesSelected ? 'Notizen' : 'Rechte Spalte erweitern'
                 }}
                 </span>
             </v-btn>
@@ -61,7 +61,7 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
         <div class="col-header">
           <h1 class="headline">{{
               layoutStore.isEssayVisible ? 'Abgabe-Text'
-                  : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : ''
+                  : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : 'Rechte Spalte'
             }}
           </h1>
           <v-btn-group density="comfortable">
@@ -70,7 +70,7 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
                 <span> {{
                     layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
                         : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
-                            : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : ''
+                            : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : 'Linke Spalte erweitern'
                   }}
                 </span>
               <v-icon icon="mdi-chevron-right"></v-icon>
