@@ -111,7 +111,9 @@ export const useResourcesStore = defineStore('resources', {
         let index = 0;
         while (index < data.length) {
           let resource = data[index];
-          resource.url = apiStore.getResourceUrl(resource.key);
+          if (resource.type != 'url') {
+            resource.url = apiStore.getResourceUrl(resource.key);
+          }
           this.resources.push(resource);
           this.keys.push(resource.key);
           if (resource.type == 'file' && this.activeKey == '') {
