@@ -4,6 +4,9 @@ node_modules
 # /dist
 # edu.
 
+# edu: ignore annotation librara
+/public/annotate-pdf
+# edu.
 
 # local env files
 .env.local
