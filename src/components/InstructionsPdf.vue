@@ -3,7 +3,7 @@ import { useLayoutStore } from '@/store/layout';
 import { useResourcesStore } from '@/store/resources';
 import { useAnnotationsStore } from '@/store/annotations';
 import Annotation from "@/data/Annotation";
-import createPDFJsApi from "../../public/annotate-pdf/pdfjs-api";
+import createPDFJsApi from 'annotate-pdf/pdfjs-api';
 
 import { nextTick,  onMounted, ref, watch, isProxy, toRaw } from 'vue';
 

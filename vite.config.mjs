@@ -3,6 +3,8 @@ import Components from 'unplugin-vue-components/vite'
 import vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+import path from 'path'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -29,6 +31,9 @@ export default defineConfig({
         }],
       },
     }),
+    viteStaticCopy({targets: [
+      {dest: 'annotate-pdf', src: path.resolve(__dirname, 'node_modules/annotate-pdf') + '/*'},
+    ]}),
   ],
   define: { 'process.env': {} },
   resolve: {
