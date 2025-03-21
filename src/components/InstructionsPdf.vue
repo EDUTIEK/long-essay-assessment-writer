@@ -18,7 +18,7 @@ let pdfjs;
 
 onMounted(() => {
   pdfjs = createPDFJsApi(instructionsNode.value, './annotate-pdf/pdfjs-dist/web/viewer.html', resource.url);
-  loadAnnotations();
+  //loadAnnotations();
   ['create', 'update', 'delete'].forEach(event => pdfjs.on(event, saveAnnotations));
 });
 
