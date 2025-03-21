@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import localForage from "localforage";
-
+import {useApiStore} from "@/store/api";
+import { useChangesStore } from "@/store/changes";
 import Annotation from "@/data/Annotation";
 import Change from '@/data/Change';
 
@@ -127,24 +128,75 @@ export const useAnnotationsStore = defineStore('annotations', {
      * @param annotations
      * @returns {Promise<void>}
      */
-    async saveAnnotationsForResource(resource_key, annotations) {
+    async saveAnnotationsForResource(resource_key, annotations)
+    {
+      const changesStore = useChangesStore();
 
       const old_annos = this.annotations.filter(element => element.resource_key === resource_key);
-      const other_annos = this.annotations.filter(element => element.resource_key !== resource_key);
+      const new_keys = annotations.map(element => element.getKey());
 
-      this.$reset();
-
-      this.annotations = annotations.concat(other_annos);
-      this.keys = this.annotations.map(element => element.getKey());
-
-      for (const annotation of old_annos) {
-        await storage.removeItem(annotation.getKey());
+      // delete old annotations that no longer exist
+      for (const old_annotation of old_annos) {
+        if (!new_keys.includes(old_annotation.getKey())) {
+          this.annotations = this.annotations.filter(element => element.getKey() !== old_annotation.getKey());
+          this.keys = this.keys.filter(element => element !== old_annotation.getKey());
+          await storage.removeItem(old_annotation.getKey());
+          await changesStore.setChange(new Change({
+            type: Change.TYPE_ANNOTATIONS,
+            action: Change.ACTION_DELETE,
+            key: old_annotation.getKey(),
+            payload: {resource_key: old_annotation.resource_key, mark_key: old_annotation.mark_key}
+          }));
+        }
       }
 
-      for (const annotation of this.annotations) {
-        await storage.setItem(annotation.getKey(), JSON.stringify(annotation.getData()));
+      // save changed or new annotations
+      for (const annotation of annotations) {
+        const existing = this.annotations.find(element => element.getKey() == annotation.getKey());
+        if (existing) {
+          if (existing.getSignature() !== annotation.getSignature()) {
+            existing.setData(annotation.getData());
+            await storage.setItem(existing.getKey(), JSON.stringify(existing.getData()));
+            await changesStore.setChange(new Change({
+              type: Change.TYPE_ANNOTATIONS,
+              action: Change.ACTION_SAVE,
+              key: existing.getKey()
+            }));
+          }
+        }
+        else {
+          this.annotations.push(annotation);
+          this.keys.push(annotation.getKey());
+          await storage.setItem(annotation.getKey(), JSON.stringify(annotation.getData()));
+          await changesStore.setChange(new Change({
+            type: Change.TYPE_ANNOTATIONS,
+            action: Change.ACTION_SAVE,
+            key: annotation.getKey(),
+          }));
+        }
       }
-      await storage.setItem('keys', JSON.stringify(this.keys));
+
+    },
+
+    /**
+     * Get all changed annotations from the storage as flat data objects
+     * This is called for sending the annotations to the backend
+     * @param {integer} sendingTime - timestamp of the sending or 0 to get all
+     * @return {array} Change objects
+     */
+    async getChangedData(sendingTime = 0) {
+      const apiStore = useApiStore();
+      const changesStore = useChangesStore();
+      const changes = [];
+      for (const change of changesStore.getChangesFor(Change.TYPE_ANNOTATIONS, sendingTime)) {
+        const data = await storage.getItem(change.key);
+        if (data) {
+          changes.push(apiStore.getChangeDataToSend(change, JSON.parse(data)));
+        } else {
+          changes.push(apiStore.getChangeDataToSend(change));
+        }
+      }
+      return changes;
     }
   }
 });

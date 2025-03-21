@@ -10,10 +10,16 @@ class Annotation {
   resource_key = '';
 
   /**
-   * key of the annotation within the pdf document
+   * key of the mark within the pdf document
    * @type {string}
    */
-  local_key = '';
+  mark_key = '';
+
+  /**
+   * Raw kark data in the pdf document
+   * @type {object}
+   */
+  mark_value = {};
 
   /**
    * Number of the parent (page or paragraph)
@@ -22,10 +28,22 @@ class Annotation {
   parent_number = 0
 
   /**
-   * Raw annotation data
-   * @type {object}
+   * Number of start position (only for text marks)
+   * @type {number}
    */
-  value = {};
+  start_position = 0;
+
+  /**
+   * Number of start position (only for text marks)
+   * @type {number}
+   */
+  end_position = 0;
+
+  /**
+   * Comment for this annotation
+   * @type {string}
+   */
+  comment = null;
 
 
   /**
@@ -45,14 +63,23 @@ class Annotation {
     if (data.resource_key !== undefined && data.resource_key !== null) {
       this.resource_key = data.resource_key.toString();
     }
+    if (data.mark_key !== undefined && data.mark_key !== null) {
+      this.mark_key = data.mark_key
+    }
+    if (data.mark_value !== undefined && data.mark_value !== null) {
+      this.mark_value = data.mark_value;
+    }
     if (data.parent_number !== undefined && data.parent_number !== null) {
       this.parent_number = data.parent_number
     }
-    if (data.local_key !== undefined && data.local_key !== null) {
-      this.local_key = data.local_key
+    if (data.start_position !== undefined && data.start_position !== null) {
+      this.start_position = data.start_position
     }
-    if (data.value !== undefined && data.value !== null) {
-      this.value = data.value;
+    if (data.end_position !== undefined && data.end_position !== null) {
+      this.end_position = data.end_position
+    }
+    if (data.comment !== undefined && data.comment !== null) {
+      this.comment = data.comment
     }
   }
 
@@ -63,9 +90,12 @@ class Annotation {
   getData() {
     return {
       resource_key: this.resource_key,
-      local_key: this.local_key,
+      mark_key: this.mark_key,
+      mark_value: this.mark_value,
       parent_number: this.parent_number,
-      value: this.value
+      start_position: this.start_position,
+      end_position: this.end_position,
+      comment: this.comment
     }
   }
 
@@ -74,9 +104,13 @@ class Annotation {
    * @return {string}
    */
   getKey() {
-    return 'ANNO-' + this.resource_key + '-' + this.local_key
+    return 'ANNO-' + this.resource_key + '-' + this.mark_key
   }
 
+
+  getSignature() {
+    return JSON.stringify(this.getData());
+  }
 
   /**
    * Get a clone of the object

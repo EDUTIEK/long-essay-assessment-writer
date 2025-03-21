@@ -330,9 +330,9 @@ export const useApiStore = defineStore('api', {
       await essayStore.loadFromData(response.data.essay);
       await notesStore.loadFromData(response.data.notes);
       await notesStore.prepareNotes(settingsStore.notice_boards);
+      await annotationsStore.loadFromData(response.data.annotations);
 
       await changesStore.clearStorage();
-      await annotationsStore.loadFromStorage();
       await layoutStore.initialize();
 
       // send the time when the working on the task is started
@@ -435,6 +435,7 @@ export const useApiStore = defineStore('api', {
      * @return bool
      */
     async saveChangesToBackend(wait = false) {
+      const annotationsStore = useAnnotationsStore();
       const changesStore = useChangesStore();
       const notesStore = useNotesStore();
       const preferencesStore = usePreferencesStore();
@@ -458,6 +459,7 @@ export const useApiStore = defineStore('api', {
 
         try {
           const data = {
+            annotations: await annotationsStore.getChangedData(this.lastSendingTry),
             notes: await notesStore.getChangedData(this.lastSendingTry),
             preferences: await preferencesStore.getChangedData(this.lastSendingTry)
           };
@@ -466,6 +468,9 @@ export const useApiStore = defineStore('api', {
           this.setTimeOffset(response);
           this.refreshToken(response);
 
+          await changesStore.setChangesSent(Change.TYPE_ANNOTATIONS,
+              response.data.annotations,
+              this.lastSendingTry);
           await changesStore.setChangesSent(Change.TYPE_NOTES,
             response.data.notes,
             this.lastSendingTry);

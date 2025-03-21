@@ -18,7 +18,7 @@ let pdfjs;
 
 onMounted(() => {
   pdfjs = createPDFJsApi(instructionsNode.value, './annotate-pdf/pdfjs-dist/web/viewer.html', resource.url);
-  //loadAnnotations();
+  loadAnnotations();
   ['create', 'update', 'delete'].forEach(event => pdfjs.on(event, saveAnnotations));
 });
 
@@ -33,11 +33,10 @@ watch(() => layoutStore.focusChange, handleFocusChange);
 async function loadAnnotations() {
   const all = [];
   for (const annotation of annotationsStore.getAnnotationsForResource(resource.key)) {
-   console.log(annotation);
     all.push({
-      id: annotation.local_key,
+      id: annotation.mark_key,
       page: annotation.parent_number,
-      intern: JSON.parse(annotation.value),
+      intern: JSON.parse(annotation.mark_value),
     })
   }
 
@@ -49,20 +48,19 @@ async function saveAnnotations(event) {
 
   const annotations = [];
   for (const raw of all) {
-    console.log(raw);
     annotations.push(
         new Annotation(
             {
               resource_key: resource.key,
-              local_key: raw.id,
+              mark_key: raw.id,
+              mark_value: JSON.stringify(raw.intern),
               parent_number: raw.page,
-              value: JSON.stringify(raw.intern),
             }
         )
     )
   }
 
-  annotationsStore.loadFromData(annotations);
+  annotationsStore.saveAnnotationsForResource(resource.key, annotations);
 }
 
 </script>
@@ -70,10 +68,12 @@ async function saveAnnotations(event) {
 <template>
   <div id="app-instructions-pdf-wrapper">
     <div class="appTextButtons">
+      <!--
       <v-btn-group density="comfortable" variant="outlined" divided>
         <v-btn title="Load Annotations" size="small" @click="loadAnnotations">Markierungen laden</v-btn>
         <v-btn title="Save Annotations" size="small" @click="saveAnnotations">Markierungen speichern</v-btn>
       </v-btn-group>
+      -->
     </div>
     <div id="app-instructions-pdf" tabindex="0" ref="instructionsNode"></div>
   </div>

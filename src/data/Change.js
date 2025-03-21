@@ -8,10 +8,11 @@ class Change {
 
   static ALLOWED_ACTIONS = [Change.ACTION_SAVE, Change.ACTION_DELETE];
 
+  static TYPE_ANNOTATIONS = 'annotations';
   static TYPE_NOTES = 'notes';
   static TYPE_PREFERENCES = 'preferences';
 
-  static ALLOWED_TYPES = [Change.TYPE_NOTES, Change.TYPE_PREFERENCES];
+  static ALLOWED_TYPES = [Change.TYPE_ANNOTATIONS, Change.TYPE_NOTES, Change.TYPE_PREFERENCES];
 
 
   /**
@@ -39,6 +40,14 @@ class Change {
    * @type {integer}
    */
   last_change = 0;
+
+
+  /**
+   * Payload to be added in apiStore.getChangeDataToSend()
+   * The keys of deleted objects may be added before
+   * @type {object|null}
+   */
+  payload = null;
 
 
   /**
@@ -70,6 +79,9 @@ class Change {
     if (data.last_change !== undefined && data.last_change !== null) {
       this.last_change = parseInt(data.last_change);
     }
+    if (data.payload !== undefined && data.payload !== null) {
+      this.payload = data.payload;
+    }
   }
 
 
@@ -82,7 +94,8 @@ class Change {
       action: this.action,
       type: this.type,
       key: this.key,
-      last_change: this.last_change
+      last_change: this.last_change,
+      payload: this.payload
     }
   }
 
