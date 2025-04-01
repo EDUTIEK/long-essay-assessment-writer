@@ -1,6 +1,6 @@
 <script setup>
 import Instructions from "@/components/Instructions.vue";
-import InstructionsPdf from '@/components/InstructionsPdf.vue';
+import ResourcePdf from '@/components/ResourcePdf.vue';
 import Resources from "@/components/Resources.vue";
 import EditSelect from "@/components/EditSelect.vue";
 import { useLayoutStore } from "../store/layout";
@@ -51,8 +51,7 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
         <div class="col-content">
           <!-- Ally: use v-show to keep cursor at position when only one columns is shown and columns are switched -->
           <instructions v-show="layoutStore.isInstructionsVisible"/>
-          <instructions-pdf v-show="layoutStore.isInstructionsPdfVisible"/>
-          <resources v-show="layoutStore.isResourcesVisible"/>
+          <resources v-show="layoutStore.isInstructionsPdfVisible || layoutStore.isResourcesVisible"/>
         </div>
       </section>
       <section aria-label="Rechte Spalte" class="column"

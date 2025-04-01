@@ -5,6 +5,7 @@ import { useTaskStore } from '@/store/task';
 import { useSettingsStore } from "@/store/settings";
 import { useApiStore } from "@/store/api";
 import { nextTick, watch } from 'vue';
+import Resource from "@/data/Resource";
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
@@ -33,7 +34,7 @@ function closeNavigation(event) {
 }
 
 function selectResource(resource) {
-  if (resource.type == 'url' && !resource.embedded) {
+  if (resource.type == Resource.TYPE_URL && !resource.embedded) {
     window.open(resource.source, 'long-essay-writer-resource-' + resource.key)
   } else {
     resourcesStore.selectResource(resource);
@@ -50,11 +51,14 @@ function handleKey(event) {
 }
 
 function getResourceIcon(resource) {
-  switch (resource.type) {
-    case "url":
-      return (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible) ? "mdi-file-link" : "mdi-file-link-outline"
-    default:
-      return (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible) ? "mdi-file" : "mdi-file-outline"
+  if (resource.isExternalUrl()) {
+    return "mdi-link"
+  }
+  else if (resource.isEmbeddedUrl()) {
+    return (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible) ? "mdi-link-box" : "mdi-link-box-outline"
+  }
+  else {
+    return (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible) ? "mdi-file" : "mdi-file-outline"
   }
 }
 

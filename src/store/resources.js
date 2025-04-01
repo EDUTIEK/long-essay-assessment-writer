@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import localForage from "localforage";
 import { useApiStore } from "./api";
 import axios from 'axios';
+import Resource from "@/data/Resource";
 
 const storage = localForage.createInstance({
   storeName: "writer-resources",
@@ -21,31 +22,30 @@ export const useResourcesStore = defineStore('resources', {
     }
   },
 
-
   getters: {
     hasResources: (state) => state.resources.length > 0,
 
     hasInstruction(state) {
-      const resource = state.resources.find(element => element.type == 'instruct');
+      const resource = state.resources.find(element => element.type == Resource.TYPE_INSTRUCTION);
       return resource ? true : false;
     },
 
     getInstruction(state) {
-      return state.resources.find(element => element.type == 'instruct');
+      return state.resources.find(element => element.type == Resource.TYPE_INSTRUCTION);
     },
 
     hasFileResources(state) {
-      const resource = state.resources.find(element => element.type == 'file');
+      const resource = state.resources.find(element => element.type == Resource.TYPE_FILE);
       return resource ? true : false;
     },
 
     hasFileOrUrlResources(state) {
-      const resource = state.resources.find(element => element.type == 'file' || element.type == 'url');
+      const resource = state.resources.find(element => element.type == Resource.TYPE_FILE || element.type == Resource.TYPE_URL);
       return resource ? true : false;
     },
 
     getFileOrUrlResources(state) {
-      return state.resources.filter(element => element.type == 'file' || element.type == 'url');
+      return state.resources.filter(element => element.type == Resource.TYPE_FILE || element.type == Resource.TYPE_URL);
     },
 
     activeTitle(state) {
@@ -83,11 +83,16 @@ export const useResourcesStore = defineStore('resources', {
         this.activeKey = await storage.getItem('activeKey') ?? [];
         this.resources = [];
 
-        let index = 0;
-        while (index < this.keys.length) {
-          let resource = await storage.getItem(this.keys[index]);
-          this.resources.push(resource);
-          index++;
+        for (const key of this.keys) {
+          const stored = await storage.getItem(key);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (typeof parsed === 'object' && parsed !== null) {
+              const resource = new Resource(parsed);
+              this.resources.push(resource);
+            }
+          }
+
         }
 
         await this.loadFiles();
@@ -103,27 +108,23 @@ export const useResourcesStore = defineStore('resources', {
 
       try {
         await storage.clear();
+        this.$reset();
 
-        this.keys = [];
-        this.resources = [];
-        this.activeKey = '';
-
-        let index = 0;
-        while (index < data.length) {
-          let resource = data[index];
-          if (resource.type != 'url') {
+        for (const resource_data of data) {
+          const resource = new Resource(resource_data);
+          if (resource.type != Resource.TYPE_URL) {
             resource.url = apiStore.getResourceUrl(resource.key);
           }
           this.resources.push(resource);
-          this.keys.push(resource.key);
-          if (resource.type == 'file' && this.activeKey == '') {
+          if (this.activeKey == '' && resource.isEmbeddedSelectable()) {
             this.activeKey = resource.key;
           }
-          await storage.setItem(resource.key, resource);
-          index++;
-        }
 
-        await storage.setItem('resourceKeys', JSON.stringify(this.keys));
+          this.keys.push(resource.getKey());
+          await storage.setItem(resource.getKey(), JSON.stringify(resource.getData()));
+        }
+        ;
+        await storage.setItem('keys', JSON.stringify(this.keys));
         await storage.setItem('activeKey', this.activeKey);
 
         // proload files in the background (don't wait)
@@ -139,7 +140,6 @@ export const useResourcesStore = defineStore('resources', {
       await storage.setItem('activeKey', this.activeKey);
     },
 
-
     /**
      * Preload file resources (workaround until service worker is implemented)
      * The Resources Component will only show PDF resources when they are immediately available
@@ -148,11 +148,10 @@ export const useResourcesStore = defineStore('resources', {
      * https://stackoverflow.com/a/50387899
      */
     async loadFiles() {
-      let index = 0;
-      while (index < this.keys.length) {
-        let resource = this.getResource(this.keys[index]);
+      for (const key of this.keys) {
+        let resource = this.getResource(key);
         let response = null;
-        if (resource.type != 'url') {
+        if (resource.hasFileToLoad()) {
           try {
             console.log('preload ' + resource.title + '...');
             response = await axios(resource.url, { responseType: 'blob', timeout: 60000 });
@@ -164,7 +163,6 @@ export const useResourcesStore = defineStore('resources', {
             // return false;
           }
         }
-        index++;
       }
     }
   }

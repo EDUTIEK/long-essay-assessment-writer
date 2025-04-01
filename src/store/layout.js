@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import localForage from "localforage";
 import { useResourcesStore } from "@/store/resources";
 import { useTaskStore } from '@/store/task';
+import Resource from "@/data/Resource";
 
 const storage = localForage.createInstance({
   storeName: "writer-layout",
@@ -47,7 +48,22 @@ export const useLayoutStore = defineStore('layout', {
     isResourcesVisible: (state) => (state.expandedColumn != 'right' && state.leftContent == 'resources'),
 
     isEssayVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'essay'),
-    isNotesVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'notes')
+    isNotesVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'notes'),
+
+    isResourceShown: state => {
+
+      const resourcesStore = useResourcesStore();
+      /**
+       * Check if a resource is visible
+       * @returns {bool}
+       */
+      const fn = function (resource) {
+        return (state.isInstructionsPdfVisible && resource.type == Resource.TYPE_INSTRUCTION ||
+            state.isResourcesVisible && resourcesStore.isActive(resource));
+      }
+      return fn;
+    },
+
   },
 
   actions: {

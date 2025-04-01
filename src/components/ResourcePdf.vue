@@ -1,31 +1,32 @@
 <script setup>
-import { useLayoutStore } from '@/store/layout';
-import { useResourcesStore } from '@/store/resources';
-import { useAnnotationsStore } from '@/store/annotations';
+import {useLayoutStore} from '@/store/layout';
+import {useResourcesStore} from '@/store/resources';
+import {useAnnotationsStore} from '@/store/annotations';
 import Annotation from "@/data/Annotation";
 import createPDFJsApi from 'annotate-pdf/pdfjs-api';
-
-import { nextTick,  onMounted, ref, watch, isProxy, toRaw } from 'vue';
+import {nextTick, onMounted, ref, watch} from 'vue';
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
 const annotationsStore = useAnnotationsStore();
 
-const instructionsNode = ref();
-const resource = resourcesStore.getInstruction;
+const props = defineProps(['resource']);
+const resource = props.resource;
+const ResourceNode = ref();
 
 let pdfjs;
 
 onMounted(() => {
-  pdfjs = createPDFJsApi(instructionsNode.value, './annotate-pdf/pdfjs-dist/web/viewer.html', resource.url);
+  pdfjs = createPDFJsApi(ResourceNode.value, './annotate-pdf/pdfjs-dist/web/viewer.html', resource.url);
   loadAnnotations();
   ['create', 'update', 'delete'].forEach(event => pdfjs.on(event, saveAnnotations));
+  handleFocusChange();
 });
 
 async function handleFocusChange() {
-  if (layoutStore.focusTarget == 'left' && layoutStore.isInstructionsPdfVisible) {
+  if (layoutStore.isResourceShown(resource)) {
     await nextTick();
-    document.getElementById('app-instructions-pdf').focus();
+    ResourceNode.value.focus();
   }
 }
 watch(() => layoutStore.focusChange, handleFocusChange);
@@ -66,7 +67,7 @@ async function saveAnnotations(event) {
 </script>
 
 <template>
-  <div id="app-instructions-pdf-wrapper">
+  <div class ="appResourceWrapper">
     <div class="appTextButtons">
       <!--
       <v-btn-group density="comfortable" variant="outlined" divided>
@@ -75,14 +76,14 @@ async function saveAnnotations(event) {
       </v-btn-group>
       -->
     </div>
-    <div id="app-instructions-pdf" tabindex="0" ref="instructionsNode"></div>
+    <div class="appResourceNode" tabindex="0" ref="ResourceNode"></div>
   </div>
 </template>
 
 
 <style scoped>
 
-#app-instructions-pdf-wrapper {
+.appResourceWrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -94,7 +95,7 @@ async function saveAnnotations(event) {
   height: 50px;
 }
 
-#app-instructions-pdf {
+.appResourceNode {
   flex-grow: 1;
   width: 100%;
   height: calc(100% - 50px);
