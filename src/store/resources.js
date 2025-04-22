@@ -34,13 +34,9 @@ export const useResourcesStore = defineStore('resources', {
       return state.resources.find(element => element.type == Resource.TYPE_INSTRUCTION);
     },
 
-    hasFileResources(state) {
-      const resource = state.resources.find(element => element.type == Resource.TYPE_FILE);
-      return resource ? true : false;
-    },
-
-    hasFileOrUrlResources(state) {
-      const resource = state.resources.find(element => element.type == Resource.TYPE_FILE || element.type == Resource.TYPE_URL);
+    hasEmbeddedFileOrUrlResources(state) {
+      const resource = state.resources.find(element => (element.type == Resource.TYPE_FILE || element.type == Resource.TYPE_URL)
+        && element.embedded == true);
       return resource ? true : false;
     },
 

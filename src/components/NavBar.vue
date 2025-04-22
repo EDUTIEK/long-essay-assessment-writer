@@ -97,7 +97,7 @@ function getResourceIcon(resource) {
         </template>
       </v-list-item>
 
-      <v-divider class="border-opacity-75"></v-divider>
+      <v-divider v-show="taskStore.hasInstructions || resourcesStore.hasInstruction" class="border-opacity-75"></v-divider>
 
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    @click="closeNavigation; layoutStore.showEssay();"

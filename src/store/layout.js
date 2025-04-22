@@ -76,7 +76,7 @@ export const useLayoutStore = defineStore('layout', {
 
       this.leftContent = taskStore.hasInstructions ? 'instructions' :
         resourcesStore.hasInstruction ? 'instructionsPdf' :
-          resourcesStore.hasFileResources ? 'resources' : ''
+          resourcesStore.hasEmbeddedFileOrUrlResources ? 'resources' : ''
 
       if (!this.leftContent) {
         this.expandedColumn = 'right';
