@@ -19,7 +19,7 @@ export const useLayoutStore = defineStore('layout', {
       // saved in storage
       expandedColumn: 'none',         // left|right|none
       leftContent: 'instructions',    // instructions|instructionsPdf|resources
-      rightContent: 'essay',          // essay|notes
+      rightContent: 'essay',          // essay|notes|annotations
       showTimer: false,
       showHelp: false,
 
@@ -40,6 +40,7 @@ export const useLayoutStore = defineStore('layout', {
     isInstructionsPdfSelected: (state) => state.leftContent == 'instructionsPdf',
     isResourcesSelected: (state) => state.leftContent == 'resources',
 
+    isAnnotationsSelected: (state) => state.rightContent == 'annotations',
     isEssaySelected: (state) => state.rightContent == 'essay',
     isNotesSelected: (state) => state.rightContent == 'notes',
 
@@ -47,6 +48,7 @@ export const useLayoutStore = defineStore('layout', {
     isInstructionsPdfVisible: (state) => (state.isInstructionsPdfSelected && state.isLeftVisible),
     isResourcesVisible: (state) => (state.expandedColumn != 'right' && state.leftContent == 'resources'),
 
+    isAnnotationsVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'annotations'),
     isEssayVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'essay'),
     isNotesVisible: (state) => (state.expandedColumn != 'left' && state.rightContent == 'notes'),
 
@@ -64,6 +66,19 @@ export const useLayoutStore = defineStore('layout', {
       return fn;
     },
 
+    shownResourceKey: (state) => {
+      const resourcesStore = useResourcesStore();
+      if (state.isInstructionsPdfVisible) {
+        const resource = resourcesStore.getInstruction;
+        if (resource) {
+          return resource.key;
+        }
+      }
+      else if (state.isResourcesVisible) {
+        return resourcesStore.activeKey;
+      }
+      return null;
+    }
   },
 
   actions: {
@@ -143,6 +158,26 @@ export const useLayoutStore = defineStore('layout', {
     showResources() {
       this.leftContent = 'resources';
       this.setLeftVisible();
+      this.saveToStorage();
+    },
+
+    showForResourceKey(key) {
+      const resourcesStore = useResourcesStore();
+      const resource = resourcesStore.getResource(key);
+      if (resource) {
+        if (resource.type == Resource.TYPE_INSTRUCTION) {
+          this.showInstructionsPdf();
+        }
+        else {
+          resourcesStore.selectResource(resource);
+          this.showResources();
+        }
+      }
+    },
+
+    showAnnotations() {
+      this.rightContent = 'annotations';
+      this.setRightVisible();
       this.saveToStorage();
     },
 

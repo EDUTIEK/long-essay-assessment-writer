@@ -3,6 +3,23 @@
  */
 class Annotation {
 
+  static KEY_INSTRUCTIONS = 'instructions';
+
+  /**
+   * Get a minimal annotation from an annotation key
+   * This is used to create the playload of a delete change
+   * @param {string} key
+   * @returns {Annotation}
+   */
+  static getFromKey(key) {
+    const parts = key.split('-');
+    return new Annotation({
+          resource_key: parts[1],
+          mark_key: parts[2] + '-' + parts[3],
+        }
+    );
+  }
+
   /**
    * Key of the pdf resource
    * @type {string}
@@ -45,6 +62,11 @@ class Annotation {
    */
   comment = null;
 
+  /**
+   * Annotation label (not stored, renumbered when annotations are added or deleted)
+   * @type {string}
+   */
+  label = '';
 
   /**
    * Constructor - gets properties from a data object

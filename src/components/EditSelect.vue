@@ -6,6 +6,7 @@ import { useSettingsStore } from "@/store/settings";
 import { usePreferencesStore } from "@/store/preferences";
 import EditNote from "@/components/EditNote.vue";
 import EditEssay from "@/components/EditEssay.vue";
+import Annotations from "@/components/Annotations.vue";
 
 const layoutStore = useLayoutStore();
 const notesStore = useNotesStore();
@@ -17,11 +18,15 @@ updateSelectedEditor();
 
 function updateSelectedEditor() {
   switch (layoutStore.rightContent) {
+    case 'annotations':
+      selectedEditor.value = 'annotations';
+      break
     case 'essay':
       selectedEditor.value = 'essay';
       break;
     case 'notes':
       selectedEditor.value = notesStore.activeKey;
+      break;
   }
 }
 
@@ -34,6 +39,10 @@ function selectEditor() {
 
     case undefined:
       updateSelectedEditor();
+      break;
+
+    case 'annotations':
+      layoutStore.showAnnotations();
       break;
 
     case 'essay':
@@ -55,6 +64,12 @@ function selectEditor() {
     <div class="appEditChoices">
       <v-btn-toggle v-if="settingsStore.hasNotes" density="comfortable" variant="outlined" divided
                     v-model="selectedEditor" @click="selectEditor()">
+        <v-btn aria-labelledby="app-edit-select-annotations" size="small"
+               value="annotations">
+          <v-icon icon="mdi-marker"></v-icon>
+          <span class="sr-only" id="app-edit-select-annotations">Anmerkungen</span>
+          <span aria-hidden="true">Anmerkungen</span>
+        </v-btn>
         <v-btn aria-labelledby="app-edit-select-text" size="small"
                value="essay">
           <v-icon icon="mdi-file-edit-outline"></v-icon>
@@ -88,6 +103,7 @@ function selectEditor() {
     </div>
     <div class="appEditors">
       <!-- Ally: use v-show to keep cursor at position when only one columns is shown and columns are switched -->
+      <annotations v-show="layoutStore.isAnnotationsSelected"></annotations>
       <edit-essay v-show="layoutStore.isEssaySelected"/>
       <edit-note
           v-if="settingsStore.notice_boards > 0"

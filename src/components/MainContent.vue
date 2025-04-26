@@ -34,7 +34,8 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
             <v-btn size="small" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>{{
-                  layoutStore.isEssaySelected ? 'Abgabe-Text'
+                  layoutStore.isAnnotationsSelected ? 'Anmerkungen'
+                    : layoutStore.isEssaySelected ? 'Abgabe-Text'
                       : layoutStore.isNotesSelected ? 'Notizen' : 'Rechte Spalte erweitern'
                 }}
                 </span>
@@ -59,7 +60,8 @@ document.addEventListener('keydown', layoutStore.handleKeyDown);
                v-show="layoutStore.isRightVisible">
         <div class="col-header">
           <h1 class="headline">{{
-              layoutStore.isEssayVisible ? 'Abgabe-Text'
+              layoutStore.isAnnotationsSelected ? 'Anmerkungen'
+                : layoutStore.isEssayVisible ? 'Abgabe-Text'
                   : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : 'Rechte Spalte'
             }}
           </h1>

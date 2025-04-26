@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
 import localForage from "localforage";
 import {useApiStore} from "@/store/api";
+import {useResourcesStore} from "@/store/resources";
+import {useLayoutStore} from "@/store/layout";
 import { useChangesStore } from "@/store/changes";
 import Annotation from "@/data/Annotation";
 import Change from '@/data/Change';
+import resource from "@/data/Resource";
 
 
 const storage = localForage.createInstance({
@@ -17,6 +20,14 @@ function startState() {
     // saved in storage
     keys: [],                   // list of string keys
     annotations: [],            // list of all annotation objects
+
+    // not saved in storage
+    markerChange: 0,                // for watchers: timestamp of the last change that affects the text markers (not the selection)
+    selectionChange: 0,             // for watchers: timestamp of the last change of the selected annotation
+    caretRequest: 0,                // for watchers: timestamp of the last request to set the caret to the mark of selected comment
+
+    selectedKey: '',                // key of the currently selected comment
+    firstVisibleKey: '',            // key of the first visible comment in the scrolled text
   }
 }
 
@@ -33,6 +44,15 @@ export const useAnnotationsStore = defineStore('annotations', {
    */
   getters: {
 
+    activeAnnotations: state => {
+      const layoutStore = useLayoutStore();
+      const shownResourceKey = layoutStore.shownResourceKey;
+      if (shownResourceKey) {
+        return state.annotations.filter(annotation => annotation.resource_key == shownResourceKey);
+      }
+      return [];
+    },
+
     getAnnotationsForResource: state => {
 
       /**
@@ -48,6 +68,131 @@ export const useAnnotationsStore = defineStore('annotations', {
 
 
   actions: {
+
+    /**
+     * Set the first visible annotation to force a scrolling
+     * @param {string} key
+     * @public
+     */
+    setFirstVisibleAnnotation(key) {
+      this.firstVisibleKey = key;
+    },
+
+
+    /**
+     * Set timestamp of the last change that affects the text markers (not the selection)
+     * @public
+     */
+    setMarkerChange() {
+      this.markerChange = Date.now();
+    },
+
+    /**
+     * Set timestamp of the last request to set the carent to the selected comment
+     * @public
+     */
+    setCaretRequest() {
+      this.caretRequest = Date.now();
+    },
+
+    /**
+     * Set the currently selected annotation
+     * Call with set_change=true when a annotation is selected, added or removed
+     * Call with set_change=false when just the key of the selected annotation is updated
+     *
+     * @param {string} key
+     * @param {boolean} set_change
+     * @public
+     */
+    selectAnnotation(key, set_change = true) {
+      this.selectedKey = key;
+      if (set_change) {
+        this.selectionChange = Date.now();
+      }
+    },
+
+    /**
+     * Update an annotation in the store
+     * @param {bool} trigger a sorting and labelling of the annotations
+     * @param {Annotation} annotation
+     * @public
+     */
+    async updateAnnotation(annotation, sort = false) {
+      const apiStore = useApiStore();
+      const changesStore = useChangesStore();
+
+      if (this.keys.includes(annotation.getKey())
+      ) {
+        await storage.setItem(annotation.getKey(), JSON.stringify(annotation.getData()));
+        await changesStore.setChange(new Change({
+          type: Change.TYPE_ANNOTATIONS,
+          action: Change.ACTION_SAVE,
+          key: annotation.getKey()
+        }))
+
+        if (sort) {
+          await this.sortAndLabelAnnotations();
+          this.setMarkerChange();
+        }
+      }
+    },
+
+    /**
+     * Delete an annotation
+     *
+     * @param {string} removeKey
+     * @private
+     */
+    async deleteAnnotation(removeKey) {
+      if (this.selectedKey == removeKey) {
+        this.selectAnnotation('', true);
+      }
+      const annotation = this.annotations.find(element => element.getKey() == removeKey);
+
+      this.annotations = this.annotations.filter(element => element.getKey() != removeKey);
+      if (this.keys.includes(removeKey)) {
+        this.keys = this.keys.filter(key => key != removeKey)
+        await storage.setItem('keys', JSON.stringify(this.keys));
+        await storage.removeItem(removeKey);
+      }
+
+      const changesStore = useChangesStore();
+      const change = new Change({
+        type: Change.TYPE_ANNOTATIONS,
+        action: Change.ACTION_DELETE,
+        key: annotation.getKey()
+      });
+
+      await changesStore.setChange(change);
+      await this.sortAndLabelAnnotations();
+      this.setMarkerChange();
+    },
+
+
+    /**
+     * Sort and label the annotations of a resource by position
+     * @private
+     */
+    async sortAndLabelAnnotations() {
+      this.annotations = this.annotations.sort(compareAnnotations);
+
+      let resource_key = '';
+      let parent = 0;
+      let number = 0;
+      for (const annotation of this.annotations) {
+        if (annotation.resource_key !== resource_key) {
+          resource_key = annotation.resource_key;
+          parent = 0;
+          number = 1;
+        }else if (annotation.parent_number > parent) {
+          parent = annotation.parent_number;
+          number = 1;
+        } else {
+          number++;
+        }
+        annotation.label = (parent + 1).toString() + '.' + number.toString();
+      }
+    },
 
     /**
      * Clear the whole storage
@@ -88,7 +233,7 @@ export const useAnnotationsStore = defineStore('annotations', {
             }
           }
         }
-
+        await this.sortAndLabelAnnotations();
       }
       catch (err) {
         console.log(err);
@@ -116,6 +261,7 @@ export const useAnnotationsStore = defineStore('annotations', {
         }
         ;
         await storage.setItem('keys', JSON.stringify(this.keys));
+        await this.sortAndLabelAnnotations();
       }
       catch (err) {
         console.log(err);
@@ -193,10 +339,34 @@ export const useAnnotationsStore = defineStore('annotations', {
         if (data) {
           changes.push(apiStore.getChangeDataToSend(change, JSON.parse(data)));
         } else {
-          changes.push(apiStore.getChangeDataToSend(change));
+          changes.push(apiStore.getChangeDataToSend(change, Annotation.getFromKey(change.key)));
         }
       }
       return changes;
     }
   }
 });
+
+
+/**
+ * Compare two annotations for sorting
+ * @param {Annotation} annotation1
+ * @param {Annotation} annotation2
+ */
+const compareAnnotations = function (annotation1, annotation2) {
+  if (annotation1.resource_key < annotation2.resource_key) {
+    return -1;
+  } else if (annotation1.resource_key > annotation2.resource_key) {
+    return 1;
+  } else if (annotation1.parent_number < annotation2.parent_number) {
+    return -1;
+  } else if (annotation1.parent_number > annotation2.parent_number) {
+    return 1;
+  } else if (annotation1.start_position < annotation2.start_position) {
+    return -1;
+  } else if (annotation1.start_position > annotation2.start_position) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
