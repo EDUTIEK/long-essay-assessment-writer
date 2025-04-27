@@ -6,6 +6,16 @@ class Annotation {
   static KEY_INSTRUCTIONS = 'instructions';
 
   /**
+   * Build an annotation key
+   * @param {string} resource_key
+   * @param {string} mark_key
+   * @returns {string}
+   */
+  static buildKey(resource_key, mark_key) {
+    return 'ANNO-' + resource_key + '-' + mark_key
+  }
+
+  /**
    * Get a minimal annotation from an annotation key
    * This is used to create the playload of a delete change
    * @param {string} key
@@ -18,6 +28,24 @@ class Annotation {
           mark_key: parts[2] + '-' + parts[3],
         }
     );
+  }
+
+  static compare(annotation1, annotation2) {
+    if (annotation1.resource_key < annotation2.resource_key) {
+      return -1;
+    } else if (annotation1.resource_key > annotation2.resource_key) {
+      return 1;
+    } else if (annotation1.parent_number < annotation2.parent_number) {
+      return -1;
+    } else if (annotation1.parent_number > annotation2.parent_number) {
+      return 1;
+    } else if (annotation1.start_position < annotation2.start_position) {
+      return -1;
+    } else if (annotation1.start_position > annotation2.start_position) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   /**
@@ -126,7 +154,7 @@ class Annotation {
    * @return {string}
    */
   getKey() {
-    return 'ANNO-' + this.resource_key + '-' + this.mark_key
+    return Annotation.buildKey(this.resource_key, this.mark_key);
   }
 
 

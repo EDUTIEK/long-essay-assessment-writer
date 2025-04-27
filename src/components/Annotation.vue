@@ -10,7 +10,6 @@ const layoutStore = useLayoutStore();
 
 const props = defineProps(['annotation']);
 const annotation = props.annotation;
-console.log(props);
 
 function isSelected(annotation) {
   return annotation.getKey() == annotationsStore.selectedKey;

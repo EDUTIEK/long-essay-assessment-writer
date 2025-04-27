@@ -26,7 +26,8 @@ function startState() {
     selectionChange: 0,             // for watchers: timestamp of the last change of the selected annotation
     caretRequest: 0,                // for watchers: timestamp of the last request to set the caret to the mark of selected comment
 
-    selectedKey: '',                // key of the currently selected comment
+    selectedKey: '',                // key of the currently selected annotation
+    deletedKey: '',                 // key of the last deleted annotation
     firstVisibleKey: '',            // key of the first visible comment in the scrolled text
   }
 }
@@ -53,18 +54,30 @@ export const useAnnotationsStore = defineStore('annotations', {
       return [];
     },
 
+    getAnnotation: state => {
+
+        /**
+         * Get an annotation by key
+         * @param {string} key
+         */
+        const fn = function (key) {
+          return state.annotations.find(element => element.getKey() === key);
+        }
+        return fn;
+    },
+
     getAnnotationsForResource: state => {
 
-      /**
-       * Get the annotations for a resource
-       * @param {string} resource_key
-       */
-      const fn = function (resource_key) {
-        return state.annotations.filter(element => element.resource_key === resource_key);
-      }
-      return fn;
+        /**
+         * Get the annotations for a resource
+         * @param {string} resource_key
+         */
+        const fn = function (resource_key) {
+          return state.annotations.filter(element => element.resource_key === resource_key);
+        }
+        return fn;
+      },
     },
-  },
 
 
   actions: {
@@ -97,18 +110,39 @@ export const useAnnotationsStore = defineStore('annotations', {
 
     /**
      * Set the currently selected annotation
-     * Call with set_change=true when a annotation is selected, added or removed
-     * Call with set_change=false when just the key of the selected annotation is updated
-     *
      * @param {string} key
-     * @param {boolean} set_change
      * @public
      */
-    selectAnnotation(key, set_change = true) {
+    selectAnnotation(key) {
       this.selectedKey = key;
-      if (set_change) {
-        this.selectionChange = Date.now();
-      }
+      this.selectionChange = Date.now();
+    },
+
+    /**
+     * Create an annotation in the store
+     * @param {bool} trigger a sorting and labelling of the annotations
+     * @param {Annotation} annotation
+     * @public
+     */
+    async createAnnotation(annotation) {
+      const apiStore = useApiStore();
+      const changesStore = useChangesStore();
+
+      // first do state changes (trigger watchers)
+      this.keys.push(annotation.getKey());
+      this.annotations.push(annotation);
+      await this.sortAndLabelAnnotations();
+      this.setMarkerChange();
+      this.selectAnnotation(annotation);
+
+      // then save the annotation
+      await storage.setItem(annotation.getKey(), JSON.stringify(annotation.getData()));
+      await storage.setItem('keys', JSON.stringify(this.keys));
+      await changesStore.setChange(new Change({
+        type: Change.TYPE_ANNOTATIONS,
+        action: Change.ACTION_SAVE,
+        key: annotation.getKey()
+      }))
     },
 
     /**
@@ -139,13 +173,12 @@ export const useAnnotationsStore = defineStore('annotations', {
 
     /**
      * Delete an annotation
-     *
      * @param {string} removeKey
      * @private
      */
     async deleteAnnotation(removeKey) {
       if (this.selectedKey == removeKey) {
-        this.selectAnnotation('', true);
+        this.selectAnnotation('');
       }
       const annotation = this.annotations.find(element => element.getKey() == removeKey);
 
@@ -155,6 +188,7 @@ export const useAnnotationsStore = defineStore('annotations', {
         await storage.setItem('keys', JSON.stringify(this.keys));
         await storage.removeItem(removeKey);
       }
+      this.deletedKey = removeKey;
 
       const changesStore = useChangesStore();
       const change = new Change({
@@ -174,7 +208,7 @@ export const useAnnotationsStore = defineStore('annotations', {
      * @private
      */
     async sortAndLabelAnnotations() {
-      this.annotations = this.annotations.sort(compareAnnotations);
+      this.annotations = this.annotations.sort(Annotation.compare);
 
       let resource_key = '';
       let parent = 0;
@@ -268,61 +302,6 @@ export const useAnnotationsStore = defineStore('annotations', {
       }
     },
 
-    /**
-     * Save the annotations of a resource key
-     * @param resource_key
-     * @param annotations
-     * @returns {Promise<void>}
-     */
-    async saveAnnotationsForResource(resource_key, annotations)
-    {
-      const changesStore = useChangesStore();
-
-      const old_annos = this.annotations.filter(element => element.resource_key === resource_key);
-      const new_keys = annotations.map(element => element.getKey());
-
-      // delete old annotations that no longer exist
-      for (const old_annotation of old_annos) {
-        if (!new_keys.includes(old_annotation.getKey())) {
-          this.annotations = this.annotations.filter(element => element.getKey() !== old_annotation.getKey());
-          this.keys = this.keys.filter(element => element !== old_annotation.getKey());
-          await storage.removeItem(old_annotation.getKey());
-          await changesStore.setChange(new Change({
-            type: Change.TYPE_ANNOTATIONS,
-            action: Change.ACTION_DELETE,
-            key: old_annotation.getKey(),
-            payload: {resource_key: old_annotation.resource_key, mark_key: old_annotation.mark_key}
-          }));
-        }
-      }
-
-      // save changed or new annotations
-      for (const annotation of annotations) {
-        const existing = this.annotations.find(element => element.getKey() == annotation.getKey());
-        if (existing) {
-          if (existing.getSignature() !== annotation.getSignature()) {
-            existing.setData(annotation.getData());
-            await storage.setItem(existing.getKey(), JSON.stringify(existing.getData()));
-            await changesStore.setChange(new Change({
-              type: Change.TYPE_ANNOTATIONS,
-              action: Change.ACTION_SAVE,
-              key: existing.getKey()
-            }));
-          }
-        }
-        else {
-          this.annotations.push(annotation);
-          this.keys.push(annotation.getKey());
-          await storage.setItem(annotation.getKey(), JSON.stringify(annotation.getData()));
-          await changesStore.setChange(new Change({
-            type: Change.TYPE_ANNOTATIONS,
-            action: Change.ACTION_SAVE,
-            key: annotation.getKey(),
-          }));
-        }
-      }
-
-    },
 
     /**
      * Get all changed annotations from the storage as flat data objects
@@ -347,26 +326,3 @@ export const useAnnotationsStore = defineStore('annotations', {
   }
 });
 
-
-/**
- * Compare two annotations for sorting
- * @param {Annotation} annotation1
- * @param {Annotation} annotation2
- */
-const compareAnnotations = function (annotation1, annotation2) {
-  if (annotation1.resource_key < annotation2.resource_key) {
-    return -1;
-  } else if (annotation1.resource_key > annotation2.resource_key) {
-    return 1;
-  } else if (annotation1.parent_number < annotation2.parent_number) {
-    return -1;
-  } else if (annotation1.parent_number > annotation2.parent_number) {
-    return 1;
-  } else if (annotation1.start_position < annotation2.start_position) {
-    return -1;
-  } else if (annotation1.start_position > annotation2.start_position) {
-    return 1;
-  } else {
-    return 0;
-  }
-}

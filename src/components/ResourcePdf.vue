@@ -19,7 +19,10 @@ let pdfjs;
 onMounted(() => {
   pdfjs = createPDFJsApi(ResourceNode.value, './annotate-pdf/pdfjs-dist/web/viewer.html', resource.url);
   loadAnnotations();
-  ['create', 'update', 'delete'].forEach(event => pdfjs.on(event, saveAnnotations));
+  pdfjs.on('create', createAnnotation);
+  pdfjs.on('update', updateAnnotation);
+  pdfjs.on('delete', deleteAnnotation);
+  pdfjs.on('select', selectAnnotation);
   handleFocusChange();
 });
 
@@ -31,7 +34,7 @@ async function handleFocusChange() {
 }
 watch(() => layoutStore.focusChange, handleFocusChange);
 
-async function loadAnnotations() {
+function loadAnnotations() {
   const all = [];
   for (const annotation of annotationsStore.getAnnotationsForResource(resource.key)) {
     all.push({
@@ -44,25 +47,55 @@ async function loadAnnotations() {
   pdfjs.setAll(all);
 }
 
-async function saveAnnotations(event) {
-  const all = await pdfjs.getAll();
-
-  const annotations = [];
-  for (const raw of all) {
-    annotations.push(
-        new Annotation(
-            {
-              resource_key: resource.key,
-              mark_key: raw.id,
-              mark_value: JSON.stringify(raw.intern),
-              parent_number: raw.page,
-            }
-        )
-    )
-  }
-
-  annotationsStore.saveAnnotationsForResource(resource.key, annotations);
+function createAnnotation(event) {
+  const annotation = new Annotation(
+      {
+        resource_key: resource.key,
+        mark_key: event.detail.id,
+        mark_value: JSON.stringify(event.detail.intern),
+        parent_number: event.detail.page,
+        start_position: Math.round(- event.detail.intern.rect[1])
+      }
+  );
+  annotationsStore.createAnnotation(annotation);
 }
+
+function updateAnnotation(event) {
+  const annotation = annotationsStore.getAnnotation(Annotation.buildKey(resource.key, event.detail.id));
+  if (annotation) {
+    annotation.mark_value = JSON.stringify(event.detail.intern);
+    annotationsStore.updateAnnotation(annotation);
+  }
+}
+
+function deleteAnnotation(event) {
+  if (event.detail) {
+    annotationsStore.deleteAnnotation(Annotation.buildKey(resource.key, event.detail.id));
+  }
+}
+
+function selectAnnotation(event) {
+  if (event.detail) {
+    annotationsStore.selectAnnotation(Annotation.buildKey(resource.key, event.detail.id));
+  }
+}
+
+function refreshSelection() {
+  const annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
+  if (annotation && annotation.resource_key == resource.key) {
+    pdfjs.select(annotation.mark_key);
+  }
+}
+watch(() => annotationsStore.selectionChange, refreshSelection);
+
+function handleDeleted()
+{
+  const annotation = Annotation.getFromKey(annotationsStore.deletedKey);
+  if (annotation.resource_key == resource.key) {
+    pdfjs.delete(annotation.mark_key);
+  }
+}
+watch(() => annotationsStore.deletedKey, handleDeleted);
 
 </script>
 
