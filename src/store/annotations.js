@@ -48,8 +48,8 @@ export const useAnnotationsStore = defineStore('annotations', {
     activeAnnotations: state => {
       const layoutStore = useLayoutStore();
       const shownResourceKey = layoutStore.shownResourceKey;
-      if (shownResourceKey) {
-        return state.annotations.filter(annotation => annotation.resource_key == shownResourceKey);
+      if (shownResourceKey !== null) {
+        return state.annotations.filter(annotation => annotation.resource_key === shownResourceKey);
       }
       return [];
     },
@@ -77,25 +77,40 @@ export const useAnnotationsStore = defineStore('annotations', {
         }
         return fn;
       },
+
+    getActiveAnotationsInRange: state => {
+
+      /**
+       * Get the active comments in a range of marked text
+       *
+       * @param {number} start_position
+       * @param {number} end_position
+       * @returns {Comment[]}
+       */
+      const fn = function (start_position, end_position) {
+        return state.activeAnnotations.filter(annotation =>
+            annotation.start_position <= end_position && annotation.end_position >= start_position
+        );
+      };
+      return fn;
     },
 
-  getActiveAnotationsInRange: state => {
+    getActiveAnnotationsByStartPosition: state => {
 
-    /**
-     * Get the active comments in a range of marked text
-     *
-     * @param {number} start_position
-     * @param {number} end_position
-     * @returns {Comment[]}
-     */
-    const fn = function (start_position, end_position) {
-      return state.activeAnnotations.filter(annotation =>
-          annotation.start_position <= end_position && annotation.end_position >= start_position
-      );
-    };
-    return fn;
+      /**
+       * Get the active annotations with a start position
+       *
+       * @param {number] }start_position
+       * @returns {Comment[]}
+       */
+      const fn = function (start_position) {
+        return state.activeAnnotations.filter(annotation =>
+            annotation.start_position == start_position
+        );
+      }
+      return fn;
+    },
   },
-
 
   actions: {
 

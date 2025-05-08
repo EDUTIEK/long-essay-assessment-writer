@@ -82,7 +82,13 @@ export const useTaskStore = defineStore('task', {
       try {
         this.writing_end = data.writing_end;
         this.writing_excluded = data.writing_excluded;
-        await storage.setItem('task', this.$state);
+        await storage.setItem('task', {
+          'title': this.title,
+          'instructions': this.instructions,
+          'writer_name': this.writer_name,
+          'writing_end': this.writing_end,
+          'writing_excluded': this.writing_excluded
+        });
       }
       catch (err) {
         console.log(err);

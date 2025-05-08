@@ -6,6 +6,7 @@ import { useClipbardStore } from "@/store/clipboard";
 import {useAnnotationsStore} from "@/store/annotations";
 import TextMarker from '@/lib/TextMarker';
 import { onMounted, nextTick, watch } from 'vue';
+import Annotation from "@/data/Annotation";
 
 const taskStore = useTaskStore();
 const layoutStore = useLayoutStore();
@@ -16,7 +17,7 @@ const annotationsStore = useAnnotationsStore();
 let marker;
 
 onMounted(() => {
-  marker = new TextMarker(document.getElementById('app-essay'), onSelection, onIntersection);
+  marker = new TextMarker(document.getElementById('app-instructions'), onSelection, onIntersection);
   refreshMarks();
 });
 
@@ -52,6 +53,7 @@ watch(() => annotationsStore.caretRequest, setCaretToSelectedAnnotation);
  * Update the marking of an annotation
  */
 function updateMark(annotation) {
+  marker.showMark('marked', annotation.start_position, annotation.end_position);
   marker.addLabel('labelled', annotation.label, annotation.start_position);
 }
 
@@ -60,32 +62,40 @@ function updateMark(annotation) {
  * Decide whether to add a new annotation or select an existing annotation
  */
 async function onSelection(selected) {
-  // check if new selection overlaps with annotations
-  let annotations = annotationsStore.getActiveAnnotationsInRange(selected.firstWord, selected.lastWord);
-  if (annotations.length) {
-    // get the first overlapping annotation
-    let annotation = annotations.shift();
+  console.log(selected);
+  marker.removeSelection();
 
-    if (selected.isCollapsed) {
-      // just clicked at a position => select the overlapping comment
-      marker.removeSelection();
+  if (selected.isCollapsed) {
+    // just clicked at a position => select the overlapping annotation
+    const annotations = annotationsStore.getActiveAnotationsInRange(selected.firstWord, selected.lastWord);
+    if (annotations.length) {
+      const annotation = annotations.shift();
       annotationsStore.selectAnnotation(annotation.getKey());
-    } else {
-      // always create a new comment, even if it overlaps
-      marker.removeSelection();
-      annotationsStore.createAnnotation(selected.firstWord, selected.lastWord, selected.parentNumber);
     }
-  } else if (!selected.isCollapsed) {
-    // no overlapping => create a new comment
-    marker.removeSelection();
-    annotationsStore.createAnnotation(selected.firstWord, selected.lastWord, selected.parentNumber);
+  }
+  else {
+    // selected text => create a new annotation
+    const annotation = new Annotation({
+          resource_key: Annotation.KEY_INSTRUCTIONS,
+          parent_number: selected.parentNumber,
+          start_position: selected.firstWord,
+          end_position: selected.lastWord
+        });
+    await annotationsStore.createAnnotation(annotation);
+    annotationsStore.selectAnnotation(annotation.getKey());
   }
 }
 
-
-function handleBeforeinput(event) {
-  event.preventDefault();
-  return false;
+/**
+ * Handle a annotation geting visible by scrolling
+ * @param {int} firstWord
+ */
+function onIntersection(firstWord) {
+  let annotations = annotationsStore.getActiveAnnotationsByStartPosition(firstWord);
+  if (annotations.length) {
+    let annotation = annotations.shift();
+    annotation.setFirstVisibleAnnotation(annotation.getKey());
+  }
 }
 
 async function handleFocusChange() {
@@ -174,7 +184,8 @@ Must be global because of v-html used for the instructions
 
 </style>
 
-<style scoped>
+<style>
+/* Must be global because of v-html used for the instructions */
 
 #app-instructions-wrapper {
   height: 100%;
@@ -195,5 +206,32 @@ Must be global because of v-html used for the instructions
   overflow-y: scroll;
 }
 
+w-p.labelled:before {
+  content: attr(label); /* value that that refers to CSS 'content' */
+  position: relative;
+  left: -3px;
+  top: -7px;
+  padding: 3px;
+  z-index: 10000;
+  background-color: #aaaaaaaa;
+  color: white;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: normal;
+  border-radius: 5px;
+}
+
+w-p.labelled.selected:before {
+  background-color: #606060;
+}
+
+w-p.marked {
+  background-color: #D8E5F4;
+}
+
+w-p.marked.selected {
+  background-color: #94C3FC !important;
+}
 
 </style>

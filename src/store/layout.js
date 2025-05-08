@@ -3,6 +3,7 @@ import localForage from "localforage";
 import { useResourcesStore } from "@/store/resources";
 import { useTaskStore } from '@/store/task';
 import Resource from "@/data/Resource";
+import Annotation from "@/data/Annotation";
 
 const storage = localForage.createInstance({
   storeName: "writer-layout",
@@ -68,7 +69,10 @@ export const useLayoutStore = defineStore('layout', {
 
     shownResourceKey: (state) => {
       const resourcesStore = useResourcesStore();
-      if (state.isInstructionsPdfVisible) {
+      if (state.isInstructionsVisible) {
+          return Annotation.KEY_INSTRUCTIONS;
+      }
+      else if (state.isInstructionsPdfVisible) {
         const resource = resourcesStore.getInstruction;
         if (resource) {
           return resource.key;

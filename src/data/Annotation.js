@@ -3,7 +3,7 @@
  */
 class Annotation {
 
-  static KEY_INSTRUCTIONS = 'instructions';
+  static KEY_INSTRUCTIONS = '0';
 
   /**
    * Build an annotation key
@@ -12,7 +12,8 @@ class Annotation {
    * @returns {string}
    */
   static buildKey(resource_key, mark_key) {
-    return 'ANNO-' + resource_key + '-' + mark_key
+    // use underscore as separator because mark key has a dash inside
+    return 'ANNO_' + resource_key + '_' + mark_key
   }
 
   /**
@@ -22,10 +23,10 @@ class Annotation {
    * @returns {Annotation}
    */
   static getFromKey(key) {
-    const parts = key.split('-');
+    const parts = key.split('_');
     return new Annotation({
           resource_key: parts[1],
-          mark_key: parts[2] + '-' + parts[3],
+          mark_key: parts[2],
         }
     );
   }
@@ -55,16 +56,17 @@ class Annotation {
   resource_key = '';
 
   /**
-   * key of the mark within the pdf document
+   * unique key of the mark within the pdf document
+   * random key of the mark in the instructions
    * @type {string}
    */
   mark_key = '';
 
   /**
-   * Raw kark data in the pdf document
-   * @type {object}
+   * Raw mark data in the pdf document (stringified)
+   * @type {string}
    */
-  mark_value = {};
+  mark_value = null;
 
   /**
    * Number of the parent (page or paragraph)
@@ -115,6 +117,8 @@ class Annotation {
     }
     if (data.mark_key !== undefined && data.mark_key !== null) {
       this.mark_key = data.mark_key
+    } else {
+      this.mark_key = Math.random().toString();
     }
     if (data.mark_value !== undefined && data.mark_value !== null) {
       this.mark_value = data.mark_value;

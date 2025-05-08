@@ -4,6 +4,7 @@ import { useLayoutStore } from "@/store/layout";
 import { useNotesStore } from '@/store/notes';
 import { useSettingsStore } from "@/store/settings";
 import { usePreferencesStore } from "@/store/preferences";
+import {useAnnotationsStore} from "@/store/annotations";
 import EditNote from "@/components/EditNote.vue";
 import EditEssay from "@/components/EditEssay.vue";
 import Annotations from "@/components/Annotations.vue";
@@ -12,6 +13,7 @@ const layoutStore = useLayoutStore();
 const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
+const annotationsStore = useAnnotationsStore();
 
 const selectedEditor = ref('essay');
 updateSelectedEditor();
@@ -29,6 +31,7 @@ function updateSelectedEditor() {
       break;
   }
 }
+
 
 watch(() => layoutStore.rightContent, updateSelectedEditor);
 watch(() => notesStore.activeKey, updateSelectedEditor);
@@ -55,6 +58,12 @@ function selectEditor() {
       break;
   }
 }
+
+function showAnnotations() {
+  selectedEditor.value = 'annotations';
+  selectEditor();
+}
+watch(() => annotationsStore.selectionChange, showAnnotations);
 
 </script>
 
