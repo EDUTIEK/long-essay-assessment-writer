@@ -365,7 +365,7 @@ export const useApiStore = defineStore('api', {
         const alertStore = useAlertStore();
         const settingsStore = useSettingsStore();
         const notesStore = useNotesStore();
-        await taskStore.loadFromData(response.data.task);
+        await taskStore.loadFromUpdate(response.data.task);
         await alertStore.loadFromData(response.data.alerts, true);
         await settingsStore.loadFromData(response.data.settings);
         await notesStore.prepareNotes(settingsStore.notice_boards);

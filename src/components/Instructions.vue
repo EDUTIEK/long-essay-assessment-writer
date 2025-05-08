@@ -3,12 +3,90 @@ import { useTaskStore } from '@/store/task';
 import { useLayoutStore } from '@/store/layout';
 import { usePreferencesStore } from "@/store/preferences";
 import { useClipbardStore } from "@/store/clipboard";
-import { nextTick, watch } from 'vue';
+import {useAnnotationsStore} from "@/store/annotations";
+import TextMarker from '@/lib/TextMarker';
+import { onMounted, nextTick, watch } from 'vue';
 
 const taskStore = useTaskStore();
 const layoutStore = useLayoutStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore = useClipbardStore();
+const annotationsStore = useAnnotationsStore();
+
+let marker;
+
+onMounted(() => {
+  marker = new TextMarker(document.getElementById('app-essay'), onSelection, onIntersection);
+  refreshMarks();
+});
+
+function refreshMarks() {
+  marker.hideAllMarksAndLabels();
+  annotationsStore.activeAnnotations.forEach(annotation => updateMark(annotation));
+}
+
+watch(() => annotationsStore.markerChange, refreshMarks);
+
+function refreshSelection() {
+  marker.hideAllMarksOfClass('selected');
+
+  let annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
+  if (annotation) {
+    marker.showMark('selected', annotation.start_position, annotation.end_position);
+    marker.addLabel('labelled', annotation.label, annotation.start_position);
+    marker.scrollToMark(annotation.start_position, annotation.end_position);
+  }
+}
+
+watch(() => annotationsStore.selectionChange, refreshSelection);
+
+function setCaretToSelectedAnnotation()
+{
+  let annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
+  marker.setCaretToMark(annotation.start_position);
+}
+
+watch(() => annotationsStore.caretRequest, setCaretToSelectedAnnotation);
+
+/**
+ * Update the marking of an annotation
+ */
+function updateMark(annotation) {
+  marker.addLabel('labelled', annotation.label, annotation.start_position);
+}
+
+/**
+ * Handle the click into the text or a selection of a text range
+ * Decide whether to add a new annotation or select an existing annotation
+ */
+async function onSelection(selected) {
+  // check if new selection overlaps with annotations
+  let annotations = annotationsStore.getActiveAnnotationsInRange(selected.firstWord, selected.lastWord);
+  if (annotations.length) {
+    // get the first overlapping annotation
+    let annotation = annotations.shift();
+
+    if (selected.isCollapsed) {
+      // just clicked at a position => select the overlapping comment
+      marker.removeSelection();
+      annotationsStore.selectAnnotation(annotation.getKey());
+    } else {
+      // always create a new comment, even if it overlaps
+      marker.removeSelection();
+      annotationsStore.createAnnotation(selected.firstWord, selected.lastWord, selected.parentNumber);
+    }
+  } else if (!selected.isCollapsed) {
+    // no overlapping => create a new comment
+    marker.removeSelection();
+    annotationsStore.createAnnotation(selected.firstWord, selected.lastWord, selected.parentNumber);
+  }
+}
+
+
+function handleBeforeinput(event) {
+  event.preventDefault();
+  return false;
+}
 
 async function handleFocusChange() {
   if (layoutStore.focusTarget == 'left' && layoutStore.isInstructionsVisible) {

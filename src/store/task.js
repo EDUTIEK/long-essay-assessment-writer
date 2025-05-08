@@ -78,6 +78,20 @@ export const useTaskStore = defineStore('task', {
       setInterval(this.updateRemainingTime, 1000);
     },
 
+    async loadFromUpdate(data) {
+      try {
+        this.writing_end = data.writing_end;
+        this.writing_excluded = data.writing_excluded;
+        await storage.setItem('task', this.$state);
+      }
+      catch (err) {
+        console.log(err);
+      }
+
+      this.updateRemainingTime();
+      setInterval(this.updateRemainingTime, 1000);
+    },
+
     /**
      * Update the remaining writing time (called by interval)
      */

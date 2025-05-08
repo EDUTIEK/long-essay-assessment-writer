@@ -79,6 +79,23 @@ export const useAnnotationsStore = defineStore('annotations', {
       },
     },
 
+  getActiveAnotationsInRange: state => {
+
+    /**
+     * Get the active comments in a range of marked text
+     *
+     * @param {number} start_position
+     * @param {number} end_position
+     * @returns {Comment[]}
+     */
+    const fn = function (start_position, end_position) {
+      return state.activeAnnotations.filter(annotation =>
+          annotation.start_position <= end_position && annotation.end_position >= start_position
+      );
+    };
+    return fn;
+  },
+
 
   actions: {
 
