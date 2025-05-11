@@ -5,6 +5,7 @@ import { useNotesStore } from '@/store/notes';
 import { useSettingsStore } from "@/store/settings";
 import { usePreferencesStore } from "@/store/preferences";
 import {useAnnotationsStore} from "@/store/annotations";
+import {useTaskStore} from "@/store/task";
 import EditNote from "@/components/EditNote.vue";
 import EditEssay from "@/components/EditEssay.vue";
 import Annotations from "@/components/Annotations.vue";
@@ -14,6 +15,7 @@ const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
 const annotationsStore = useAnnotationsStore();
+const taskStore = useTaskStore();
 
 const selectedEditor = ref('essay');
 updateSelectedEditor();
@@ -71,7 +73,7 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
 <template>
   <div id="app-edit-select-wrapper">
     <div class="appEditChoices">
-      <v-btn-toggle v-if="settingsStore.hasNotes" density="comfortable" variant="outlined" divided
+      <v-btn-toggle v-if="settingsStore.hasNotes || taskStore.hasInstructions" density="comfortable" variant="outlined" divided
                     v-model="selectedEditor" @click="selectEditor()">
         <v-btn aria-labelledby="app-edit-select-annotations" size="small"
                value="annotations">
@@ -97,6 +99,7 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
               aria-hidden="true">{{ settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1 }}</span>
         </v-btn>
       </v-btn-toggle>
+      &nbsp;
       <span aria-hidden="true" v-if="settingsStore.hasNotes">&nbsp;</span>
       <v-btn-group density="comfortable" variant="outlined" divided>
         <v-btn title="Editor Text verkleinern" size="small" icon="mdi-magnify-minus-outline"

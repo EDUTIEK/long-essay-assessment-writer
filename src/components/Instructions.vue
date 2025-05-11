@@ -5,7 +5,7 @@ import { usePreferencesStore } from "@/store/preferences";
 import { useClipbardStore } from "@/store/clipboard";
 import {useAnnotationsStore} from "@/store/annotations";
 import TextMarker from '@/lib/TextMarker';
-import { onMounted, nextTick, watch } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import Annotation from "@/data/Annotation";
 
 const taskStore = useTaskStore();
@@ -13,6 +13,8 @@ const layoutStore = useLayoutStore();
 const preferencesStore = usePreferencesStore();
 const clipboardStore = useClipbardStore();
 const annotationsStore = useAnnotationsStore();
+
+const markingActive = ref(0);
 
 let marker;
 
@@ -62,8 +64,6 @@ function updateMark(annotation) {
  * Decide whether to add a new annotation or select an existing annotation
  */
 async function onSelection(selected) {
-  console.log(selected);
-  marker.removeSelection();
 
   if (selected.isCollapsed) {
     // just clicked at a position => select the overlapping annotation
@@ -73,8 +73,9 @@ async function onSelection(selected) {
       annotationsStore.selectAnnotation(annotation.getKey());
     }
   }
-  else {
+  else if (markingActive.value === 1) {
     // selected text => create a new annotation
+    marker.removeSelection();
     const annotation = new Annotation({
           resource_key: Annotation.KEY_INSTRUCTIONS,
           parent_number: selected.parentNumber,
@@ -96,6 +97,10 @@ function onIntersection(firstWord) {
     let annotation = annotations.shift();
     annotation.setFirstVisibleAnnotation(annotation.getKey());
   }
+}
+
+function setMarkingActive(active) {
+  markingActive.value = active;
 }
 
 async function handleFocusChange() {
@@ -157,6 +162,19 @@ function getHTMLOfSelection() {
 <template>
   <div id="app-instructions-wrapper">
     <div class="appTextButtons">
+      <v-btn-toggle v-model="markingActive" density="comfortable" variant="outlined" divided>
+        <v-btn aria-labelledby="app-instructions-mode-select" size="small" value="0"
+               @click="setMarkingActive(0)">
+          <v-icon icon="mdi-cursor-default-outline"></v-icon>
+          <span class="sr-only" id="app-instructions-mode-select">Auswählen</span>
+        </v-btn>
+        <v-btn aria-labelledby="app-instructions-mode-mark"  size="small" value="1"
+               @click="setMarkingActive(1)">
+          <v-icon icon="mdi-marker"></v-icon>
+          <span class="sr-only" id="app-instructions-mode-mark">Markieren</span>
+        </v-btn>
+      </v-btn-toggle>
+      &nbsp;
       <v-btn-group density="comfortable" variant="outlined" divided>
         <v-btn title="Aufgabenstellung Text verkleinern" size="small" icon="mdi-magnify-minus-outline"
                @click="preferencesStore.zoomInstructionsOut()"></v-btn>
