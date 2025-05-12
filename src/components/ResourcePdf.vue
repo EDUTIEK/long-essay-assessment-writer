@@ -23,6 +23,7 @@ onMounted(() => {
   pdfjs.on('update', updateAnnotation);
   pdfjs.on('delete', deleteAnnotation);
   pdfjs.on('select', selectAnnotation);
+  pdfjs.on('pageChanged', pageChanged);
   handleFocusChange();
 });
 
@@ -47,7 +48,7 @@ function loadAnnotations() {
   pdfjs.setAll(all);
 }
 
-function createAnnotation(event) {
+async function createAnnotation(event) {
   const annotation = new Annotation(
       {
         resource_key: resource.key,
@@ -57,7 +58,8 @@ function createAnnotation(event) {
         start_position: Math.round(- event.detail.intern.rect[1])
       }
   );
-  annotationsStore.createAnnotation(annotation);
+  await annotationsStore.createAnnotation(annotation);
+  annotationsStore.selectAnnotation(annotation.getKey());
 }
 
 function updateAnnotation(event) {
@@ -77,6 +79,14 @@ function deleteAnnotation(event) {
 function selectAnnotation(event) {
   if (event.detail) {
     annotationsStore.selectAnnotation(Annotation.buildKey(resource.key, event.detail.id));
+  }
+}
+
+function pageChanged(event) {
+  let annotations = annotationsStore.getActiveAnnotationsByParentNumber(event.detail);
+  if (annotations.length) {
+    let annotation = annotations.shift();
+    annotationsStore.setFirstVisibleAnnotation(annotation.getKey());
   }
 }
 

@@ -85,7 +85,7 @@ export const useAnnotationsStore = defineStore('annotations', {
        *
        * @param {number} start_position
        * @param {number} end_position
-       * @returns {Comment[]}
+       * @returns {Annotation[]}
        */
       const fn = function (start_position, end_position) {
         return state.activeAnnotations.filter(annotation =>
@@ -100,12 +100,28 @@ export const useAnnotationsStore = defineStore('annotations', {
       /**
        * Get the active annotations with a start position
        *
-       * @param {number] }start_position
-       * @returns {Comment[]}
+       * @param {number} start_position
+       * @returns {Annotation[]}
        */
       const fn = function (start_position) {
         return state.activeAnnotations.filter(annotation =>
             annotation.start_position == start_position
+        );
+      }
+      return fn;
+    },
+
+    getActiveAnnotationsByParentNumber: state => {
+
+      /**
+       * Get the active annotations with a start position
+       *
+       * @param {number} parent_number
+       * @returns {Annotation[]}
+       */
+      const fn = function (parent_number) {
+        return state.activeAnnotations.filter(annotation =>
+            annotation.parent_number == parent_number
         );
       }
       return fn;

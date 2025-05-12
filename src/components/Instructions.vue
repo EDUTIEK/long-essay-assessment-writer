@@ -92,9 +92,9 @@ async function onSelection(selected) {
  * @param {int} firstWord
  */
 function onIntersection(firstWord) {
-  let annotations = annotationsStore.getActiveAnnotationsByStartPosition(firstWord);
+  const annotations = annotationsStore.getActiveAnnotationsByStartPosition(firstWord);
   if (annotations.length) {
-    let annotation = annotations.shift();
+    const annotation = annotations.shift();
     annotationsStore.setFirstVisibleAnnotation(annotation.getKey());
   }
 }
