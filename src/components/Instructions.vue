@@ -95,7 +95,7 @@ function onIntersection(firstWord) {
   let annotations = annotationsStore.getActiveAnnotationsByStartPosition(firstWord);
   if (annotations.length) {
     let annotation = annotations.shift();
-    annotation.setFirstVisibleAnnotation(annotation.getKey());
+    annotationsStore.setFirstVisibleAnnotation(annotation.getKey());
   }
 }
 

@@ -45,4 +45,9 @@ watch(() => annotationsStore.firstVisibleKey, scrollToFirstVisible);
 
 <style scoped>
 
+#appAnnotations {
+  overflow-y: scroll;
+  overflow-x: clip;
+}
+
 </style>

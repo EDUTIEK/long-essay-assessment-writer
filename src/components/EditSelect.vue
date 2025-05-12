@@ -113,21 +113,18 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
         </v-btn>
       </v-btn-group>
     </div>
-    <div class="appEditors">
-      <!-- Ally: use v-show to keep cursor at position when only one columns is shown and columns are switched -->
-      <annotations v-show="layoutStore.isAnnotationsSelected"></annotations>
-      <edit-essay v-show="layoutStore.isEssaySelected"/>
-      <edit-note
-          v-if="settingsStore.notice_boards > 0"
-          v-show="layoutStore.isNotesSelected && notesStore.activeKey == key"
-          v-for="key in notesStore.keys"
-          :key="key"
-          :noteKey="key"
-          :noteLabel="settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)"
-      >
-      </edit-note>
-    </div>
-
+    <!-- Ally: use v-show to keep cursor at position when only one column is shown and columns are switched -->
+    <annotations class="appEditors" v-show="layoutStore.isAnnotationsSelected"></annotations>
+    <edit-essay class="appEditors" v-show="layoutStore.isEssaySelected"/>
+    <edit-note class="appEditors"
+        v-if="settingsStore.notice_boards > 0"
+        v-show="layoutStore.isNotesSelected && notesStore.activeKey == key"
+        v-for="key in notesStore.keys"
+        :key="key"
+        :noteKey="key"
+        :noteLabel="settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)"
+    >
+    </edit-note>
   </div>
 </template>
 
