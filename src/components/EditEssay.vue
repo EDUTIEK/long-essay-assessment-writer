@@ -29,115 +29,46 @@ import 'tinymce/skins/content/default/content.js';
 
 // Import tiny vue integration
 import Editor from '@tinymce/tinymce-vue'
+import TinyHelper from '@/lib/TinyHelper';
 
 import { useEssayStore } from '@/store/essay';
 import { useSettingsStore } from "@/store/settings";
 import { usePreferencesStore } from "@/store/preferences";
-import { useClipbardStore } from "@/store/clipboard";
 import { useLayoutStore } from "@/store/layout";
-
-import { nextTick, ref, watch } from 'vue';
+import { watch } from 'vue';
 
 const essayStore = useEssayStore();
 const settingsStore = useSettingsStore();
 const preferencesStore = usePreferencesStore();
-const clipboardStore = useClipbardStore();
 const layoutStore = useLayoutStore();
 
-const wordCount = ref(0);
-const characterCount = ref(0);
+const helper = new TinyHelper('app-essay');
 
-function handleInit() {
-  applyZoom();
-  applyFormat();
-  updateWordCount();
-}
-
-watch(() => preferencesStore.editor_zoom, applyZoom);
-watch(() => settingsStore.contentClass, applyFormat);
+watch(() => settingsStore.contentClass, helper.applyFormat.bind(helper));
+watch(() => preferencesStore.editor_zoom, helper.applyZoom.bind(helper));
+watch(() => layoutStore.focusChange, handleFocusChange);
 
 async function handleFocusChange() {
   if (layoutStore.focusTarget == 'right' && layoutStore.isEssayVisible) {
-    await nextTick();
-    const editor = tinymce.get('app-essay');
-    editor.focus();
+    helper.applyFocus();
   }
 }
 
-watch(() => layoutStore.focusChange, handleFocusChange);
+function handleInit() {
+  helper.init();
+}
 
 function handleChange() {
   essayStore.updateContent(true);
-  applyZoom();
-  updateWordCount();
+  helper.applyZoom();
+  helper.applyWordCount();
+  helper.applyScrolling();
 }
 
 function handleKeyUp() {
   essayStore.updateContent(true);
-  updateWordCount();
-}
-
-function applyZoom() {
-  try {
-    const editor = tinymce.get('app-essay');
-    if (editor) {
-      editor.dom.setStyle(editor.dom.doc.body, 'font-size', (preferencesStore.editor_zoom) + 'rem');
-      editor.dom.setStyle(editor.dom.select('h1'),
-          'font-size',
-          (preferencesStore.editor_zoom * settingsStore.tinyH1Size) + 'rem');
-      editor.dom.setStyle(editor.dom.select('h2'),
-          'font-size',
-          (preferencesStore.editor_zoom * settingsStore.tinyH2Size) + 'rem');
-      editor.dom.setStyle(editor.dom.select('h3'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
-      editor.dom.setStyle(editor.dom.select('h4'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
-      editor.dom.setStyle(editor.dom.select('h5'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
-      editor.dom.setStyle(editor.dom.select('h6'), 'font-size', (preferencesStore.editor_zoom) + 'rem');
-    }
-  }
-  catch (e) {
-    // prevent error when tiny is unloaded
-  }
-}
-
-/**
- * Add classes for the headline styles to the overlay element of the tiny menu
- */
-function applyFormat() {
-  for (const element of document.getElementsByClassName('tox-tinymce-aux')) {
-    element.classList.add(settingsStore.contentClass);
-  }
-}
-
-function updateWordCount() {
-  try {
-    const editor = tinymce.get('app-essay');
-    if (editor) {
-      const plugin = editor.plugins.wordcount;
-      wordCount.value = plugin.body.getWordCount();
-      characterCount.value = plugin.body.getCharacterCount();
-    }
-  }
-  catch (e) {
-    // prevent error when tiny is unloaded
-  }
-}
-
-/**
- * Handle copy to the clipboard
- * @param {ClipboardEvent} event
- */
-function handleCopy(event) {
-  clipboardStore.setContent(event.clipboardData.getData('text/html'));
-}
-
-/**
- * Check if paste is allowed (called from tiny plugin)
- */
-function handlePaste(plugin, args) {
-  if (!clipboardStore.getPasteAllowed(args.content)) {
-    args.content = '';
-    clipboardStore.showWarning();
-  }
+  helper.applyWordCount();
+  helper.applyScrolling();
 }
 
 </script>
@@ -149,47 +80,19 @@ function handlePaste(plugin, args) {
       <editor
           id="app-essay"
           v-model="essayStore.currentContent"
-          @change="handleChange"
-          @keydown="layoutStore.handleKeyDown"
-          @keyup="handleKeyUp"
-          @copy="handleCopy"
-          @cut="handleCopy"
           @init="handleInit"
+          @change="handleChange"
+          @keyup="handleKeyUp"
+          @keydown="layoutStore.handleKeyDown"
+          @copy="helper.handleCopy"
+          @cut="helper.handleCopy"
           api-key="no-api-key"
-          :init="{
-          license_key: 'gpl',
-          language: 'de',
-          height: '100%',
-          menubar: false,
-          statusbar: false,
-          plugins: 'lists charmap wordcount',
-          toolbar: settingsStore.tinyToolbar,
-          valid_elements: settingsStore.tinyValidElements,
-          formats: settingsStore.tinyFormats,
-          style_formats: settingsStore.tinyStyles,
-          custom_undo_redo_levels: 10,
-          text_patterns: false,
-          skin: 'default',
-          content_css: 'default',
-          content_style: settingsStore.tinyContentStyle,
-          browser_spellcheck: settingsStore.allow_spellcheck,
-          highlight_on_focus: true,
-          iframe_aria_text: 'Editor Abgabe-Text',
-          paste_as_text: false,         // keep formats when copying between clipboards
-          paste_block_drop: true,       // prevent unfiltered content from drag & drop
-          paste_merge_formats: true,    // default
-          paste_tab_spaces: 4,          // default
-          smart_paste: false,           // don't create hyperlinks automatically
-          paste_data_images: false,     // don't paste images
-          paste_remove_styles_if_webkit: true,  // default
-          paste_webkit_styles: 'none',          // default
-          paste_preprocess: handlePaste
-         }"
+          :init="helper.getInit()"
       />
     </div>
     <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
       <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
-             :text="preferencesStore.word_count_characters ? characterCount + ' Zeichen' : wordCount + ' Wörter' ">
+             :text="preferencesStore.word_count_characters ? helper.characterCount.value + ' Zeichen' : helper.wordCount.value + ' Wörter' ">
       </v-btn>
     </div>
   </div>
