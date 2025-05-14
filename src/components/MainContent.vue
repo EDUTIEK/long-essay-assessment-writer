@@ -6,6 +6,7 @@ import EditSelect from "@/components/EditSelect.vue";
 import { useLayoutStore } from "../store/layout";
 import { useResourcesStore } from "../store/resources";
 import { useClipbardStore } from "@/store/clipboard";
+import {nextTick, onMounted} from "vue";
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
@@ -13,6 +14,11 @@ const clipboardStore = useClipbardStore();
 
 //Enable keyboard hotkeys
 document.addEventListener('keydown', layoutStore.handleKeyDown);
+
+// needed to activate the input mode of dragon when being clicked in
+onMounted(async () => {
+  layoutStore.setFocusChange('header');
+})
 
 </script>
 

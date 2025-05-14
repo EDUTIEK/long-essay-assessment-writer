@@ -215,11 +215,13 @@ export const useLayoutStore = defineStore('layout', {
 
     setLeftExpanded(expanded) {
       this.expandedColumn = expanded ? 'left' : 'none';
+      this.setFocusChange('left');
       this.saveToStorage();
     },
 
     setRightExpanded(expanded) {
       this.expandedColumn = expanded ? 'right' : 'none';
+      this.setFocusChange('right');
       this.saveToStorage();
     },
 
