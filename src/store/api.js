@@ -36,6 +36,7 @@ export const useApiStore = defineStore('api', {
       timeOffset: 0,                      // differnce between server time and client time (ms)
 
       // not saved
+      intervals: {},                      // list of all registered timer intervals, indexed by their name
       initialized: false,                 // used to switch from startup screen to the editing view
       review: false,                      // used to switch to the review and confirmation for a final submission
       showInitFailure: false,             // show a message that the initialisation failed
@@ -241,7 +242,7 @@ export const useApiStore = defineStore('api', {
         }
       }
 
-      setInterval(this.timedSync, syncInterval);
+      this.setInterval('apiStore.timedSync', this.timedSync, syncInterval);
     },
 
     /**
@@ -638,5 +639,28 @@ export const useApiStore = defineStore('api', {
 
       this.review = true;
     },
+
+    /**
+     * Set a timer interval
+     * @param {string} name unique name of the interval to set
+     * @param {function} handler function that is called
+     * @param {integer} interval milliseconds between each call
+     */
+    setInterval(name, handler, interval) {
+      if (name in this.intervals) {
+        clearInterval(this.intervals[name]);
+      }
+      this.intervals[name] = setInterval(handler, interval);
+    },
+
+    /**
+     * Clear all timer intervals
+     */
+    clearAllIntervals() {
+      for (const name in this.intervals) {
+        clearInterval(this.intervals[name]);
+        delete this.intervals[name];
+      }
+    }
   }
 })

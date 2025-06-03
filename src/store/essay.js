@@ -164,7 +164,8 @@ export const useEssayStore = defineStore('essay', {
       }
 
       lockUpdate = 0;
-      setInterval(this.updateContent, checkInterval);
+      const apiStore = useApiStore();
+      apiStore.setInterval('essayStore.updateContent', this.updateContent, checkInterval);
     },
 
     /**
@@ -200,7 +201,8 @@ export const useEssayStore = defineStore('essay', {
       }
 
       lockUpdate = 0;
-      setInterval(this.updateContent, checkInterval);
+      const apiStore = useApiStore();
+      apiStore.setInterval('essayStore.updateContent', this.updateContent, checkInterval);
     },
 
 
@@ -306,6 +308,10 @@ export const useEssayStore = defineStore('essay', {
               "| Editor: ", fromEditor,
               "| Duration:", Date.now() - currentTime, 'ms');
           }
+
+          // reset the interval
+          // this should start the interval again if it stopped unintendendly
+          apiStore.setInterval('essayStore.updateContent', this.updateContent, checkInterval);
         }
 
         // set this here

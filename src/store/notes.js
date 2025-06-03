@@ -135,7 +135,8 @@ export const useNotesStore = defineStore('notes', {
       }
 
       lockUpdate = 0;
-      setInterval(this.updateContent, checkInterval);
+      const apiStore = useApiStore();
+      apiStore.setInterval('notesStore.updateContent', this.updateContent, checkInterval);
     },
 
 

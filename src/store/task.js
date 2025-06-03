@@ -62,7 +62,8 @@ export const useTaskStore = defineStore('task', {
       }
 
       this.updateRemainingTime();
-      setInterval(this.updateRemainingTime, 1000);
+      const apiStore = useApiStore();
+      apiStore.setInterval('taskStore.updateRemainingTime', this.updateRemainingTime, 1000);
     },
 
     async loadFromData(data) {
@@ -75,7 +76,9 @@ export const useTaskStore = defineStore('task', {
       }
 
       this.updateRemainingTime();
-      setInterval(this.updateRemainingTime, 1000);
+      const apiStore = useApiStore();
+      apiStore.setInterval('taskStore.updateRemainingTime', this.updateRemainingTime, 1000);
+
     },
 
     async loadFromUpdate(data) {
@@ -95,7 +98,8 @@ export const useTaskStore = defineStore('task', {
       }
 
       this.updateRemainingTime();
-      setInterval(this.updateRemainingTime, 1000);
+      const apiStore = useApiStore();
+      apiStore.setInterval('taskStore.updateRemainingTime', this.updateRemainingTime, 1000);
     },
 
     /**
