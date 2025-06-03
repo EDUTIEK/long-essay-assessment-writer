@@ -12,7 +12,7 @@ const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
 const clipboardStore = useClipbardStore();
 
-//Enable keyboard hotkeys
+// enable keyboard hotkeys
 document.addEventListener('keydown', layoutStore.handleKeyDown);
 
 // needed to activate the input mode of dragon when being clicked in

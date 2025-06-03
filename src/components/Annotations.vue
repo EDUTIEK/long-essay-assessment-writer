@@ -2,8 +2,10 @@
 import { useAnnotationsStore } from "@/store/annotations";
 import Annotation from '@/components/Annotation.vue';
 import { nextTick, watch } from 'vue';
+import {useLayoutStore} from "@/store/layout";
 
 const annotationsStore = useAnnotationsStore();
+const layoutStore = useLayoutStore()
 
 /**
  * Focus the currently selected annotation
@@ -20,6 +22,7 @@ async function focusSelected() {
 }
 
 watch(() => annotationsStore.selectionChange, focusSelected);
+watch(() => layoutStore.focusChange, focusSelected);
 
 
 /**

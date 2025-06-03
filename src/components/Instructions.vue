@@ -166,12 +166,12 @@ function getHTMLOfSelection() {
         <v-btn aria-labelledby="app-instructions-mode-select" size="small" value="0"
                @click="setMarkingActive(0)">
           <v-icon icon="mdi-cursor-default-outline"></v-icon>
-          <span class="sr-only" id="app-instructions-mode-select">Auswählen</span>
+          <span id="app-instructions-mode-select">Auswählen</span>
         </v-btn>
         <v-btn aria-labelledby="app-instructions-mode-mark"  size="small" value="1"
                @click="setMarkingActive(1)">
           <v-icon icon="mdi-marker"></v-icon>
-          <span class="sr-only" id="app-instructions-mode-mark">Markieren</span>
+          <span id="app-instructions-mode-mark">Markieren</span>
         </v-btn>
       </v-btn-toggle>
       &nbsp;
