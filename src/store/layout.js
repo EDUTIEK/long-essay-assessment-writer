@@ -23,6 +23,7 @@ export const useLayoutStore = defineStore('layout', {
       rightContent: 'essay',          // essay|notes|annotations
       showTimer: false,
       showHelp: false,
+      showSendingStatus: false,
 
       // not saved in storage
       focusTarget: '',                // target for setting the focus (header|navigation|left|right)

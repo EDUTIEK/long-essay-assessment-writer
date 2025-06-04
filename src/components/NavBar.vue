@@ -6,6 +6,7 @@ import { useSettingsStore } from "@/store/settings";
 import { useApiStore } from "@/store/api";
 import { nextTick, watch } from 'vue';
 import Resource from "@/data/Resource";
+import SendingStatus from "@/components/SendingStatus.vue";
 
 const layoutStore = useLayoutStore();
 const resourcesStore = useResourcesStore();
@@ -153,19 +154,7 @@ function getResourceIcon(resource) {
     </v-list>
 
     <template v-slot:append>
-      <v-list tabindex="-1">
-        <v-list-item
-            tabindex="-1"
-            disabled
-            :aria-label="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
-            :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
-        >
-          <template v-slot:prepend>
-            <v-icon aria-role="hidden"
-                    :icon="apiStore.isSending ? 'mdi-cloud-upload' : (apiStore.isAllSent ? 'mdi-cloud-check-outline' : 'mdi-cloud-outline')"></v-icon>
-          </template>
-        </v-list-item>
-      </v-list>
+      <SendingStatus></SendingStatus>
     </template>
 
 
