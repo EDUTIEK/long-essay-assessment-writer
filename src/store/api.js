@@ -47,7 +47,10 @@ export const useApiStore = defineStore('api', {
 
       // should be unified in the next version
       lastStepsTry: 0,                    // timestamp of the last try to send writing steps
-      lastSendingTry: 0                   // timestamp of the last try to send changes
+      lastSendingTry: 0,                  // timestamp of the last try to send changes
+
+      lastSaveWritingStepsResponseStatusText: '',
+      lastSaveWritingStepsResponseData: null
     }
   },
 
@@ -419,11 +422,14 @@ export const useApiStore = defineStore('api', {
         this.setTimeOffset(response);
         this.refreshToken(response);
         this.lastStepsTry = 0;
+        this.lastSaveWritingStepsResponseStatusText = response.statusText
+        this.lastSaveWritingStepsResponseData = response.data
         return true;
       }
       catch (error) {
-        console.error(error);
         this.lastStepsTry = 0;
+        this.lastSaveWritingStepsResponseStatusText = error.response.statusText
+        this.lastSaveWritingStepsResponseData = error.response.data
         return false;
       }
     },
