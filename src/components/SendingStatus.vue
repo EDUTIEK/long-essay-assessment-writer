@@ -6,6 +6,7 @@ import {useEssayStore} from "@/store/essay";
 import {useTaskStore} from "@/store/task";
 import {ref} from "vue";
 import FileHandling from "@/lib/FileHandling";
+import SendingResult from "@/data/SendingResult";
 
 const apiStore = useApiStore();
 const layoutStore = useLayoutStore();
@@ -15,17 +16,15 @@ const fileHandling = new FileHandling();
 
 const showSending = ref(false);
 const showFailure = ref(false);
-const sendStatus = ref('');
-const sendData = ref('');
+const sendingResult = ref(new SendingResult());
 
 async function sendUpdate() {
   showSending.value = true;
   showFailure.value = false;
-  const ok = await essayStore.sendUpdate(true);
+  const result = await essayStore.sendUpdate(true);
   showSending.value = false;
-  if (!ok) {
-    sendStatus.value = apiStore.lastSaveWritingStepsResponseStatusText;
-    sendData.value = apiStore.lastSaveWritingStepsResponseData;
+  if (result && !result.success) {
+    sendingResult.value = result;
     showFailure.value = true;
   }
 }
@@ -33,8 +32,7 @@ async function sendUpdate() {
 function openPopup() {
   showSending.value = false;
   showFailure.value = false;
-  sendStatus.value = '';
-  sendData.value = '';
+  sendingResult.value = new SendingResult();
   layoutStore.showSendingStatus = true;
 }
 
@@ -71,8 +69,8 @@ async function downloadEssay() {
 
           <v-alert v-show="showSending">Übertrage...</v-alert>
           <v-alert v-show="showFailure">Beim Übertragen ist ein Fehler aufgetreten!
-            <br>{{sendStatus}}
-            <br>{{sendData}}
+            <br>{{sendingResult.message}}
+            <br>{{sendingResult.details}}
           </v-alert>
 
           <v-table>

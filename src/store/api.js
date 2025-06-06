@@ -14,6 +14,7 @@ import { useAnnotationsStore } from '@/store/annotations';
 
 import md5 from 'md5';
 import Change from "@/data/Change";
+import SendingResult from "@/data/SendingResult";
 
 const syncInterval = 5000;      // time (ms) to wait for syncing with the backend
 
@@ -409,11 +410,13 @@ export const useApiStore = defineStore('api', {
 
     /**
      * Save the writing steps to the backend
+     * @param WritingStep[] steps
+     * @return SendingResult
      */
     async saveWritingStepsToBackend(steps) {
       let response = {};
       let data = {
-        steps: steps
+        steps: steps.map(step => step.getData())
       }
 
       this.lastStepsTry = Date.now();
@@ -422,15 +425,19 @@ export const useApiStore = defineStore('api', {
         this.setTimeOffset(response);
         this.refreshToken(response);
         this.lastStepsTry = 0;
-        this.lastSaveWritingStepsResponseStatusText = response.statusText
-        this.lastSaveWritingStepsResponseData = response.data
-        return true;
+        return new SendingResult({
+          success: true,
+          message: response.statusText,
+          details: response.data
+        })
       }
       catch (error) {
         this.lastStepsTry = 0;
-        this.lastSaveWritingStepsResponseStatusText = error.response.statusText
-        this.lastSaveWritingStepsResponseData = error.response.data
-        return false;
+        return new SendingResult({
+          success: false,
+          message: error.response.statusText,
+          details: error.response.data
+        })
       }
     },
 
@@ -499,11 +506,15 @@ export const useApiStore = defineStore('api', {
 
     /**
      * Save the final authorization to the backend
+     * @param WritingStep[] steps
+     * @param string content
+     * @param string hash
+     * @param bool authorized
      */
     async saveFinalContentToBackend(steps, content, hash, authorized) {
       let response = {};
       let data = {
-        steps: steps,
+        steps: steps.map(step => step.getData()),
         content: content,
         hash: hash,
         authorized: authorized

@@ -4,6 +4,7 @@ import DiffMatchPatch from 'diff-match-patch';
 import md5 from 'md5';
 import { useApiStore } from "./api";
 import { useTaskStore } from "./task";
+import WritingStep from "@/data/WritingStep";
 
 const storage = localForage.createInstance({
   storeName: "writer-essay",
@@ -28,9 +29,8 @@ const startState = {
   lastStoredIndex: -1,        // history index of the last save in the store
   lastSentIndex: -1,          // history index of the last sending to the backend
   lastSentHash: '',           // hash of the full content of the last saving stored on the server
-
   lastSave: 0,                // timestamp (ms) of the last save in the store
-  lastSending: 0,             // timestamp (ms) of the last sending to the backend
+  lastSendingTry: 0,          // timestamp (ms) of the last sending to the backend
   lastSendingSuccess: 0,      // timestamp (ms) of the last successful sending to the backend
 
   // not saved
@@ -107,22 +107,22 @@ export const useEssayStore = defineStore('essay', {
     },
 
     /**
-     * Push a save object to the history in the state
-     * @param saveObject
+     * Push a writing step to the history in the state
+     * @param WritingStep step
      * @param integer
      * @returns integer index of the pushed object
      */
-    addToHistory(saveObject, distance = 0, index = null) {
+    addToHistory(step, index = null) {
       let lastIndex;
       if (index !== null) {
-        this.history[index] = saveObject;
+        this.history[index] = step;
         lastIndex = index;
       } else {
-        lastIndex = this.history.push(saveObject) - 1;
+        lastIndex = this.history.push(step) - 1;
       }
 
-      if (saveObject.is_delta) {
-        this.sumOfDistances += distance;
+      if (step.is_delta) {
+        this.sumOfDistances += step.distance;
       } else {
         this.sumOfDistances = 0;
       }
@@ -148,16 +148,9 @@ export const useEssayStore = defineStore('essay', {
 
         let index = 0;
         while (index < data.steps.length) {
-          let entry = data.steps[index];
-          let saveObject = {
-            is_delta: entry.is_delta,
-            timestamp: entry.timestamp,
-            content: entry.content,
-            hash_before: entry.hash_before,
-            hash_after: entry.hash_after
-          }
-          this.addToHistory(saveObject, 0, index);
-          await storage.setItem(this.formatIndex(index), saveObject);
+          let step = new WritingStep(data.steps[index]);
+          this.addToHistory(step, index);
+          await storage.setItem(this.formatIndex(index), step.getData());
           index++;
         }
 
@@ -168,7 +161,7 @@ export const useEssayStore = defineStore('essay', {
         await storage.setItem('lastSentIndex', this.lastSentIndex);
         await storage.setItem('lastSentHash', this.lastSentHash);
         await storage.setItem('lastSave', this.lastSave);
-        await storage.setItem('lastSending', this.lastSending);
+        await storage.setItem('lastSendingTry', this.lastSendingTry);
         await storage.setItem('lastSendingSuccess', this.lastSendingSuccess);
 
       }
@@ -195,7 +188,7 @@ export const useEssayStore = defineStore('essay', {
         this.lastSentIndex = await storage.getItem('lastSentIndex') ?? -1;
         this.lastSentHash = await storage.getItem('lastSentHash') ?? '';
         this.lastSave = await storage.getItem('lastSave') ?? 0;
-        this.lastSending = await storage.getItem('lastSending') ?? 0;
+        this.lastSendingTry = await storage.getItem('lastSendingTry') ?? 0;
         this.lastSendingSuccess = await storage.getItem('lastSendingSuccess') ?? 0;
         this.storedContent = await storage.getItem('storedContent') ?? '';
         this.storedHash = await storage.getItem('storedHash') ?? '';
@@ -203,8 +196,8 @@ export const useEssayStore = defineStore('essay', {
 
         let index = 0;
         while (index <= this.lastStoredIndex) {
-          let saveObject = (await storage.getItem(this.formatIndex(index))) ?? {};
-          this.addToHistory(saveObject, 0, index);
+          let step = new WritingStep((await storage.getItem(this.formatIndex(index))) ?? {});
+          this.addToHistory(step, index);
           index++;
         }
 
@@ -252,7 +245,7 @@ export const useEssayStore = defineStore('essay', {
 
       try {
         const currentContent = this.currentContent + '';   // ensure it is not changed because content in state  is bound to tiny
-        let saveObject = null;
+        let step = null;
 
         //
         // create the save object if content has changed
@@ -276,34 +269,36 @@ export const useEssayStore = defineStore('essay', {
             || this.sumOfDistances + distance > maxDistance     // or enough changes are saved as diffs
             || result[0] != currentContent                      // or patch is wrong
           ) {
-            saveObject = {
+            step = new WritingStep({
               is_delta: 0,
               timestamp: apiStore.getServerTime(currentTime),
               content: currentContent,
               hash_before: this.storedHash,
-              hash_after: currentHash
-            }
+              hash_after: currentHash,
+              distance: distance
+            });
           }
           // make a delta save if ...
           else if (distance >= saveDistance                       // enouch changed since lase save
             || currentTime - this.lastSave > saveInterval       // enogh time since last save
           ) {
-            saveObject = {
+            step = new WritingStep({
               is_delta: 1,
               timestamp: apiStore.getServerTime(currentTime),
               content: difftext,
               hash_before: this.storedHash,
-              hash_after: currentHash
-            }
+              hash_after: currentHash,
+              distance: distance
+            });
           }
 
           //
-          // add the save object to the history
+          // add the writing step to the history
           //
-          if (saveObject !== null) {
+          if (step !== null) {
 
             // push to history
-            this.lastStoredIndex = this.addToHistory(saveObject, distance);
+            this.lastStoredIndex = this.addToHistory(step);
             this.lastSave = currentTime;
             this.storedContent = currentContent;
             this.storedHash = currentHash;
@@ -312,11 +307,11 @@ export const useEssayStore = defineStore('essay', {
             // 'content' in storage always corresponds to the the last history entry (which may be delta)
             await storage.setItem('storedContent', this.storedContent);
             await storage.setItem('storedHash', this.storedHash);
-            await storage.setItem(this.formatIndex(this.lastStoredIndex), saveObject);
+            await storage.setItem(this.formatIndex(this.lastStoredIndex), step.getData());
             await storage.setItem('lastStoredIndex', this.lastStoredIndex);
 
             console.log(
-              "Delta:", saveObject.is_delta,
+              "Delta:", step.is_delta,
               "| Distance (sum): ", distance, "(", this.sumOfDistances, ")",
               "| Editor: ", fromEditor,
               "| Duration:", Date.now() - currentTime, 'ms');
@@ -343,20 +338,21 @@ export const useEssayStore = defineStore('essay', {
     /**
      * Send an update to the backend
      * Called from updateContent() without wait
+     * @return SendingResult|null
      */
     async sendUpdate(forced = false) {
 
       // avoid too many sendings
       // sendUpdate is called from updateContent with the checkInterval
-      if (!forced && Date.now() - this.lastSending < sendInterval) {
-        return true;
+      if (!forced && Date.now() - this.lastSendingTry < sendInterval) {
+        return null;
       }
 
       // avoid parallel sendings
       // no need to wait because sendUpdate is called by interval
       // use post-increment for test-and-set
       if (lockSending++) {
-        return true;
+        return null;
       }
 
       let steps = [];
@@ -370,27 +366,24 @@ export const useEssayStore = defineStore('essay', {
         sentIndex = index++;                        // post increment
       }
 
-      let success = false;
+      let result = null;
       if (steps.length > 0) {
         const apiStore = useApiStore();
-        if (await apiStore.saveWritingStepsToBackend(steps)) {
+        result = await apiStore.saveWritingStepsToBackend(steps);
+        if (result.success) {
           this.lastSentIndex = sentIndex;
           this.lastSentHash = sentHash;
           this.lastSendingSuccess = Date.now();
           await storage.setItem('lastSentIndex', sentIndex);
           await storage.setItem('lastSentHash', sentHash);
           await storage.setItem('lastSendingSuccess', this.lastSendingSuccess);
-          success = true;
         }
       }
-      else {
-        success = true;
-      }
 
-      this.lastSending = Date.now();
-      await storage.setItem('lastSending', this.lastSending);
+      this.lastSendingTry = Date.now();
+      await storage.setItem('lastSendingTry', this.lastSendingTry);
       lockSending = false;
-      return success;
+      return result;
     },
 
 
@@ -400,10 +393,12 @@ export const useEssayStore = defineStore('essay', {
     async setAllSavingsSent() {
       this.lastSentIndex = this.lastStoredIndex;
       this.lastSentHash = this.storedHash;
+      this.lastSendingTry = Date.now();
       this.lastSendingSuccess = Date.now();
       await storage.setItem('lastSentIndex', this.lastSentIndex);
       await storage.setItem('lastSentHash', this.lastSentHash);
-      this.lastSending = Date.now();
+      await storage.setItem('lastSendingTry', this.lastSendingTry);
+      await storage.setItem('lastSendingSuccess', this.lastSendingSuccess);
     },
 
     /**
