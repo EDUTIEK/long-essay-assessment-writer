@@ -4,6 +4,7 @@ import {useApiStore} from "@/store/api";
 import {useLayoutStore} from "@/store/layout";
 import {useEssayStore} from "@/store/essay";
 import {useTaskStore} from "@/store/task";
+import {useChangesStore} from "@/store/changes";
 import {ref} from "vue";
 import FileHandling from "@/lib/FileHandling";
 import SendingResult from "@/data/SendingResult";
@@ -12,21 +13,18 @@ const apiStore = useApiStore();
 const layoutStore = useLayoutStore();
 const essayStore = useEssayStore();
 const taskStore = useTaskStore();
+const changesStore = useChangesStore();
 const fileHandling = new FileHandling();
 
 const showSending = ref(false);
 const showFailure = ref(false);
 const sendingResult = ref(new SendingResult());
 
-async function sendUpdate() {
-  showSending.value = true;
-  showFailure.value = false;
-  const result = await essayStore.sendUpdate(true);
-  showSending.value = false;
-  if (result && !result.success) {
-    sendingResult.value = result;
-    showFailure.value = true;
-  }
+/**
+ * Format a timestamp as string like '2022-02-21 21:22'
+ */
+function formatTimestamp(timestamp) {
+  return new Date(timestamp).toISOString().slice(0, 16).replace('T', ' ');
 }
 
 function openPopup() {
@@ -38,6 +36,29 @@ function openPopup() {
 
 function closePopup() {
   layoutStore.showSendingStatus = false;
+}
+
+async function sendUpdate() {
+  showFailure.value = false;
+  showSending.value = true;
+
+  const result1 = await essayStore.sendUpdate(true);
+  if (result1 && !result1.success) {
+    sendingResult.value = result1;
+    showSending.value = false;
+    showFailure.value = true;
+    return;
+  }
+
+  const result2 = await apiStore.saveChangesToBackend(true);
+  if (result2 && !result2.success) {
+    sendingResult.value = result2;
+    showSending.value = false;
+    showFailure.value = true;
+    return;
+  }
+
+  showSending.value = false;
 }
 
 async function downloadEssay() {
@@ -65,42 +86,65 @@ async function downloadEssay() {
     <v-dialog v-model="layoutStore.showSendingStatus" max-width="1000">
       <v-card>
         <v-card-text>
-          <h2>Speicherung und Übertragung</h2>
-
           <v-alert v-show="showSending">Übertrage...</v-alert>
           <v-alert v-show="showFailure">Beim Übertragen ist ein Fehler aufgetreten!
             <br>{{sendingResult.message}}
             <br>{{sendingResult.details}}
           </v-alert>
-
-          <v-table>
-            <tbody>
-            <tr>
-              <td>
-                Letzte lokale Speicherung im Browser:
-              </td>
-              <td>
-                {{essayStore.lastSave > 0 ? essayStore.formatTimestamp(essayStore.lastSave) : 'keine'}}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Letzte Übertragung auf den Server:
-              </td>
-              <td>
-                {{essayStore.lastSendingSuccess > 0 ? essayStore.formatTimestamp(essayStore.lastSendingSuccess) : 'keine'}}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Bearbeitungsschritte:
-              </td>
-              <td>
-                {{essayStore.openSendings > 0 ? (essayStore.openSendings  + ' noch nicht übertragen') : 'alle übertragen' }}
-              </td>
-            </tr>
-            </tbody>
-          </v-table>
+          <h3>Bearbeitungsschritte im Abgabetext</h3>
+          <v-container>
+            <v-row>
+              <v-col cols="6">
+                Letzte Speicherung im Browser:
+              </v-col>
+              <v-col cols="6">
+                {{essayStore.lastSave > 0 ? formatTimestamp(essayStore.lastSave) : 'keine'}}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="6">
+                Letzte Übertragung ins System:
+              </v-col>
+                <v-col cols="6">
+                {{essayStore.lastSendingSuccess > 0 ? formatTimestamp(essayStore.lastSendingSuccess) : 'keine'}}
+              </v-col>
+            </v-row>
+              <v-row>
+                <v-col cols="6">
+                Status:
+              </v-col>
+              <v-col cols="6">
+                {{essayStore.openSendings > 0 ? (essayStore.openSendings  + ' noch nicht übertragen') : 'alle sind übertragen' }}
+              </v-col>
+            </v-row>
+          </v-container>
+          <h3>Anmerkungen, Notizen, Einstellungen</h3>
+          <v-container>
+            <v-row>
+              <v-col cols="6">
+                Letzte Speicherung im Browser:
+              </v-col>
+              <v-col cols="6">
+                {{changesStore.lastSave > 0 ? formatTimestamp(changesStore.lastSave) : 'keine'}}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="6">
+                Letzte Übertragung ins System:
+              </v-col>
+              <v-col cols="6">
+                {{changesStore.lastSendingSuccess > 0 ? formatTimestamp(changesStore.lastSendingSuccess) : 'keine'}}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="6">
+                Status:
+              </v-col>
+              <v-col cols="6">
+                {{changesStore.countChanges > 0 ? (changesStore.countChanges  + ' noch nicht übertragen') : 'alle sind übertragen' }}
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="sendUpdate()">

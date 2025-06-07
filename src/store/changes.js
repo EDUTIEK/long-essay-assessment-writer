@@ -10,7 +10,9 @@ const storage = localForage.createInstance({
 
 function startState() {
   const state = {
-    changes: {}
+    changes: {},
+    lastSave: 0,          // timestamp (ms) of the lastsaving in the storage
+    lastSendingSuccess: 0   // timestamp (ms) of the last successful sending to the backend
   };
   for (const type of Change.ALLOWED_TYPES) {
     state.changes[type] = {};   // changes of objects of the type that have to be sent to the backend: key => Change
@@ -128,6 +130,8 @@ export const useChangesStore = defineStore('changes', {
             }
           }
         }
+        this.lastSave = parseInt(await storage.getItem('lastSave'));
+        this.lastSendingSuccess = parseInt(await storage.getItem('lastSendingSuccess'));
       }
       catch (err) {
         console.log(err);
@@ -149,6 +153,8 @@ export const useChangesStore = defineStore('changes', {
         data[key] = change.getData();
       }
       await storage.setItem(type, JSON.stringify(data));
+      this.lastSave = Date.now();
+      await storage.setItem('lastSave', this.lastSave);
     },
 
     /**
@@ -227,6 +233,8 @@ export const useChangesStore = defineStore('changes', {
       if (toStore) {
         await this.saveChangesOfTypeToStorage(type);
       }
+      this.lastSendingSuccess = Date.now();
+      await storage.setItem('lastSendingSuccess', this.lastSendingSuccess);
     }
   }
 });

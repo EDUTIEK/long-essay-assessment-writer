@@ -48,10 +48,7 @@ export const useApiStore = defineStore('api', {
 
       // should be unified in the next version
       lastStepsTry: 0,                    // timestamp of the last try to send writing steps
-      lastSendingTry: 0,                  // timestamp of the last try to send changes
-
-      lastSaveWritingStepsResponseStatusText: '',
-      lastSaveWritingStepsResponseData: null
+      lastChangesTry: 0,                  // timestamp of the last try to send changes
     }
   },
 
@@ -67,7 +64,7 @@ export const useApiStore = defineStore('api', {
     },
 
     isSending: state => {
-      state.lastSendingTry > 0 || state.lastStepsTry > 0;
+      state.lastChangesTry > 0 || state.lastStepsTry > 0;
     },
 
     getRequestConfig: state => {
@@ -356,10 +353,10 @@ export const useApiStore = defineStore('api', {
     async loadUpdateFromBackend() {
 
       // don't interfer with a running request
-      if (this.lastSendingTry > 0) {
+      if (this.lastChangesTry > 0) {
         return false;
       }
-      this.lastSendingTry = Date.now();
+      this.lastChangesTry = Date.now();
 
       try {
         const response = await axios.get('/update', this.getRequestConfig(this.dataToken));
@@ -375,12 +372,12 @@ export const useApiStore = defineStore('api', {
         await settingsStore.loadFromData(response.data.settings);
         await notesStore.prepareNotes(settingsStore.notice_boards);
 
-        this.lastSendingTry = 0;
+        this.lastChangesTry = 0;
         return true;
       }
       catch (error) {
         console.error(error);
-        this.lastSendingTry = 0;
+        this.lastChangesTry = 0;
         return false;
       }
     },
@@ -446,7 +443,7 @@ export const useApiStore = defineStore('api', {
      * Timer is set in initialisation
      *
      * @param bool wait    wait some seconds for a running sending to finish (if not called by timer)
-     * @return bool
+     * @return SendingResult|null
      */
     async saveChangesToBackend(wait = false) {
       const annotationsStore = useAnnotationsStore();
@@ -457,25 +454,25 @@ export const useApiStore = defineStore('api', {
       // wait up to seconds for a running request to finish before giving up
       if (wait) {
         let tries = 0;
-        while (tries < 5 && this.lastSendingTry > 0) {
+        while (tries < 5 && this.lastChangesTry > 0) {
           tries++;
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
 
       // don't interfer with a running request
-      if (this.lastSendingTry > 0) {
-        return false;
+      if (this.lastChangesTry > 0) {
+        return null;
       }
 
       if (changesStore.countChanges > 0) {
-        this.lastSendingTry = Date.now();
+        this.lastChangesTry = Date.now();
 
         try {
           const data = {
-            annotations: await annotationsStore.getChangedData(this.lastSendingTry),
-            notes: await notesStore.getChangedData(this.lastSendingTry),
-            preferences: await preferencesStore.getChangedData(this.lastSendingTry)
+            annotations: await annotationsStore.getChangedData(this.lastChangesTry),
+            notes: await notesStore.getChangedData(this.lastChangesTry),
+            preferences: await preferencesStore.getChangedData(this.lastChangesTry)
           };
 
           const response = await axios.put('/changes', data, this.getRequestConfig(this.dataToken));
@@ -484,23 +481,32 @@ export const useApiStore = defineStore('api', {
 
           await changesStore.setChangesSent(Change.TYPE_ANNOTATIONS,
               response.data.annotations,
-              this.lastSendingTry);
+              this.lastChangesTry);
           await changesStore.setChangesSent(Change.TYPE_NOTES,
             response.data.notes,
-            this.lastSendingTry);
+            this.lastChangesTry);
           await changesStore.setChangesSent(Change.TYPE_PREFERENCES,
             response.data.preferences,
-            this.lastSendingTry);
+            this.lastChangesTry);
+
+          this.lastChangesTry = 0;
+          return new SendingResult({
+            success: true,
+            message: response.statusText,
+            details: response.data
+          })
         }
         catch (error) {
-          console.error(error);
-          this.lastSendingTry = 0;
-          return false;
+          this.lastChangesTry = 0;
+          return new SendingResult({
+            success: false,
+            message: error.response.statusText,
+            details: error.response.data
+          })
         }
-        this.lastSendingTry = 0;
       }
 
-      return true;
+      return null;
     },
 
 
