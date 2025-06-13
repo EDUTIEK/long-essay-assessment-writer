@@ -118,8 +118,24 @@ class Resource {
     }
   }
 
-  isPdf() {
+  isFile() {
     return [Resource.TYPE_FILE, Resource.TYPE_SOLUTION, Resource.TYPE_INSTRUCTION].includes(this.type);
+  }
+
+  isPdf() {
+    return this.isFile() && 'application/pdf' === this.mimetype;
+  }
+
+  isVideo() {
+    return this.isFile() && /^video\//.test(this.mimetype);
+  }
+
+  isAudio() {
+    return this.isFile() && /^audio\//.test(this.mimetype);
+  }
+
+  isImage() {
+    return this.isFile() && /^image\//.test(this.mimetype);
   }
 
   isExternalUrl() {

@@ -5,7 +5,6 @@ function run()
     window.localStorage.removeItem('pdfjs.history');
     window.localStorage.removeItem('pdfjs.preferences');
     setup(forwardEvent, actions => {
-        overwriteMethodOnce(PDFViewerApplication.pdfSidebar, 'setInitialView', setView => setView(0));
         window.addEventListener('message', event => {
             then(
                 actions[event.data.name](...event.data.args),
@@ -39,7 +38,6 @@ function setup(dispatch, ready){
     uiManager(manager => {
         pdfOn('annotationeditorparamschanged', checkForChanges);
         pdfOn('switchannotationeditorparams', checkForChanges);
-        pdfOnPageChanging(pageChanging);
         // pdfOn('annotationeditorstateschanged', checkForChanges);
 
         const actions = {
@@ -121,11 +119,6 @@ function setup(dispatch, ready){
             updating = null;
             deleted.forEach(x => dispatch('delete', externEntry(x)));
             updateSelection();
-        }
-
-        function pageChanging(){
-            const page = pdfCurrentPageIndex();
-            dispatch('pageChanged', page);
         }
 
         function createOrUpdateEntry(page, editor)
@@ -395,11 +388,6 @@ function pdfSwitchToPageIndex(page)
     PDFViewerApplication.eventBus.dispatch('pagenumberchanged', {value: page + 1});
 }
 
-function pdfOnPageChanging(proc)
-{
-    PDFViewerApplication.eventBus.on('pagechanging', proc);
-}
-
 function pdfOn(n, proc)
 {
     PDFViewerApplication.pdfViewer.eventBus.on(n, proc);
@@ -521,14 +509,6 @@ function diff(left, right)
     }
 
     return null;
-}
-
-function overwriteMethodOnce(obj, method, instead = Void)
-{
-    obj[method] = () => {
-        delete obj[method];
-        return instead(obj[method]);
-    };
 }
 
 function Void(){}
