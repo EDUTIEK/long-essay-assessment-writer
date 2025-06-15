@@ -348,6 +348,11 @@ export const useEssayStore = defineStore('essay', {
         return null;
       }
 
+      // unclock if sending is forced
+      if (forced) {
+        lockSending = 0;
+      }
+
       // avoid parallel sendings
       // no need to wait because sendUpdate is called by interval
       // use post-increment for test-and-set

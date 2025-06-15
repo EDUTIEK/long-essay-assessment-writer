@@ -19,6 +19,30 @@ import SendingResult from "@/data/SendingResult";
 const syncInterval = 5000;      // time (ms) to wait for syncing with the backend
 
 
+function getSendingResultFromError(error) {
+  if (error.response) {
+    return new SendingResult({
+      success: false,
+      message: error.response.statusText,
+      details: error.response.data
+    })
+  }
+  else if (error.message) {
+    return new SendingResult({
+      success: false,
+      message: error.message,
+      details: ''
+    })
+  }
+  else {
+    return new SendingResult({
+      success: false,
+      message: 'Unknown error',
+      details: ''
+    })
+  }
+}
+
 /**
  * API Store
  * Handles the communication with the backend
@@ -431,11 +455,7 @@ export const useApiStore = defineStore('api', {
       }
       catch (error) {
         this.lastStepsTry = 0;
-        return new SendingResult({
-          success: false,
-          message: error.response.statusText,
-          details: error.response.data
-        })
+        return getSendingResultFromError(error);
       }
     },
 
@@ -499,11 +519,7 @@ export const useApiStore = defineStore('api', {
         }
         catch (error) {
           this.lastChangesTry = 0;
-          return new SendingResult({
-            success: false,
-            message: error.response.statusText,
-            details: error.response.data
-          })
+         return getSendingResultFromError(error);
         }
       }
 
