@@ -24,7 +24,7 @@ const sendingResult = ref(new SendingResult());
  * Format a timestamp as string like '2022-02-21 21:22'
  */
 function formatTimestamp(timestamp) {
-  return new Date(timestamp).toISOString().slice(0, 16).replace('T', ' ');
+  return new Date(timestamp).toLocaleString();
 }
 
 function openPopup() {
