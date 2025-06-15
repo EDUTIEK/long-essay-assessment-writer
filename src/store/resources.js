@@ -77,7 +77,7 @@ export const useResourcesStore = defineStore('resources', {
 
     async loadFromStorage() {
       try {
-        const keys = await storage.getItem('resourceKeys');
+        const keys = await storage.getItem('keys');
         if (keys) {
           this.keys = JSON.parse(keys);
         }

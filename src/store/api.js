@@ -289,6 +289,7 @@ export const useApiStore = defineStore('api', {
 
       // directy check for updates of task settings to avoid delay
       await this.loadUpdateFromBackend();
+      await layoutStore.initialize();
       this.initialized = true;
     },
 
