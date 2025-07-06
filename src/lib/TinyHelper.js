@@ -129,10 +129,25 @@ export default class TinyHelper {
     /**
      * Fix for dragon extension in chrome browser
      */
-    applyScrolling() {
+    applyScrolling(force) {
         try {
-            this.editor.selection.getNode().scrollIntoView(false);
+            const selection = this.editor.selection.getNode();
+
+            // not available in all browsers
+            // if (Element.prototype.scrollIntoViewIfNeeded) {
+            // }
+
+            const selRect = selection.getBoundingClientRect();
+            const contRect = this.editor.getContentAreaContainer().getBoundingClientRect();
+            if (selRect.top < contRect.top || selRect.bottom > contRect.bottom
+                || selRect.right > contRect.right || selRect.left < contRect.left) {
+                selection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
         } catch (e) {
+            console.log(e);
         }
     }
 

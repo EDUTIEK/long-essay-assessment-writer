@@ -116,7 +116,7 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
         </v-btn>
       </v-btn-group>
     </div>
-    <!-- Ally: use v-show to keep cursor at position when only one column is shown and columns are switched -->
+    <!-- Ally: use v-show to keep cursor at position when editors are switched -->
     <annotations class="appEditors" v-show="layoutStore.isAnnotationsSelected"></annotations>
     <edit-essay class="appEditors" v-show="layoutStore.isEssaySelected"/>
     <edit-note class="appEditors"
