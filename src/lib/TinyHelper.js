@@ -3,10 +3,13 @@ import {useSettingsStore} from "@/store/settings";
 import {useClipbardStore} from "@/store/clipboard";
 import {usePreferencesStore} from "@/store/preferences";
 import {nextTick, ref, watch} from 'vue';
+import i18n from "@/plugins/i18n";
 
 let settingsStore;
 let clipboardStore;
 let preferencesStore;
+
+const { t } = i18n.global
 
 export default class TinyHelper {
 
@@ -43,7 +46,7 @@ export default class TinyHelper {
             content_style: settingsStore.tinyContentStyle,
             browser_spellcheck: settingsStore.allow_spellcheck,
             highlight_on_focus: true,
-            iframe_aria_text: 'Editor Abgabe-Text',
+            iframe_aria_text: t('tinyHelperIframeAriaText'),
             paste_as_text: false,         // keep formats when copying between clipboards
             paste_block_drop: true,       // prevent unfiltered content from drag & drop
             paste_merge_formats: true,    // default

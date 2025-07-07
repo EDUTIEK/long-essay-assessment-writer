@@ -47,9 +47,9 @@ export const useAnnotationsStore = defineStore('annotations', {
 
     activeAnnotations: state => {
       const layoutStore = useLayoutStore();
-      const shownResourceKey = layoutStore.shownResourceKey;
-      if (shownResourceKey !== null) {
-        return state.annotations.filter(annotation => annotation.resource_key === shownResourceKey);
+      const selectedResourceKey = layoutStore.selectedResourceKey;
+      if (selectedResourceKey !== null) {
+        return state.annotations.filter(annotation => annotation.resource_key === selectedResourceKey);
       }
       return [];
     },

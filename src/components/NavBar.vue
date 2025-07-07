@@ -79,8 +79,8 @@ function getResourceIcon(resource) {
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    v-if="taskStore.hasInstructions"
                    @click="closeNavigation; layoutStore.showInstructions();"
-                   :aria-label="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ', ist ausgewählt' : '')"
-                   :title="'Aufgabenstellung' + (layoutStore.isInstructionsVisible ? ' (ausgewählt)' : '')"
+                   :aria-label="$t('allInstructions') + (layoutStore.isInstructionsVisible ? $t('navBarSelectedAria') : '')"
+                   :title="$t('allInstructions') + (layoutStore.isInstructionsVisible ? $t('navBarSelected') : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
@@ -91,8 +91,8 @@ function getResourceIcon(resource) {
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    v-if="resourcesStore.hasInstruction"
                    @click="closeNavigation; layoutStore.showInstructionsPdf();"
-                   :aria-label="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ', ist ausgewählt' : '')"
-                   :title="'Aufgabenstellung als PDF' + (layoutStore.isInstructionsPdfVisible ? ' (ausgewählt)' : '')"
+                   :aria-label="$t('allInstructionsPdf') + (layoutStore.isInstructionsPdfVisible ?  $t('navBarSelectedAria') : '')"
+                   :title="$t('allInstructionsPdf') + (layoutStore.isInstructionsPdfVisible ? $t('navBarSelected') : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
@@ -103,8 +103,8 @@ function getResourceIcon(resource) {
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    v-for="resource in resourcesStore.getFileOrUrlResources"
                    @click="closeNavigation; selectResource(resource);"
-                   :aria-label="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ?  ', ist ausgewählt' : '')"
-                   :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? ' (ausgewählt)' : '')"
+                   :aria-label="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ?  $t('navBarSelectedAria') : '')"
+                   :title="resource.title + (resourcesStore.isActive(resource) && layoutStore.isResourcesVisible ? $t('navBarSelected') : '')"
                    :key="resource.key"
                    :ripple="false">
         <template v-slot:prepend>
@@ -118,8 +118,8 @@ function getResourceIcon(resource) {
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    v-if="taskStore.hasInstructions || resourcesStore.hasAnnotatableResource"
                    @click="closeNavigation; layoutStore.showAnnotations();"
-                   :aria-label="'Anmerkungen' + (layoutStore.isAnnotationsVisible ? ', ist ausgewählt' : '')"
-                   :title="'Anmerkungen' + (layoutStore.isAnnotationsVisible ? ' (ausgewählt)' : '')"
+                   :aria-label="$t('allNotes') + (layoutStore.isAnnotationsVisible ? $t('navBarSelectedAria') : '')"
+                   :title="$t('allNotes') + (layoutStore.isAnnotationsVisible ? $t('navBarSelected') : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
@@ -130,8 +130,8 @@ function getResourceIcon(resource) {
 
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    @click="closeNavigation; layoutStore.showEssay();"
-                   :aria-label="'Abgabe-Text' + (layoutStore.isEssayVisible ? ', ist ausgewählt' : '')"
-                   :title="'Abgabe-Text' + (layoutStore.isEssayVisible ? ' (ausgewählt)' : '')"
+                   :aria-label="$t('allEssay') + (layoutStore.isEssayVisible ? $t('navBarSelectedAria') : '')"
+                   :title="$t('allEssay') + (layoutStore.isEssayVisible ? $t('navBarSelected') : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
@@ -141,8 +141,8 @@ function getResourceIcon(resource) {
 
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0" v-if="settingsStore.hasNotes"
                    @click="closeNavigation; layoutStore.showNotes();"
-                   :aria-label="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ', ist ausgewählt' : '')"
-                   :title="'Notizen, werden bei der Abgabe verworfen' + (layoutStore.isNotesVisible ? ' (ausgewählt)' : '')"
+                   :aria-label="$t('allNotesWillPurged') + (layoutStore.isNotesVisible ? $t('navBarSelectedAria') : '')"
+                   :title="$t('allNotesWillPurged') + (layoutStore.isNotesVisible ? $t('navBarSelected') : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"

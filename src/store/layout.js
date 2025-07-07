@@ -68,18 +68,18 @@ export const useLayoutStore = defineStore('layout', {
       return fn;
     },
 
-    shownResourceKey: (state) => {
+    selectedResourceKey: (state) => {
       const resourcesStore = useResourcesStore();
-      if (state.isInstructionsVisible) {
+      if (state.isInstructionsSelected) {
           return Annotation.KEY_INSTRUCTIONS;
       }
-      else if (state.isInstructionsPdfVisible) {
+      else if (state.isInstructionsPdfSelected) {
         const resource = resourcesStore.getInstruction;
         if (resource) {
           return resource.key;
         }
       }
-      else if (state.isResourcesVisible) {
+      else if (state.isResourcesSelected) {
         return resourcesStore.activeKey;
       }
       return null;

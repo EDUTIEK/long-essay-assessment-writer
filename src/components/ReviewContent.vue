@@ -19,10 +19,8 @@ const preferencesStore = usePreferencesStore();
   <v-main fill-height>
       <div class="column" v-show="essayStore.openSendings > 0">
         <div class="col-header bg-grey-lighten-4">
-          <h2 class="text-h6" style="color:#f00000;">Ihre letzten Eingaben wurden noch nicht übertragen, sind aber lokal
-            gesichert!</h2>
-          <p>Bitte versuchen Sie die Übertragung nach einer Minute erneut. Wenden Sie sich gegebenenfalls an die
-            Aufsicht.</p>
+          <h2 class="text-h6" style="color:#f00000;">{{ $t('reviewContentNotYetSent') }}</h2>
+          <p>{{ $t('reviewContentTryAgainLater') }}</p>
         </div>
 
         <div class="col-content">
@@ -36,12 +34,12 @@ const preferencesStore = usePreferencesStore();
         <div class="col-footer bg-grey-lighten-4">
           <v-btn class="ma-2" :color="settingsStore.primaryColorCss" @click="apiStore.retry()">
             <v-icon :color="settingsStore.primaryTextColorCss" icon="mdi-refresh"></v-icon>
-            <span :style="settingsStore.primaryTextColorFullCss">Erneut versuchen</span>
+            <span :style="settingsStore.primaryTextColorFullCss">{{ $t('reviewContentTryAgain') }}</span>
           </v-btn>
           <v-btn class="ma-2" @click="apiStore.review=false"
                  v-show="!taskStore.writingEndReached && !taskStore.isExcluded">
             <v-icon icon="mdi-file-edit-outline"></v-icon>
-            <span>Weiter bearbeiten</span>
+            <span>{{ $t('reviewContentContinueEditing') }}</span>
           </v-btn>
           <!--
           <v-btn class="ma-2" :href="apiStore.returnUrl">
@@ -54,20 +52,19 @@ const preferencesStore = usePreferencesStore();
 
       <div class="column" v-show="essayStore.openSendings <= 0">
         <div class="col-header bg-grey-lighten-4" v-show="taskStore.isExcluded">
-          <h2 class="text-h6">Sie wurden von der Bearbeitung ausgeschlossen.</h2>
-          <p>Es ist keine weitere Eingabe möglich.</p>
+          <h2 class="text-h6">{{ $t('reviewContentExcluded')}}</h2>
+          <p>{{ $t('reviewContentEditingPrevented') }}</p>
         </div>
         <div class="col-header bg-grey-lighten-4" v-show="taskStore.writingEndReached && !taskStore.isExcluded">
-          <h2 class="text-h6">Ihre Bearbeitungszeit ist beendet</h2>
-          <p>Es ist keine weitere Eingabe möglich. Bitte überprüfen Sie, ob Sie den Text in dieser Form zur Bewertung
-            abgeben möchten. Eventuell müssen Sie scrollen um alle Teile ihres Textes sehen zu können!
-            <span v-if="notesStore.hasWrittenNotes">Ihre Notizen werden verworfen.</span></p>
+          <h2 class="text-h6">{{ $t('reviewContentTimeOver') }}</h2>
+          <p>{{ $t('reviewContentEditingPrevented') }} {{$t('reviewContentPleaseCheckText') }} {{ $t('reviewContentYouMayScroll') }}
+            <span v-if="notesStore.hasWrittenNotes">{{ $t('reviewContentNotesWillBePurged')}}</span></p>
         </div>
         <div class="col-header bg-grey-lighten-4" v-show="!taskStore.writingEndReached && !taskStore.isExcluded">
-          <h2 class="text-h6">Abgabe-Text</h2>
-          <p>Bitte überprüfen Sie, ob Sie den Text in dieser Form zur Bewertung abgeben möchten.
-            <span v-if="notesStore.hasWrittenNotes">Ihre Notizen werden verworfen. Falls Teile davon bewertet werden sollen, kopieren Sie sie bitte in den Abgabetext.</span>
-            Nach der Abgabe ist keine weitere Bearbeitung mehr möglich. Eventuell müssen Sie scrollen um alle Teile ihres Textes sehen zu können!</p>
+          <h2 class="text-h6">{{ $t('allEssay') }}</h2>
+          <p>{{$t('reviewContentPleaseCheckText') }} {{ $t('reviewContentYouMayScroll') }}
+            <span v-if="notesStore.hasWrittenNotes">{{ $t('reviewContentNotesWillBePurged')}}</span>
+            {{ $t('reviewContentAuthorizationFinishes') }}</p>
         </div>
 
         <div class="col-content">
@@ -82,17 +79,17 @@ const preferencesStore = usePreferencesStore();
           <v-btn class="ma-2 primary" @click="apiStore.finalize(true)" :color="settingsStore.primaryColorCss"
                  v-show="!taskStore.isExcluded">
             <v-icon :color="settingsStore.primaryTextColorCss" icon="mdi-file-send-outline"></v-icon>
-            <span :style="settingsStore.primaryTextColorFullCss">Zur Bewertung abgeben</span>
+            <span :style="settingsStore.primaryTextColorFullCss">{{ $t('reviewContentAuthorize') }}</span>
           </v-btn>
           <v-btn class="ma-2" @click="apiStore.finalize(false)"
                  v-show="taskStore.writingEndReached || taskStore.isExcluded">
             <v-icon icon="mdi-logout-variant"></v-icon>
-            <span>Meine Bearbeitung nicht bewerten</span>
+            <span>{{ $t('reviewContentDontAuthorize') }}</span>
           </v-btn>
           <v-btn class="ma-2" @click="apiStore.review=false"
                  v-show="!taskStore.writingEndReached && !taskStore.isExcluded">
             <v-icon icon="mdi-file-edit-outline"></v-icon>
-            <span>Weiter bearbeiten</span>
+            <span>{{ $t('reviewContentContinueEditing') }}</span>
           </v-btn>
         </div>
       </div>
@@ -100,27 +97,23 @@ const preferencesStore = usePreferencesStore();
     <v-dialog persistent v-model="apiStore.showFinalizeFailure">
       <v-card>
         <v-card-text>
-          <p>Bei der Übertragung ihres Texts ist ein Netzwerkproblem aufgetreten. Ihre Eingaben sind lokal
-            gesichert.</p>
-          <p><br>
-            Sie können die Klausur auch ohne Übertragung verlassen und später wieder aufrufen, um die Übertragung
-            nachzuholen.
-          </p>
+          <p>{{ $t('reviewContentNetworkProblem') }}</p>
+          <p><br>{{ $t('reviewContentLeaveAndTryLater')}}</p>
           <p v-show="apiStore.showAuthorizeFailure"><br>
-            Melden Sie sich bei der Aufsicht, um Ihre Klausur zur Korrektur abzugeben.
+            {{ $t('reviewContentCallSupervisionToAuthorize') }}
           </p>
           <p v-show="!apiStore.showAuthorizeFailure"><br>
-            Melden Sie sich bei der Aufsicht, um Hilfe zu erhalten.
+            {{ $t('reviewContentCallSupervisionForHelp') }}
           </p>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="apiStore.showFinalizeFailure=false">
             <v-icon left icon="mdi-close"></v-icon>
-            <span>Meldung schließen</span>
+            <span>{{ $t('allCloseMessage') }}</span>
           </v-btn>
           <v-btn :href="apiStore.returnUrl">
             <v-icon left icon="mdi-logout-variant"></v-icon>
-            <span>Ohne Übertragung verlassen</span>
+            <span>{{ $t('reviewContentLeaveWithoutSending') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>

@@ -1,11 +1,26 @@
 <script setup>
 import { useAnnotationsStore } from "@/store/annotations";
-import Annotation from '@/components/Annotation.vue';
+import AnnotationInput from '@/components/AnnotationInput.vue';
 import { nextTick, watch } from 'vue';
 import {useLayoutStore} from "@/store/layout";
+import {useResourcesStore} from "@/store/resources";
+import Annotation from "@/data/Annotation";
 
 const annotationsStore = useAnnotationsStore();
-const layoutStore = useLayoutStore()
+const layoutStore = useLayoutStore();
+const resourcesStore = useResourcesStore();
+
+function annotationsPossible() {
+  const key = layoutStore.selectedResourceKey;
+  if (key === Annotation.KEY_INSTRUCTIONS) {
+    return true;
+  }
+  const resource = resourcesStore.getResource(key);
+  if (resource !== null && resource.canBeAnnoteted()) {
+    return true;
+  }
+  return false;
+}
 
 /**
  * Focus the currently selected annotation
@@ -41,8 +56,16 @@ watch(() => annotationsStore.firstVisibleKey, scrollToFirstVisible);
 </script>
 
 <template>
+
   <div id="appAnnotations">
-    <Annotation v-for="annotation in annotationsStore.activeAnnotations" :key="annotation.getKey()" :annotation="annotation"></Annotation>
+    <div v-show="layoutStore.isAnnotationsSelected && !annotationsPossible()">
+      <br />
+      <v-alert>{{ $t('annotationsNoContentSelected') }}</v-alert>
+    </div>
+    <AnnotationInput
+        v-show="layoutStore.isAnnotationsSelected && annotationsPossible()"
+        v-for="annotation in annotationsStore.activeAnnotations"
+        :key="annotation.getKey()" :annotation="annotation"></AnnotationInput>
   </div>
 </template>
 

@@ -77,7 +77,7 @@ function handleKeyUp() {
 
 <template>
   <div id="app-note-edit-wrapper">
-    <label class="hidden" :for="'app-note-' + props.noteKey">{{ 'Verborgenes Feld zur ' + props.noteLabel }}</label>
+    <label class="hidden" :for="'app-note-' + props.noteKey">{{ $t('editNoteHiddenField', [props.noteLabel]) }}</label>
     <div class="tinyWrapper">
       <editor
           :id="'app-note-' + props.noteKey"
@@ -94,7 +94,7 @@ function handleKeyUp() {
     </div>
     <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
       <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
-             :text="preferencesStore.word_count_characters ? helper.characterCount.value + ' Zeichen' : helper.wordCount.value + ' Wörter' ">
+             :text="preferencesStore.word_count_characters ? $t('allNumCharacters', helper.characterCount.value) : $t('allNumWords' , helper.wordCount.value) ">
       </v-btn>
     </div>
   </div>

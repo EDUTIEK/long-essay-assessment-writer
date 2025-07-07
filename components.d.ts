@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Alerts: typeof import('./src/components/Alerts.vue')['default']
-    Annotation: typeof import('./src/components/Annotation.vue')['default']
+    AnnotationInput: typeof import('./src/components/AnnotationInput.vue')['default']
     Annotations: typeof import('./src/components/Annotations.vue')['default']
     AppBar: typeof import('./src/components/AppBar.vue')['default']
     EditEssay: typeof import('./src/components/EditEssay.vue')['default']

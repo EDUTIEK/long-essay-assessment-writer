@@ -69,12 +69,12 @@ async function openReview() {
 
     <v-btn class="app-header-item" v-show="!apiStore.review" @click="closeWriter()">
       <v-icon left icon="mdi-pause"></v-icon>
-      <span>Unterbrechen</span>
+      <span>{{ $t("appBarInterrupt") }}</span>
     </v-btn>
 
     <v-btn class="app-header-item" v-show="!apiStore.review" @click="openReview">
       <v-icon left icon="mdi-eye"></v-icon>
-      <span>Vorschau zur Abgabe </span>
+      <span>{{ $t("appBarReview") }}</span>
     </v-btn>
 
   </v-app-bar>

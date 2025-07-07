@@ -74,8 +74,8 @@ async function downloadEssay() {
     <v-list-item
         tabindex="-1"
         @click = "openPopup()"
-        :aria-label="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
-        :title="apiStore.isSending ? 'Änderungen werden gesendet' : (apiStore.isAllSent ? 'Alles gesendet' : 'Noch Änderungen zu senden')"
+        :aria-label="apiStore.isSending ? $t('sendingStatusSending') : (apiStore.isAllSent ? $t('sendingStatusAllSent') : $t('sendingStatusOpenSendings'))"
+        :title="apiStore.isSending ? $t('sendingStatusSending') : (apiStore.isAllSent ? $t('sendingStatusAllSent') : $t('sendingStatusOpenSendings'))"
     >
       <template v-slot:prepend>
         <v-icon aria-role="hidden"
@@ -86,16 +86,16 @@ async function downloadEssay() {
     <v-dialog v-model="layoutStore.showSendingStatus" max-width="1000">
       <v-card>
         <v-card-text>
-          <v-alert v-show="showSending">Übertrage...</v-alert>
-          <v-alert v-show="showFailure">Beim Übertragen ist ein Fehler aufgetreten!
+          <v-alert v-show="showSending">{{ $t('sendingStatusSending') }}</v-alert>
+          <v-alert v-show="showFailure">{{ $t('sendingStatusError') }}
             <br>{{sendingResult.message}}
             <br>{{sendingResult.details}}
           </v-alert>
-          <h3>Bearbeitungsschritte im Abgabetext</h3>
+          <h3>{{ $t('sendingStatusWritingSteps') }}</h3>
           <v-container>
             <v-row>
               <v-col cols="6">
-                Letzte Speicherung im Browser:
+                {{ $t('sendingStatusLastBrowserSave') }}
               </v-col>
               <v-col cols="6">
                 {{essayStore.lastSave > 0 ? formatTimestamp(essayStore.lastSave) : 'keine'}}
@@ -103,7 +103,7 @@ async function downloadEssay() {
             </v-row>
             <v-row>
               <v-col cols="6">
-                Letzte Übertragung ins System:
+                {{ $t('sendingStatusLastSending') }}
               </v-col>
                 <v-col cols="6">
                 {{essayStore.lastSendingSuccess > 0 ? formatTimestamp(essayStore.lastSendingSuccess) : 'keine'}}
@@ -111,37 +111,37 @@ async function downloadEssay() {
             </v-row>
               <v-row>
                 <v-col cols="6">
-                Status:
+                  {{ $t('sendingStatusStatus') }}
               </v-col>
               <v-col cols="6">
                 {{essayStore.openSendings > 0 ? (essayStore.openSendings  + ' noch nicht übertragen') : 'alle sind übertragen' }}
               </v-col>
             </v-row>
           </v-container>
-          <h3>Anmerkungen, Notizen, Einstellungen</h3>
+          <h3>{{ $t('sendingStatusOtherChanges') }}</h3>
           <v-container>
             <v-row>
               <v-col cols="6">
-                Letzte Speicherung im Browser:
+                {{ $t('sendingStatusLastBrowserSave') }}
               </v-col>
               <v-col cols="6">
-                {{changesStore.lastSave > 0 ? formatTimestamp(changesStore.lastSave) : 'keine'}}
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                Letzte Übertragung ins System:
-              </v-col>
-              <v-col cols="6">
-                {{changesStore.lastSendingSuccess > 0 ? formatTimestamp(changesStore.lastSendingSuccess) : 'keine'}}
+                {{changesStore.lastSave > 0 ? formatTimestamp(changesStore.lastSave) : $t('sendingStatusNone')}}
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="6">
-                Status:
+                {{ $t('sendingStatusLastSending') }}
               </v-col>
               <v-col cols="6">
-                {{changesStore.countChanges > 0 ? (changesStore.countChanges  + ' noch nicht übertragen') : 'alle sind übertragen' }}
+                {{changesStore.lastSendingSuccess > 0 ? formatTimestamp(changesStore.lastSendingSuccess) : $t('sendingStatusNone')}}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="6">
+                {{ $t('sendingStatusStatus') }}
+              </v-col>
+              <v-col cols="6">
+                {{changesStore.countChanges > 0 ? $t('sendingStatusNumNotSent', changesStore.countChanges) : 'alle sind übertragen' }}
               </v-col>
             </v-row>
           </v-container>
@@ -149,15 +149,15 @@ async function downloadEssay() {
         <v-card-actions>
           <v-btn @click="sendUpdate()">
             <v-icon left icon="mdi-file-send-outline"></v-icon>
-            <span>Übertragen</span>
+            <span>{{ $t('sendingStatusSend') }}</span>
           </v-btn>
           <v-btn @click="downloadEssay()">
             <v-icon left icon="mdi-file-download-outline"></v-icon>
-            <span>Exportieren</span>
+            <span>{{ $t('sendingStatusExport') }}</span>
           </v-btn>
           <v-btn @click="closePopup()">
             <v-icon left icon="mdi-close"></v-icon>
-            <span>Schließen</span>
+            <span>{{ $t('allClose') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>

@@ -30,9 +30,9 @@ onMounted(async () => {
                v-show="layoutStore.isLeftVisible">
         <div class="col-header">
           <h1 class="headline">{{
-              layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
-                  : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
-                      : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : 'Linke Spalte'
+              layoutStore.isInstructionsSelected ? $t('allInstructions')
+                  : layoutStore.isInstructionsPdfSelected ?  $t('allInstructionsPdf')
+                      : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : $t('mainContentLeftColumn')
             }}
           </h1>
           <v-btn-group density="comfortable">
@@ -40,17 +40,18 @@ onMounted(async () => {
             <v-btn size="small" @click="layoutStore.setLeftExpanded(false)" v-show="layoutStore.isLeftExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
               <span>{{
-                  layoutStore.isAnnotationsSelected ? 'Anmerkungen'
-                    : layoutStore.isEssaySelected ? 'Abgabe-Text'
-                      : layoutStore.isNotesSelected ? 'Notizen' : 'Rechte Spalte erweitern'
+                  layoutStore.isAnnotationsSelected ? $t('allAnnotations')
+                    : layoutStore.isEssaySelected ? $t('allEssay')
+                      : layoutStore.isNotesSelected ? $t('allNotes')
+                        : $t('mainContentExpandRightColumn')
                 }}
                 </span>
             </v-btn>
             <!-- expand left column -->
             <v-btn aria-labelledby="app-expand-left-column" size="small" @click="layoutStore.setLeftExpanded(true)"
                    v-show="!layoutStore.isLeftExpanded">
-              <span aria-hidden="true">Erweitern</span>
-              <span id="app-expand-left-column" class="sr-only">Linke Spalte erweitern</span>
+              <span aria-hidden="true">{{ $t('mainContentExpand') }}</span>
+              <span id="app-expand-left-column" class="sr-only">{{ $t('mainContentExpandLeftColumn') }}</span>
               <v-icon icon="mdi-chevron-right"></v-icon>
             </v-btn>
           </v-btn-group>
@@ -66,18 +67,20 @@ onMounted(async () => {
                v-show="layoutStore.isRightVisible">
         <div class="col-header">
           <h1 class="headline">{{
-              layoutStore.isAnnotationsSelected ? 'Anmerkungen'
-                : layoutStore.isEssayVisible ? 'Abgabe-Text'
-                  : layoutStore.isNotesVisible ? 'Notizen (werden bei der Abgabe verworfen)' : 'Rechte Spalte'
+              layoutStore.isAnnotationsSelected ? $t('allAnnotations')
+                : layoutStore.isEssayVisible ? $t('allEssay')
+                  : layoutStore.isNotesVisible ? $t('allNotesWillPurged')
+                          : $t('mainContentRightColumn')
             }}
           </h1>
           <v-btn-group density="comfortable">
             <!-- expand left column -->
             <v-btn size="small" @click="layoutStore.setRightExpanded(false)" v-show="layoutStore.isRightExpanded">
                 <span> {{
-                    layoutStore.isInstructionsSelected ? 'Aufgabenstellung'
-                        : layoutStore.isInstructionsPdfSelected ? 'Aufgabenstellung (PDF)'
-                            : layoutStore.isResourcesSelected ? resourcesStore.activeTitle : 'Linke Spalte erweitern'
+                    layoutStore.isInstructionsSelected ? $t('allInstructions')
+                        : layoutStore.isInstructionsPdfSelected ? $t('allInstructionsPdf')
+                            : layoutStore.isResourcesSelected ? resourcesStore.activeTitle
+                                : $t('mainContentExpandLeftColumn')
                   }}
                 </span>
               <v-icon icon="mdi-chevron-right"></v-icon>
@@ -86,8 +89,8 @@ onMounted(async () => {
             <v-btn aria-labelledby="app-expand-right-column" size="small" @click="layoutStore.setRightExpanded(true)"
                    v-show="!layoutStore.isRightExpanded">
               <v-icon icon="mdi-chevron-left"></v-icon>
-              <span aria-hidden="true">Erweitern</span>
-              <span id="app-expand-right-column" class="sr-only">Rechte Spalte erweitern</span>
+              <span aria-hidden="true">{{ $t('mainContentExpand') }}</span>
+              <span id="app-expand-right-column" class="sr-only">{{ $t('mainContentExpandRightColumn') }}</span>
             </v-btn>
           </v-btn-group>
         </div>
@@ -100,12 +103,12 @@ onMounted(async () => {
     <v-dialog width="500" persistent v-model="clipboardStore.show_warning">
       <v-card>
         <v-card-text>
-          <p>Sie können nur selbst geschriebenen Text oder Teile aus der Aufgabenstellung kopieren und einfügen.</p>
+          <p>{{ $t('mainContentCopyPrevented') }}</p>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn @click="clipboardStore.hideWarning()">
-            Ok
+            {{ $t('allOk') }}
           </v-btn>
         </v-card-actions>
       </v-card>

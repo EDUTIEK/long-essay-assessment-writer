@@ -129,8 +129,13 @@ class Resource {
   isEmbeddedUrl() {
     return this.type == Resource.TYPE_URL && this.embedded
   }
+
   isEmbeddedSelectable() {
     return (this.type == Resource.TYPE_FILE || this.type == Resource.TYPE_URL && this.embedded);
+  }
+
+  canBeAnnoteted() {
+    return this.type == Resource.TYPE_FILE;
   }
 
   hasFileToLoad() {

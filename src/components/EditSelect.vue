@@ -81,14 +81,14 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
         <v-btn v-if = "taskStore.hasInstructions || resourcesStore.hasAnnotatableResource" aria-labelledby="app-edit-select-annotations" size="small"
                value="annotations">
           <v-icon icon="mdi-marker"></v-icon>
-          <span class="sr-only" id="app-edit-select-annotations">Anmerkungen</span>
-          <span aria-hidden="true">Anmerkungen</span>
+          <span class="sr-only" id="app-edit-select-annotations">{{ $t("allAnnotations") }}</span>
+          <span aria-hidden="true">{{ $t("allAnnotations") }}</span>
         </v-btn>
         <v-btn aria-labelledby="app-edit-select-text" size="small"
                value="essay">
           <v-icon icon="mdi-file-edit-outline"></v-icon>
-          <span class="sr-only" id="app-edit-select-text">Abgabe Text bearbeiten</span>
-          <span aria-hidden="true">Text</span>
+          <span class="sr-only" id="app-edit-select-text">{{ $t("editSelectEditText") }}</span>
+          <span aria-hidden="true">{{ $t('editSelectText') }}</span>
         </v-btn>
         <v-btn size="small"
                v-for="key in notesStore.keys"
@@ -97,20 +97,20 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
                :value="key">
           <v-icon icon="mdi-clipboard-outline"></v-icon>
           <span class="sr-only"
-                :id="'app-edit-select-note' + notesStore.notes[key].note_no">{{ settingsStore.notice_boards == 1 ? 'Notizen bearbeiten' : 'Notiz ' + (notesStore.notes[key].note_no + 1) + ' bearbeiten' }}</span>
+                :id="'app-edit-select-note' + notesStore.notes[key].note_no">{{ settingsStore.notice_boards == 1 ? $t("editSelectEditNotes") : $t("editSelectEditNote", [notesStore.notes[key].note_no + 1]) }}</span>
           <span
-              aria-hidden="true">{{ settingsStore.notice_boards == 1 ? 'Notizen' : notesStore.notes[key].note_no + 1 }}</span>
+              aria-hidden="true">{{ settingsStore.notice_boards == 1 ? $t("editSelectNotes") : notesStore.notes[key].note_no + 1 }}</span>
         </v-btn>
       </v-btn-toggle>
       &nbsp;
       <span aria-hidden="true" v-if="settingsStore.hasNotes">&nbsp;</span>
       <v-btn-group density="comfortable" variant="outlined" divided>
-        <v-btn title="Editor Text verkleinern" size="small" icon="mdi-magnify-minus-outline"
+        <v-btn :title="$t('editSelectZoomOut')" size="small" icon="mdi-magnify-minus-outline"
                @click="preferencesStore.zoomEditorOut()"></v-btn>
-        <v-btn title="Editor Text vergrößern" size="small" icon="mdi-magnify-plus-outline"
+        <v-btn :title="$t('editSelectZoomIn')" size="small" icon="mdi-magnify-plus-outline"
                @click="preferencesStore.zoomEditorIn()"></v-btn>
         <v-btn
-            :title="preferencesStore.word_count_enabled ? 'Zähler verbergen' : 'Zähler anzeigen'" size="small"
+            :title="preferencesStore.word_count_enabled ? $t('editSelectCounterHide') : $t('editSelectCounterShow')" size="small"
             :icon="preferencesStore.word_count_enabled ? 'mdi-numeric' : 'mdi-numeric-off'"
             @click="preferencesStore.toggleWordCountEnabled()">
         </v-btn>
@@ -125,7 +125,7 @@ watch(() => annotationsStore.selectionChange, showAnnotations);
         v-for="key in notesStore.keys"
         :key="key"
         :noteKey="key"
-        :noteLabel="settingsStore.notice_boards == 1 ? 'Notizen' : 'Notiz ' + (notesStore.notes[key].note_no + 1)"
+        :noteLabel="settingsStore.notice_boards == 1 ? $t('editSelectEditNotes') : $t('editSelectEditNote', [notesStore.notes[key].note_no + 1])"
     >
     </edit-note>
   </div>

@@ -8,23 +8,23 @@ const apiStore = useApiStore();
   <v-main fill-height>
 
     <v-app-bar elevation="1" color="white" density="compact">
-      <p>Lade Daten...</p>
+      <p>{{ $t('startupContentLoadData') }}</p>
       <v-spacer></v-spacer>
       <v-btn :href="apiStore.returnUrl">
         <v-icon left icon="mdi-logout-variant"></v-icon>
-        <span>Beenden ...</span>
+        <span>{{ $t('allEnd') }}</span>
       </v-btn>
     </v-app-bar>
 
     <v-dialog persistent v-model="apiStore.showInitFailure">
       <v-card>
         <v-card-text>
-          <p>Beim Laden der Daten ist ein Fehler aufgetreten. Die Anwendung kann nicht gestartet werden.</p>
+          <p>{{ $t('startupContentLoadError') }}</p>
         </v-card-text>
         <v-card-actions>
           <v-btn :href="apiStore.returnUrl">
             <v-icon left icon="mdi-logout-variant"></v-icon>
-            <span>Beenden</span>
+            <span>{{ $t('allEnd') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -33,19 +33,17 @@ const apiStore = useApiStore();
     <v-dialog persistent v-model="apiStore.showReplaceConfirmation">
       <v-card>
         <v-card-text>
-          <p>In Ihrem Browser sind Eingaben eines anderen Benutzers oder einer anderen Aufgabe vorhanden, die noch nicht
-            übertragen wurden.
-            Durch das Laden werden diese Eingaben gelöscht.</p>
-          <p>Möchten Sie die neue Aufgabe laden?</p>
+          <p>{{ $t('startupContentOverwriteInfo') }}</p>
+          <p>{{ $t('startupContentOverwriteQuestion') }}</p>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="apiStore.loadDataFromBackend()">
             <v-icon left icon="mdi-reload"></v-icon>
-            <span>Laden</span>
+            <span>{{ $t('allLoad') }}</span>
           </v-btn>
           <v-btn :href="apiStore.returnUrl">
             <v-icon left icon="mdi-logout-variant"></v-icon>
-            <span>Abbrechen</span>
+            <span>{{ $t('allCancel') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -54,21 +52,17 @@ const apiStore = useApiStore();
     <v-dialog persistent v-model="apiStore.showReloadConfirmation">
       <v-card>
         <v-card-text>
-          <p>In Ihrem Browser sind Eingaben vorhanden, die noch nicht übertragen wurden.
-            Die letzte im System gespeicherte Eingabe scheint aber nicht aus diesem Browser zu stammen.
-            Das kann z.B. passieren, wenn Ihre Netzverbindung unterbrochen wurde und Sie anschließend
-            in einem anderen Browser weitergearbeitet haben.
-            Durch das Laden werden Ihre Eingaben im Browser überschrieben.</p>
-          <p>Möchten Sie die Eingabe vom System laden?</p>
+          <p>{{ $t('startupContentReloadInfo')}}</p>
+          <p>{{ $t('startupContentReloadQuestion') }}</p>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="apiStore.loadDataFromBackend()">
             <v-icon left icon="mdi-reload"></v-icon>
-            <span>Laden</span>
+            <span>{{ $t('allLoad') }}</span>
           </v-btn>
           <v-btn :href="apiStore.returnUrl">
             <v-icon left icon="mdi-logout-variant"></v-icon>
-            <span>Abbrechen</span>
+            <span>{{ $t('allCancel') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>

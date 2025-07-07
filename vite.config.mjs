@@ -4,11 +4,13 @@ import vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import path from 'path'
 
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import { resolve, dirname } from 'node:path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -34,6 +36,12 @@ export default defineConfig({
     viteStaticCopy({targets: [
       {dest: 'annotate-pdf', src: path.resolve(__dirname, 'node_modules/annotate-pdf') + '/*'},
     ]}),
+    VueI18nPlugin({
+      /* options */
+      module: 'petite-vue-i18n',
+      // locale messages resource pre-compile option
+      include: resolve(dirname(fileURLToPath(import.meta.url)), './src/locales/**'),
+    }),
   ],
   define: { 'process.env': {} },
   resolve: {

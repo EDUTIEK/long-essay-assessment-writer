@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import localForage from "localforage";
+import i18n from "@/plugins/i18n";
 
 import contentLocalCss from '@/styles/content.css?inline';
 import headlinesSingleCss from '@/styles/headlines-single.css?inline';
@@ -11,6 +12,9 @@ const storage = localForage.createInstance({
   storeName: "writer-settings",
   description: "Settings data",
 });
+
+
+const { t } = i18n.global
 
 /**
  * Settings Store
@@ -94,31 +98,31 @@ export const useSettingsStore = defineStore('settings', {
       switch (state.headline_scheme) {
         case 'single':
           return [
-            { title: 'Absatz', format: 'p' },
-            { title: 'Überschrift', format: 'h1' },
-            { title: 'Maschinenschrift', format: 'pre' },
-            { title: 'Listenelement', block: 'li' },
+            { title: t('settingsParagraph'), format: 'p' },
+            { title: t('settingsHeading'), format: 'h1' },
+            { title: t('settingsTypewriter'), format: 'pre' },
+            { title: t('settingsListElement'), block: 'li' },
           ];
         case 'three':
           return [
-            { title: 'Absatz', format: 'p' },
-            { title: 'Überschrift 1', format: 'h1' },
-            { title: 'Überschrift 2', format: 'h2' },
-            { title: 'Überschrift 3', format: 'h3' },
-            { title: 'Maschinenschrift', format: 'pre' },
-            { title: 'Listenelement', block: 'li' },
+            { title: t('settingsParagraph'), format: 'p' },
+            { title: t('settingsHeading1'), format: 'h1' },
+            { title: t('settingsHeading2'), format: 'h2' },
+            { title: t('settingsHeading3'), format: 'h3' },
+            { title: t('settingsTypewriter'), format: 'pre' },
+            { title: t('settingsListElement'), block: 'li' },
           ];
         default:
           return [
-            { title: 'Absatz', format: 'p' },
-            { title: 'Überschrift 1', format: 'h1' },
-            { title: 'Überschrift 2', format: 'h2' },
-            { title: 'Überschrift 3', format: 'h3' },
-            { title: 'Überschrift 4', format: 'h4' },
-            { title: 'Überschrift 5', format: 'h5' },
-            { title: 'Überschrift 6', format: 'h6' },
-            { title: 'Maschinenschrift', format: 'pre' },
-            { title: 'Listenelement', block: 'li' },
+            { title: t('settingsParagraph'), format: 'p' },
+            { title: t('settingsHeading1'), format: 'h1' },
+            { title: t('settingsHeading2'), format: 'h2' },
+            { title: t('settingsHeading3'), format: 'h3' },
+            { title: t('settingsHeading4'), format: 'h4' },
+            { title: t('settingsHeading5'), format: 'h5' },
+            { title: t('settingsHeading6'), format: 'h6' },
+            { title: t('settingsTypewriter'), format: 'pre' },
+            { title: t('settingsListElement'), block: 'li' },
           ];
       }
     },

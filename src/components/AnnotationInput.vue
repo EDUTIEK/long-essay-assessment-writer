@@ -91,7 +91,7 @@ async function handleTextKeydown() {
       <v-col cols="10" v-show="isSelected(annotation)">
         <v-textarea class="annotationInput" :bg-color="getBgColor(annotation)" rounded="0" density="compact" variant="solo"
                     :id="'app-annotation-' + annotation.getKey()"
-                    :label="'Anmerkung zu Markierung ' + annotation.label"
+                    :label="$t('annotationForMark', [annotation.label])"
                     rows="1" auto-grow
                     @click="annotationsStore.selectAnnotation(annotation.getKey())"
                     @change="annotationsStore.updateAnnotation(annotation)"
@@ -118,7 +118,7 @@ async function handleTextKeydown() {
                @click="annotationsStore.deleteAnnotation(annotation.getKey())"
                @keydown="handleTextKeydown()"
         >
-          <span class="sr-only">Anmerkung löschen</span>
+          <span class="sr-only">{{ $t("annotationDelete", [annotation.label]) }}</span>
         </v-btn>
       </v-col>
 

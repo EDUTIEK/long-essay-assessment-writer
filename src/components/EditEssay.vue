@@ -75,7 +75,7 @@ function handleKeyUp() {
 
 <template>
   <div id="app-essay-edit-wrapper">
-    <label for="app-essay" class="hidden">Verborgenes Feld zum Abgabe-Text</label>
+    <label for="app-essay" class="hidden">{{ $t("editEssayHiddenField") }}</label>
     <div class="tinyWrapper">
       <editor
           id="app-essay"
@@ -92,7 +92,7 @@ function handleKeyUp() {
     </div>
     <div v-show="preferencesStore.word_count_enabled" class="wordCountWrapper">
       <v-btn variant="text" size="small" @click="preferencesStore.toggleWordCountCharacters()"
-             :text="preferencesStore.word_count_characters ? helper.characterCount.value + ' Zeichen' : helper.wordCount.value + ' Wörter' ">
+             :text="preferencesStore.word_count_characters ? $t('allNumCharacters', helper.characterCount.value) : $t('allNumWords' , helper.wordCount.value) ">
       </v-btn>
     </div>
   </div>

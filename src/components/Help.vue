@@ -15,145 +15,145 @@ const layoutStore = useLayoutStore();
   <v-dialog v-model="layoutStore.showHelp" max-width="1000">
     <v-card>
       <v-card-text>
-        <h1>Allgemeine Navigation</h1>
+        <h1>{{ $t('helpGeneralNavigation') }}</h1>
         <v-table>
           <thead>
           <tr>
-            <th width="50%">Aktion</th>
-            <th width="50%">Tastenkombination</th>
+            <th width="50%">{{ $t('helpAction') }}</th>
+            <th width="50%">{{ $t('helpShortcut') }}</th>
           </tr>
           </thead>
           <tbody>
           <tr>
-            <td>Nächstes Element</td>
-            <td>Tab</td>
+            <td>{{ $t('helpNextElement') }}</td>
+            <td>{{ $t('helpKeyTab') }}</td>
           </tr>
           <tr>
-            <td>Vorheriges Element</td>
-            <td>Shift + Tab</td>
+            <td>{{ $t('helpPreviousElement')}}</td>
+            <td>{{ $t('helpKeyShiftTab') }}</td>
           </tr>
           <tr>
-            <td>Header Schaltflächen</td>
-            <td>Alt + 0</td>
+            <td>{{ $t('helpHeaderButtons') }}</td>
+            <td>{{ $t('helpKeyAlt0') }}</td>
           </tr>
           <tr>
-            <td>Navigationsleiste Schaltflächen</td>
-            <td>Alt + #</td>
+            <td>{{ $t('helpNavigationButtons') }}</td>
+            <td>{{ $t('helpKeyAltNum') }}</td>
           </tr>
           <tr>
-            <td>Inhalt linke Spalte</td>
-            <td>Alt + 1</td>
+            <td>{{ $t('helpContentLeftColumn') }}</td>
+            <td>{{ $t('helpKeyAlt1') }}</td>
           </tr>
           <tr>
-            <td>Inhalt rechte Spalte</td>
-            <td>Alt + 2</td>
+            <td>{{ $t('helpContentRightColumn') }}</td>
+            <td>{{ $t('helpKeyAlt2') }}</td>
           </tr>
           </tbody>
 
         </v-table>
 
-        <h1>Navigation im Editor</h1>
+        <h1>{{ $t('helpEditorNavigation') }}</h1>
 
         <v-table>
           <thead>
           <tr>
-            <th width="50%">Aktion</th>
-            <th width="50%">Tastenkombination</th>
+            <th width="50%">{{ $t('helpAction') }}</th>
+            <th width="50%">{{ $t('helpShortcut') }}</th>
           </tr>
           </thead>
           <tbody>
           <tr>
-            <td>In Symbolleiste wechseln</td>
-            <td>Alt + F10</td>
+            <td>{{ $t('helpToolbarFocusIn') }}</td>
+            <td>{{ $t('helpKeyAltF10') }}</td>
           </tr>
           <tr>
-            <td>Symbolleiste verlassen</td>
-            <td>Esc</td>
+            <td>{{ $t('helpToolbarFocusOut') }}</td>
+            <td>{{ $t('helpKeyEsc') }}</td>
           </tr>
           <tr>
-            <td>In Symbolleiste zwischen Schaltflächen wechseln</td>
-            <td>Pfeil links und rechts</td>
+            <td>{{ $t('helpToolbarNavigate') }}</td>
+            <td>{{ $t('helpKeysLeftRight') }}</td>
           </tr>
           <tr>
-            <td>Popup der Absatzformate aufklappen</td>
-            <td>Eingabetaste</td>
+            <td>{{ $t('helpPopupBlockFormatsShow') }}</td>
+            <td>{{ $t('helpKeyReturn') }}</td>
           </tr>
           <tr>
-            <td>Im Popup zwischen Absatzformaten wechseln</td>
-            <td>Pfeil abwärts und aufwärts</td>
+            <td>{{ $t('helpPopupBlockFormatsNavigate') }}</td>
+            <td>{{ $t('helpKeysUpDown') }}</td>
           </tr>
           <tr>
-            <td>Im Popup ein Absatzformat wählen</td>
-            <td>Eingabetaste</td>
+            <td>{{ $t('helpPopupBlockFormatsSelect') }}</td>
+            <td>{{ $t('helpKeyReturn') }}</td>
           </tr>
           <tr>
-            <td>Popup der Absatzformate schließen</td>
-            <td>Esc</td>
+            <td>{{ $t('helpPopupBlockFormatsClose') }}</td>
+            <td>{{ $t('helpKeyEsc') }}</td>
           </tr>
 
           </tbody>
         </v-table>
 
-        <h1>Tastenbefehle im Editor</h1>
-        <v-table title="Tastenbefehle im Editor">
+        <h1>{{  $t('helpEditorCommands')  }}</h1>
+        <v-table>
           <thead>
           <tr>
-            <th width="50%">Aktion</th>
-            <th width="50%">Tastenkombination</th>
+            <th width="50%">{{ $t('helpAction') }}</th>
+            <th width="50%">{{ $t('helpShortcut') }}</th>
           </tr>
           </thead>
           <tbody>
           <tr>
-            <td>Fett</td>
-            <td>Ctrl + B</td>
+            <td>{{ $t('helpCommandBold') }}</td>
+            <td>{{ $t('Ctrl + B') }}</td>
           </tr>
           <tr>
-            <td>Kursiv</td>
-            <td>Ctrl + I</td>
+            <td>{{ $t('helpCommandItalic') }}</td>
+            <td>{{ $t('helpKeyCtrlI') }}</td>
           </tr>
           <tr>
-            <td>Unterstrichen</td>
-            <td>Ctrl + U</td>
+            <td>{{ $t('helpCommundUnderline') }}</td>
+            <td>{{ $t('Ctrl + U') }}</td>
           </tr>
           <tr>
-            <td>Alles auswählen</td>
-            <td>Ctrl + A</td>
+            <td>{{ $t('helpCommandSelectAll') }}</td>
+            <td>{{ $t('Ctrl + A') }}</td>
           </tr>
           <tr>
-            <td>Wiederholen</td>
-            <td>Ctrl + Y oder Ctrl + Shift + Z</td>
+            <td>{{ $t('helpCommandRedo') }}</td>
+            <td>{{ $t('helpKeyCtrlYOrCtrlShiftZ') }}</td>
           </tr>
           <tr>
-            <td>Rückgängig machen</td>
-            <td>Ctrl + Z</td>
+            <td>{{ $t('Rückgängig machen' )}}</td>
+            <td>{{ $t('Ctrl + Z') }}</td>
           </tr>
           <tr>
-            <td>Überschrift 1</td>
-            <td>Shift + Alt + 1</td>
+            <td>{{ $t('helpCommandH1') }}</td>
+            <td>{{ $t('helpKeyShiftAlt1') }}</td>
           </tr>
           <tr>
-            <td>Überschrift 2</td>
-            <td>Shift + Alt + 2</td>
+            <td>{{ $t('helpCommandH2') }}</td>
+            <td>{{ $t('helpKeyShiftAlt2') }}</td>
           </tr>
           <tr>
-            <td>Überschrift 3</td>
-            <td>Shift + Alt + 3</td>
+            <td>{{ $t('helpCommandH3') }}</td>
+            <td>{{ $t('helpKeyShiftAlt3') }}</td>
           </tr>
           <tr>
-            <td>Überschrift 4</td>
-            <td>Shift + Alt + 4</td>
+            <td>{{ $t('helpCommandH4') }}</td>
+            <td>{{ $t('helpKeyShiftAlt4') }}</td>
           </tr>
           <tr>
-            <td>Überschrift 5</td>
-            <td>Shift + Alt + 5</td>
+            <td>{{ $t('helpCommandH5') }}</td>
+            <td>{{ $t('helpKeyShiftAlt5') }}</td>
           </tr>
           <tr>
-            <td>Überschrift 6</td>
-            <td>Shift + Alt + 6</td>
+            <td>{{ $t('helpCommandH6') }}</td>
+            <td>{{ $t('helpKeyShiftAlt6') }}</td>
           </tr>
           <tr>
-            <td>Absatz</td>
-            <td>Shift + Alt + 7</td>
+            <td>{{ $t('helpCommandParagraph') }}</td>
+            <td>{{ $t('helpKeyShiftAlt7') }}</td>
           </tr>
           </tbody>
         </v-table>
@@ -161,7 +161,7 @@ const layoutStore = useLayoutStore();
       </v-card-text>
       <v-card-actions>
         <v-btn @click="layoutStore.showHelp=false">
-          <span>Hilfe schließen</span>
+          <span>{{ $t('helpCloseHelp') }}</span>
         </v-btn>
       </v-card-actions>
     </v-card>

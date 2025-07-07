@@ -166,19 +166,19 @@ function getHTMLOfSelection() {
         <v-btn aria-labelledby="app-instructions-mode-select" size="small" value="0"
                @click="setMarkingActive(0)">
           <v-icon icon="mdi-cursor-default-outline"></v-icon>
-          <span id="app-instructions-mode-select">Auswählen</span>
+          <span id="app-instructions-mode-select">{{ $t('allSelect') }}</span>
         </v-btn>
         <v-btn aria-labelledby="app-instructions-mode-mark"  size="small" value="1"
                @click="setMarkingActive(1)">
           <v-icon icon="mdi-marker"></v-icon>
-          <span id="app-instructions-mode-mark">Markieren</span>
+          <span id="app-instructions-mode-mark">{{ $t('allMark') }}</span>
         </v-btn>
       </v-btn-toggle>
       &nbsp;
       <v-btn-group density="comfortable" variant="outlined" divided>
-        <v-btn title="Aufgabenstellung Text verkleinern" size="small" icon="mdi-magnify-minus-outline"
+        <v-btn :title="$t('instructionsZoomOut')" size="small" icon="mdi-magnify-minus-outline"
                @click="preferencesStore.zoomInstructionsOut()"></v-btn>
-        <v-btn title="Aufgabenstellung Text vergrößern" size="small" icon="mdi-magnify-plus-outline"
+        <v-btn :title="$t('instructionsZoomIn')" size="small" icon="mdi-magnify-plus-outline"
                @click="preferencesStore.zoomInstructionsIn()"></v-btn>
       </v-btn-group>
     </div>
