@@ -15,6 +15,8 @@ export default class TinyHelper {
 
     editor_id = null;
     editor = null;
+    scroll_top = 0;
+    scroll_left = 0;
 
     wordCount = ref(0);
     characterCount = ref(0);
@@ -66,6 +68,9 @@ export default class TinyHelper {
      */
     init() {
         this.editor = tinymce.get(this.editor_id);
+        const window = this.editor.getWin();
+        window.addEventListener('scroll', this.saveScrolling.bind(this));
+
         this.applyZoom();
         this.applyFormat();
         this.applyWordCount();
@@ -100,6 +105,7 @@ export default class TinyHelper {
         }
     }
 
+
     /**
      * Add classes for the headline styles to the overlay element of the tiny menu
      */
@@ -129,10 +135,34 @@ export default class TinyHelper {
         }
     }
 
+    saveScrolling() {
+        const window = this.editor.getWin();
+        if (window.scrollX > 0 || window.scrollY > 0) {
+            this.scroll_left = window.scrollX;
+            this.scroll_top = window.scrollY;
+        }
+    }
+
+    /**
+     * Workaround for a TinyMCE bug in Chrome that set scrolling to top if editor is shown
+     * This bug is fixed in TinyMCE 7.9.0
+     * It can't be updated before it is supported by tinymce-vue
+     */
+    restoreScrolling() {
+        try {
+            const window = this.editor.getWin();
+            window.scroll({left: this.scroll_left, top: this.scroll_top});
+        }
+        catch(e) {
+            console.log(e);
+        }
+    }
+
     /**
      * Fix for dragon extension in chrome browser
+     * CAUTION: this causes strange effects - do not use!
      */
-    applyScrolling(force) {
+    applyScrolling() {
         try {
             const selection = this.editor.selection.getNode();
 

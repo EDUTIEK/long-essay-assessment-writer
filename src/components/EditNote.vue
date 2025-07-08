@@ -35,7 +35,7 @@ import { useNotesStore } from '@/store/notes';
 import { useSettingsStore } from "@/store/settings";
 import { usePreferencesStore } from "@/store/preferences";
 import { useLayoutStore } from "@/store/layout";
-import { watch } from 'vue';
+import {nextTick, watch} from 'vue';
 
 const notesStore = useNotesStore();
 const settingsStore = useSettingsStore();
@@ -53,6 +53,8 @@ async function handleFocusChange() {
   if (layoutStore.focusTarget == 'right' && layoutStore.isNotesSelected
       && notesStore.activeKey == props.noteKey) {
     helper.applyFocus();
+    await nextTick();
+    helper.restoreScrolling();
   }
 }
 
@@ -64,13 +66,11 @@ function handleChange() {
   notesStore.updateContent(true);
   helper.applyZoom();
   helper.applyWordCount();
-  helper.applyScrolling();
 }
 
 function handleKeyUp() {
   notesStore.updateContent(true);
   helper.applyWordCount();
-  helper.applyScrolling();
 }
 
 </script>
@@ -88,7 +88,7 @@ function handleKeyUp() {
           @keydown="layoutStore.handleKeyDown"
           @copy="helper.handleCopy"
           @cut="helper.handleCopy"
-          api-key="no-api-key"
+          licenseKey = 'gpl'
           :init="helper.getInit()"
       />
     </div>

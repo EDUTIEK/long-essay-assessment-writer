@@ -35,7 +35,7 @@ import { useEssayStore } from '@/store/essay';
 import { useSettingsStore } from "@/store/settings";
 import { usePreferencesStore } from "@/store/preferences";
 import { useLayoutStore } from "@/store/layout";
-import { watch } from 'vue';
+import {nextTick, watch} from 'vue';
 
 const essayStore = useEssayStore();
 const settingsStore = useSettingsStore();
@@ -51,6 +51,8 @@ watch(() => layoutStore.focusChange, handleFocusChange);
 async function handleFocusChange() {
   if (layoutStore.focusTarget == 'right' && layoutStore.isEssayVisible) {
     helper.applyFocus();
+    await nextTick();
+    helper.restoreScrolling();
   }
 }
 
@@ -62,13 +64,11 @@ function handleChange() {
   essayStore.updateContent(true);
   helper.applyZoom();
   helper.applyWordCount();
-  helper.applyScrolling();
 }
 
 function handleKeyUp() {
   essayStore.updateContent(true);
   helper.applyWordCount();
-  helper.applyScrolling();
 }
 
 </script>
@@ -86,7 +86,8 @@ function handleKeyUp() {
           @keydown="layoutStore.handleKeyDown"
           @copy="helper.handleCopy"
           @cut="helper.handleCopy"
-          api-key="no-api-key"
+          @scroll="helper.saveScrolling"
+          licenseKey = 'gpl'
           :init="helper.getInit()"
       />
     </div>
