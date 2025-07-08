@@ -118,8 +118,8 @@ function getResourceIcon(resource) {
       <v-list-item aria-role="button" class="app-navigation-item" tabindex="0"
                    v-if="taskStore.hasInstructions || resourcesStore.hasAnnotatableResource"
                    @click="closeNavigation; layoutStore.showAnnotations();"
-                   :aria-label="$t('allNotes') + (layoutStore.isAnnotationsVisible ? $t('navBarSelectedAria') : '')"
-                   :title="$t('allNotes') + (layoutStore.isAnnotationsVisible ? $t('navBarSelected') : '')"
+                   :aria-label="$t('allAnnotations') + (layoutStore.isAnnotationsVisible ? $t('navBarSelectedAria') : '')"
+                   :title="$t('allAnnotations') + (layoutStore.isAnnotationsVisible ? $t('navBarSelected') : '')"
                    :ripple="false">
         <template v-slot:prepend>
           <v-icon aria-role="hidden"
