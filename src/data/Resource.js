@@ -135,7 +135,7 @@ class Resource {
   }
 
   canBeAnnoteted() {
-    return this.type == Resource.TYPE_FILE;
+    return [Resource.TYPE_FILE, Resource.TYPE_SOLUTION, Resource.TYPE_INSTRUCTION].includes(this.type);
   }
 
   hasFileToLoad() {
