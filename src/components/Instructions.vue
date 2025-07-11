@@ -117,10 +117,7 @@ watch(() => layoutStore.focusChange, handleFocusChange);
  * @param {ClipboardEvent} event
  */
 function handleCopy(event) {
-
   const content = getHTMLOfSelection();
-  console.log(content);
-
   clipboardStore.setContent(content);
   event.clipboardData.setData('text/html', content);
   event.preventDefault();

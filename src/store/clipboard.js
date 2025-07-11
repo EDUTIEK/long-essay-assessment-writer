@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia';
 import { useSettingsStore } from "@/store/settings"
 
-function normalize(html) {
+function textify(html) {
   const temp = document.createElement('div');
   temp.innerHTML = html;
   const text = temp.innerText || temp.textContent;
+  return text.trim();
+}
+
+function normalize(html) {
+  const text = textify(html);
   return text.replace(/[\s\n\r]+/g, '');
 }
 
@@ -37,6 +42,10 @@ export const useClipbardStore = defineStore('clipboard', {
           return true;
         }
 
+        if (content == '') {
+          return false;
+        }
+
         console.log('content:', content);
         console.log('normalized content:', normalize(content));
 
@@ -44,10 +53,26 @@ export const useClipbardStore = defineStore('clipboard', {
         console.log('normalized state.content:', normalize(state.content));
 
         if (normalize(content) == normalize(state.content)) {
+          console.log('paste allowed');
           return true;
         }
+        console.log('paste forbidden');
         return false;
 
+      };
+      return fn;
+    },
+
+    getTextContent: state => {
+
+      /**
+       * Get the text value of a content
+       *
+       * @param {string} content
+       * @return {string}
+       */
+      const fn = function (content) {
+        return textify(content);
       };
       return fn;
     },
@@ -60,7 +85,7 @@ export const useClipbardStore = defineStore('clipboard', {
      * @param content
      */
     setContent(content) {
-      //console.log(content);
+      console.log('copy: ', content);
       this.content = content;
     },
 

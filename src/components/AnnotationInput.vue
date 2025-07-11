@@ -2,11 +2,13 @@
 import { useApiStore } from '@/store/api';
 import { useAnnotationsStore } from "@/store/annotations";
 import { useLayoutStore } from '@/store/layout';
+import {useClipbardStore} from "@/store/clipboard";
 import {nextTick, onMounted, ref, watch} from 'vue';
 
 const apiStore = useApiStore();
 const annotationsStore = useAnnotationsStore();
 const layoutStore = useLayoutStore();
+const clipboardStore = useClipbardStore();
 
 const props = defineProps(['annotation']);
 const annotation = props.annotation;
@@ -72,18 +74,53 @@ async function handleTextKeydown() {
   }
 }
 
+/**
+ * Handle copy to the clipboard
+ * @param {ClipboardEvent} event
+ */
+function handleCopy(event) {
+  const textarea = document.getElementById('app-annotation-' + annotation.getKey());
+  const content = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+  clipboardStore.setContent(content);
+  event.clipboardData.setData('text/html', content);
+  event.preventDefault();
+}
+
+/**
+ * Handle paste from the clipboard
+ * @param event
+ */
+function handlePaste(event) {
+  const content = (event.clipboardData || window.clipboardData).getData("text/html");
+  if (!clipboardStore.getPasteAllowed(content)) {
+    event.preventDefault();
+    clipboardStore.showWarning();
+    return;
+  }
+  const text = clipboardStore.getTextContent(content);
+  const textarea = document.getElementById('app-annotation-' + annotation.getKey());
+  const value = textarea.value;
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+
+  textarea.value = value.slice(0, start) + text + value.slice(end);
+  textarea.focus();
+  textarea.selectionStart = start + text.length;
+  textarea.selectionEnd = start + text.length;
+}
+
 </script>
 
 <template>
   <v-container :id="'appAnnotationContainer' + annotation.getKey()" :key="annotation.getKey()" class="annotationContainer">
 
-    <v-row dense>
+    <v-row dense @click="annotationsStore.selectAnnotation(annotation.getKey())">
 
       <!-- label -->
       <v-col cols="1">
         <button tabindex="0"
                 :class="'v-btn annotationLabel ' + (isSelected(annotation) ? 'selected' : '')"
-                @click="annotationsStore.selectAnnotation(annotation.getKey())">
+        >
           {{ annotation.label }}
         </button>
       </v-col>
@@ -93,10 +130,12 @@ async function handleTextKeydown() {
                     :id="'app-annotation-' + annotation.getKey()"
                     :label="$t('annotationForMark', [annotation.label])"
                     rows="1" auto-grow
-                    @click="annotationsStore.selectAnnotation(annotation.getKey())"
                     @change="annotationsStore.updateAnnotation(annotation)"
                     @keyup="annotationsStore.updateAnnotation(annotation)"
                     @keydown="handleTextKeydown()"
+                    @copy="handleCopy"
+                    @cut="handleCopy"
+                    @paste="handlePaste"
                     v-model="annotation.comment">
         </v-textarea>
       </v-col>
@@ -105,7 +144,6 @@ async function handleTextKeydown() {
         <div class="annotationDisplay"
              v-show="annotation.comment"
              :style="'background-color: ' + getBgColor(annotation) + ';'"
-             @click="annotationsStore.selectAnnotation(annotation.getKey())"
         >
           {{annotation.comment}}
         </div>
