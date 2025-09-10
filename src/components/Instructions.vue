@@ -24,20 +24,24 @@ onMounted(() => {
 });
 
 function refreshMarks() {
-  marker.hideAllMarksAndLabels();
-  annotationsStore.activeAnnotations.forEach(annotation => updateMark(annotation));
+  if (layoutStore.isInstructionsSelected) {
+    marker.hideAllMarksAndLabels();
+    annotationsStore.activeAnnotations.forEach(annotation => updateMark(annotation));
+  }
 }
 
 watch(() => annotationsStore.markerChange, refreshMarks);
 
 function refreshSelection() {
-  marker.hideAllMarksOfClass('selected');
+  if (layoutStore.isInstructionsSelected) {
+    marker.hideAllMarksOfClass('selected');
 
-  let annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
-  if (annotation) {
-    marker.showMark('selected', annotation.start_position, annotation.end_position);
-    marker.addLabel('labelled', annotation.label, annotation.start_position);
-    marker.scrollToMark(annotation.start_position, annotation.end_position);
+    let annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
+    if (annotation) {
+      marker.showMark('selected', annotation.start_position, annotation.end_position);
+      marker.addLabel('labelled', annotation.label, annotation.start_position);
+      marker.scrollToMark(annotation.start_position, annotation.end_position);
+    }
   }
 }
 
@@ -45,8 +49,10 @@ watch(() => annotationsStore.selectionChange, refreshSelection);
 
 function setCaretToSelectedAnnotation()
 {
-  let annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
-  marker.setCaretToMark(annotation.start_position);
+  if (layoutStore.isInstructionsSelected) {
+    let annotation = annotationsStore.getAnnotation(annotationsStore.selectedKey);
+    marker.setCaretToMark(annotation.start_position);
+  }
 }
 
 watch(() => annotationsStore.caretRequest, setCaretToSelectedAnnotation);
