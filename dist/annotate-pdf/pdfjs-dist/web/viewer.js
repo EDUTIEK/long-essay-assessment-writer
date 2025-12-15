@@ -630,7 +630,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   debuggerSrc: {
-    value: "./debugger.mjs",
+    value: "./debugger.js",
     kind: OptionKind.VIEWER
   },
   defaultZoomDelay: {
@@ -827,7 +827,7 @@ const defaultOptions = {
     kind: OptionKind.WORKER
   },
   workerSrc: {
-    value: "../build/pdf.worker.mjs",
+    value: "../build/pdf.worker.js",
     kind: OptionKind.WORKER
   }
 };
@@ -837,7 +837,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER
   };
   defaultOptions.sandboxBundleSrc = {
-    value: "../build/pdf.sandbox.mjs",
+    value: "../build/pdf.sandbox.js",
     kind: OptionKind.VIEWER
   };
   defaultOptions.viewerCssTheme = {
@@ -2502,7 +2502,7 @@ function shallowPopulateUsing(fromElement, toElement) {
   overlayAttributes(fromElement, toElement);
   return toElement;
 }
-;// ./node_modules/cached-iterable/src/cached_iterable.mjs
+;// ./node_modules/cached-iterable/src/cached_iterable.js
 class CachedIterable extends Array {
   static from(iterable) {
     if (iterable instanceof this) {
@@ -2511,7 +2511,7 @@ class CachedIterable extends Array {
     return new this(iterable);
   }
 }
-;// ./node_modules/cached-iterable/src/cached_sync_iterable.mjs
+;// ./node_modules/cached-iterable/src/cached_sync_iterable.js
 
 class CachedSyncIterable extends CachedIterable {
   constructor(iterable) {
@@ -2546,7 +2546,7 @@ class CachedSyncIterable extends CachedIterable {
     return this[this.length - 1];
   }
 }
-;// ./node_modules/cached-iterable/src/cached_async_iterable.mjs
+;// ./node_modules/cached-iterable/src/cached_async_iterable.js
 
 class CachedAsyncIterable extends CachedIterable {
   constructor(iterable) {
@@ -2583,7 +2583,7 @@ class CachedAsyncIterable extends CachedIterable {
     return this[this.length - 1];
   }
 }
-;// ./node_modules/cached-iterable/src/index.mjs
+;// ./node_modules/cached-iterable/src/index.js
 
 
 ;// ./node_modules/@fluent/dom/esm/localization.js
@@ -15362,4 +15362,4 @@ var __webpack_exports__PDFViewerApplicationConstants = __webpack_exports__.PDFVi
 var __webpack_exports__PDFViewerApplicationOptions = __webpack_exports__.PDFViewerApplicationOptions;
 export { __webpack_exports__PDFViewerApplication as PDFViewerApplication, __webpack_exports__PDFViewerApplicationConstants as PDFViewerApplicationConstants, __webpack_exports__PDFViewerApplicationOptions as PDFViewerApplicationOptions };
 
-//# sourceMappingURL=viewer.mjs.map
+//# sourceMappingURL=viewer.js.map
