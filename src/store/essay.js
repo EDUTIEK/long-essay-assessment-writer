@@ -14,6 +14,7 @@ const storage = localForage.createInstance({
 const dmp = new DiffMatchPatch();
 
 const checkInterval = 1000;     // time (ms) to wait for a new update check (e.g. 0.2s to 1s)
+const forceInterval = 60000;    // max time to wait for a new update check if update check is locked
 const saveInterval = 5000;      // maximum time (ms) to wait for a new save if content is changed
 const sendInterval = 5000;      // maximum time (ms) to wait for sending open savings to the backend
 const saveDistance = 10;        // maximum levenshtein distance to wait for a new save if content is changed
@@ -230,10 +231,15 @@ export const useEssayStore = defineStore('essay', {
         return false;
       }
 
+      // force a check if update is locked fpr too long
+      if (!forced && currentTime - this.lastCheck > forceInterval) {
+        forced = true;
+      }
+
       // avoid parallel updates
       // no need to wait because updateContent is called by interval
       // use post-increment for test-and set
-      if (lockUpdate++) {
+      if (!forced && lockUpdate++) {
         return false;
       }
 
